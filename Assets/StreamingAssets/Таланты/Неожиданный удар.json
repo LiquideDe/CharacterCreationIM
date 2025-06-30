@@ -1,0 +1,17 @@
+{
+  "name": "Неожиданный удар",
+  "description": "Первый удар – самый страшный. В раунд внезапности вы можете совершить два действия в свой ход.",
+  "requirements": [
+  {
+      "type": "attribute_min",
+      "attribute": "Ловкость",
+      "value": 45
+    },
+	{
+	  "type": "skill_improvement",
+	  "skill": "Скрытность",
+	  "amount": 3
+  }
+
+  ]
+}

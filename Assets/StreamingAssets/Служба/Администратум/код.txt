@@ -1,0 +1,58 @@
+[System.Serializable]
+public class OriginChance
+{
+    public string origin;
+    public int[] range; // [min, max]
+}
+
+[System.Serializable]
+public class ServiceEntry
+{
+    public string service;
+    public List<OriginChance> originChances;
+}
+
+[System.Serializable]
+public class SkillUpgrade
+{
+    public int amount;
+    public List<string> skills;
+}
+
+[System.Serializable]
+public class InfluenceBonus
+{
+    public string faction;
+    public int amount;
+    public bool alternative_allowed;
+}
+
+[System.Serializable]
+public class TalentChoice
+{
+    public string type; // "fixed" или "choice_set"
+    public List<List<string>> choices; // если type == "choice_set"
+    public List<string> talents;       // если type == "fixed"
+}
+
+[System.Serializable]
+public class GearData
+{
+    public List<string> items;
+    public int money;
+    public List<string> choice; // опционально
+}
+
+[System.Serializable]
+public class ServiceData
+{
+    public string serviceName;
+    public string description;
+    public Dictionary<string, int> fixed_bonus;
+    public Dictionary<string, int> selectable_bonuses;
+    public SkillUpgrade skill_upgrades;
+    public InfluenceBonus influence_bonus;
+    public int contacts;
+    public List<TalentChoice> talents;
+    public GearData gear;
+}

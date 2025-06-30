@@ -1,0 +1,50 @@
+{
+  "serviceName": "Инквизиция",
+  "description": "",
+  "fixed_bonus": {
+    "Восприятие": 5
+  },
+  "selectable_bonuses": {
+    "Выносливость": 5,
+    "Интеллект": 5,
+    "Сила воли": 5
+  },
+  "skill_upgrades": {
+    "amount": 5,
+    "skills": [
+      "Бдительность",
+      "Дисциплина",
+      "Чутье",
+      "Логика",
+      "Знания",
+      "Командование"
+    ]
+  },
+  "influence_bonus": {
+    "faction": "Инквизиция",
+    "amount": 1,
+    "alternative_allowed": false
+  },
+  "contacts": 0,
+  "talents": [
+    {
+      "type": "fixed",
+      "talents": ["Всегда начеку"]
+    }
+  ],
+  "gear": {
+    "items": [
+      "Лазпистолет",
+      "Бронекомбинезон",
+	  "Светосфера",
+	  "Оковы"
+    ],
+    "money": 400,
+	"amount_choice":1,
+    "choice": [
+      "Ауспик",
+      "Комм-пиявка",
+      "Пикт-писец"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+[System.Serializable]
+public class BonusData
+{
+    public Dictionary<string, int> fixed_bonus;
+    public Dictionary<string, int> selectable_bonuses;
+    public List<string> items;
+}
+
+// Чтение JSON
+string jsonString = File.ReadAllText("путь_к_файлу.json");
+BonusData data = JsonUtility.FromJson<BonusData>(jsonString);
+
+// Использование данных
+int strengthBonus = data.fixed_bonus["Сила"];
+List<string> selectableChars = new List<string>(data.selectable_bonuses.Keys);

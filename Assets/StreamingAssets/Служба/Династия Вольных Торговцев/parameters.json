@@ -1,0 +1,43 @@
+{
+  "serviceName": "Династия вольных торговцев",
+  "description": "",
+  "fixed_bonus": {
+    "Товарищество": 5
+  },
+  "selectable_bonuses": {
+    "Ловкость": 5,
+    "Интеллект": 5,
+    "Восприятие": 5
+  },
+  "skill_upgrades": {
+    "amount": 5,
+    "skills": [
+      "Языки",
+      "Ориентирование",
+      "Чутье",
+      "Командование",
+      "Пилотирование",
+      "Взаимопонимание"
+    ]
+  },
+  "influence_bonus": {
+    "faction": "Династия вольных торговцев",
+    "amount": 1,
+    "alternative_allowed": false
+  },
+  "contacts": 0,
+  "talents": [
+    {
+      "type": "fixed",
+      "talents": ["Делец"]
+    }
+  ],
+  "gear": {
+    "items": [
+      "Мультикомпас",
+      "Бронекомбинезон"
+    ],
+    "money": 1200,
+	"amount_choice":1
+  }
+}
