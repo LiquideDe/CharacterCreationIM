@@ -11,7 +11,9 @@ namespace CharacterCreation
     public class BackgroundCreator : IDataCreator
     {
         private readonly List<BackgroundData> _backgrounds = new();
+        private Dictionary<string, BackgroundData> _backgroundsByName = new();
         public IReadOnlyList<BackgroundData> Backgrounds => _backgrounds;
+        public BackgroundData BackgroundsByName(string name) => _backgroundsByName[name];
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -62,7 +64,8 @@ namespace CharacterCreation
                 await UniTask.Yield();
             }
 
-            
+            foreach (var item in _backgrounds)
+                _backgroundsByName.Add(item.serviceName, item);
         }
     }
     [System.Serializable]

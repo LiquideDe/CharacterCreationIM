@@ -2,8 +2,8 @@
 {
   "name": "Одеяние",
   "type": "Обычная броня",
-  "protection_zones": ["Руки","Торс","Ноги"],
-  "armor_points": 1,
+  "protectionZones": ["Руки","Торс","Ноги"],
+  "armorPoints": 1,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -14,8 +14,8 @@
 {
   "name": "Тяжелый кожаный доспех",
   "type": "Обычная броня",
-  "protection_zones": ["Руки","Торс","Ноги"],
-  "armor_points": 2,
+  "protectionZones": ["Руки","Торс","Ноги"],
+  "armorPoints": 2,
   "weight": {
     "worn": 2,
     "carried": 3
@@ -26,8 +26,8 @@
 {
   "name": "Бронекомбинезон",
   "type": "Обычная броня",
-  "protection_zones": ["Руки","Торс","Ноги"],
-  "armor_points": 2,
+  "protectionZones": ["Руки","Торс","Ноги"],
+  "armorPoints": 2,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -38,8 +38,8 @@
 {
   "name": "Бронешинель",
   "type": "Обычная броня",
-  "protection_zones": ["Руки","Торс","Ноги"],
-  "armor_points": 2,
+  "protectionZones": ["Руки","Торс","Ноги"],
+  "armorPoints": 2,
   "weight": {
     "worn": 2,
     "carried": 3
@@ -50,8 +50,8 @@
 {
   "name": "Кустарная броня",
   "type": "Обычная броня",
-  "protection_zones": ["Торс"],
-  "armor_points": 3,
+  "protectionZones": ["Торс"],
+  "armorPoints": 3,
   "weight": {
     "worn": 4,
     "carried": 5
@@ -62,8 +62,8 @@
 {
   "name": "Кустарный щит",
   "type": "Щит",
-  "protection_zones": ["Торс","Вторая рука"],
-  "armor_points": 1,
+  "protectionZones": ["Торс","Вторая рука"],
+  "armorPoints": 1,
   "weight": {
     "worn": 1
   },
@@ -73,8 +73,8 @@
 {
   "name": "Боевой щит",
   "type": "Щит",
-  "protection_zones": ["Торс","Вторая рука"],
-  "armor_points": 2,
+  "protectionZones": ["Торс","Вторая рука"],
+  "armorPoints": 2,
   "weight": {
     "worn": 1
   },
@@ -84,8 +84,8 @@
 {
   "name": "Боевой щит",
   "type": "Щит",
-  "protection_zones": ["Торс","Вторая рука"],
-  "armor_points": 2,
+  "protectionZones": ["Торс","Вторая рука"],
+  "armorPoints": 2,
   "weight": {
     "worn": 1
   },
@@ -95,8 +95,8 @@
 {
   "name": "Абордажный щит",
   "type": "Щит",
-  "protection_zones": ["Торс","Вторая рука"],
-  "armor_points": 4,
+  "protectionZones": ["Торс","Вторая рука"],
+  "armorPoints": 4,
   "weight": {
     "worn": 2
   },
@@ -106,8 +106,8 @@
 {
   "name": "Жилет из ксеношкуры",
   "type": "Обычная броня",
-  "protection_zones": ["Торс"],
-  "armor_points": 6,
+  "protectionZones": ["Торс"],
+  "armorPoints": 6,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -118,8 +118,8 @@
 {
   "name": "Флак ботинки",
   "type": "Флак броня",
-  "protection_zones": ["Ноги"],
-  "armor_points": 2,
+  "protectionZones": ["Ноги"],
+  "armorPoints": 2,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -130,8 +130,8 @@
 {
   "name": "Флак шлем",
   "type": "Флак броня",
-  "protection_zones": ["Голова"],
-  "armor_points": 2,
+  "protectionZones": ["Голова"],
+  "armorPoints": 2,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -142,8 +142,8 @@
 {
   "name": "Флак перчатки",
   "type": "Флак броня",
-  "protection_zones": ["Руки"],
-  "armor_points": 2,
+  "protectionZones": ["Руки"],
+  "armorPoints": 2,
   "weight": {
     "worn": 0,
     "carried": 1
@@ -154,8 +154,8 @@
 {
   "name": "Флак жилет",
   "type": "Флак броня",
-  "protection_zones": ["Торс"],
-  "armor_points": 3,
+  "protectionZones": ["Торс"],
+  "armorPoints": 3,
   "weight": {
     "worn": 2,
     "carried": 3
@@ -166,8 +166,8 @@
 {
   "name": "Флак камзол",
   "type": "Флак броня",
-  "protection_zones": ["Торс","Руки"],
-  "armor_points": 3,
+  "protectionZones": ["Торс","Руки"],
+  "armorPoints": 3,
   "weight": {
     "worn": 2,
     "carried": 3
@@ -178,8 +178,8 @@
 {
   "name": "Флак доспех Астра Милитарум",
   "type": "Флак броня",
-  "protection_zones": ["Торс","Руки","Ноги","Голова"],
-  "armor_points": 4,
+  "protectionZones": ["Торс","Руки","Ноги","Голова"],
+  "armorPoints": 4,
   "weight": {
     "worn": 4,
     "carried": 5
@@ -190,8 +190,8 @@
 {
   "name": "Ячеистые ботинки",
   "type": "Ячеистая броня",
-  "protection_zones": ["Ноги"],
-  "armor_points": 3,
+  "protectionZones": ["Ноги"],
+  "armorPoints": 3,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -202,8 +202,8 @@
 {
   "name": "Ячеистые капюшон",
   "type": "Ячеистая броня",
-  "protection_zones": ["Голова"],
-  "armor_points": 3,
+  "protectionZones": ["Голова"],
+  "armorPoints": 3,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -214,8 +214,8 @@
 {
   "name": "Ячеистые перчатки",
   "type": "Ячеистая броня",
-  "protection_zones": ["Руки"],
-  "armor_points": 3,
+  "protectionZones": ["Руки"],
+  "armorPoints": 3,
   "weight": {
     "worn": 0,
     "carried": 1
@@ -226,8 +226,8 @@
 {
   "name": "Ячеистый жилет",
   "type": "Ячеистая броня",
-  "protection_zones": ["Торс"],
-  "armor_points": 4,
+  "protectionZones": ["Торс"],
+  "armorPoints": 4,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -238,8 +238,8 @@
 {
   "name": "Ксеноячеистая броня",
   "type": "Ячеистая броня",
-  "protection_zones": ["Торс","Руки","Ноги"],
-  "armor_points": 4,
+  "protectionZones": ["Торс","Руки","Ноги"],
+  "armorPoints": 4,
   "weight": {
     "worn": 2,
     "carried": 3
@@ -250,8 +250,8 @@
 {
   "name": "Панцирный шлем",
   "type": "Панцирная броня",
-  "protection_zones": ["Голова"],
-  "armor_points": 5,
+  "protectionZones": ["Голова"],
+  "armorPoints": 5,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -262,8 +262,8 @@
 {
   "name": "Панцирные перчатки",
   "type": "Панцирная броня",
-  "protection_zones": ["Руки"],
-  "armor_points": 5,
+  "protectionZones": ["Руки"],
+  "armorPoints": 5,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -274,8 +274,8 @@
 {
   "name": "Панцирные поножи",
   "type": "Панцирная броня",
-  "protection_zones": ["Ноги"],
-  "armor_points": 5,
+  "protectionZones": ["Ноги"],
+  "armorPoints": 5,
   "weight": {
     "worn": 1,
     "carried": 2
@@ -286,8 +286,8 @@
 {
   "name": "Панцирный нагрудник",
   "type": "Панцирная броня",
-  "protection_zones": ["Торс"],
-  "armor_points": 6,
+  "protectionZones": ["Торс"],
+  "armorPoints": 6,
   "weight": {
     "worn": 3,
     "carried": 4
@@ -298,8 +298,8 @@
 {
   "name": "Панцирь силовика",
   "type": "Панцирная броня",
-  "protection_zones": ["Торс","Ноги","Руки","Голова"],
-  "armor_points": 5,
+  "protectionZones": ["Торс","Ноги","Руки","Голова"],
+  "armorPoints": 5,
   "weight": {
     "worn": 4,
     "carried": 5
@@ -310,8 +310,8 @@
 {
   "name": "Панцирный доспех Темпестус",
   "type": "Панцирная броня",
-  "protection_zones": ["Торс","Ноги","Руки","Голова"],
-  "armor_points": 6,
+  "protectionZones": ["Торс","Ноги","Руки","Голова"],
+  "armorPoints": 6,
   "weight": {
     "worn": 5,
     "carried": 6
@@ -322,8 +322,8 @@
 {
   "name": "Легкая силовая броня",
   "type": "Силовая броня",
-  "protection_zones": ["Торс","Ноги","Руки","Голова"],
-  "armor_points": 8,
+  "protectionZones": ["Торс","Ноги","Руки","Голова"],
+  "armorPoints": 8,
   "weight": {
     "worn": 7,
     "carried": 8
@@ -334,8 +334,8 @@
 {
   "name": "Силовая броня",
   "type": "Силовая броня",
-  "protection_zones": ["Торс","Ноги","Руки","Голова"],
-  "armor_points": 10,
+  "protectionZones": ["Торс","Ноги","Руки","Голова"],
+  "armorPoints": 10,
   "weight": {
     "worn": 9,
     "carried": 10

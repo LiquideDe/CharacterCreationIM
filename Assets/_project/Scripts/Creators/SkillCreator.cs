@@ -7,17 +7,18 @@ using UnityEngine;
 
 namespace CharacterCreation
 {
-    public class SkillCreator : IDataCreator
+    public class SkillCreator : DataCreator,IDataCreator
     {
-        private readonly List<SkillData> _skills = new();
-        public IReadOnlyList<SkillData> Skills => _skills;
-
+        private readonly List<SkillData> _skills = new();       
         private readonly List<SpecializationData> _specializations = new();
-
-        public IReadOnlyList<SpecializationData> Specializations => _specializations;
-
         private Dictionary<string, SkillData> _skillByName = new Dictionary<string, SkillData>();
         private Dictionary<string, SpecializationData> _specializationByName = new Dictionary<string, SpecializationData>();
+
+        public IReadOnlyList<SkillData> Skills => _skills;
+        public IReadOnlyList<SpecializationData> Specializations => _specializations;
+        public SkillData SkillByName(string name) => _skillByName[name];
+        public SpecializationData SpecializationByName(string name) => _specializationByName[name];
+        
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -25,33 +26,16 @@ namespace CharacterCreation
             _specializations.Clear();
             string basePath = Path.Combine(Application.streamingAssetsPath, "Умения");
 
-            string skillsPath = Path.Combine(basePath, "Умения.json");
-            if (File.Exists(skillsPath))
+            var tasks = new List<UniTask>()
             {
-                string json = await File.ReadAllTextAsync(skillsPath, cancellationToken);
-                SkillList skillList = JsonUtility.FromJson<SkillList>(json);
-                if (skillList?.skills != null)                
-                    _skills.AddRange(skillList.skills);
-                
-            }
-            else
-            {
-                Debug.LogWarning($"Файл с умениями не найден: {skillsPath}");
-            }
-            
-            string specializationsPath = Path.Combine(basePath, "Специализации.json");
-            if (File.Exists(specializationsPath))
-            {
-                string json = await File.ReadAllTextAsync(specializationsPath, cancellationToken);
-                SpecializationList specializationList = JsonUtility.FromJson<SpecializationList>(json);
-                if (specializationList?.specializations != null)                
-                    _specializations.AddRange(specializationList.specializations);
-                
-            }
-            else
-            {
-                Debug.LogWarning($"Файл со специализациями не найден: {specializationsPath}");
-            }
+                LoadAndAddAsync<SkillList, SkillData>("Умения.json",
+                _skills, cancellationToken, list => list.data,basePath),
+
+                LoadAndAddAsync<SpecializationList, SpecializationData>("Специализации.json",
+                _specializations, cancellationToken, list => list.data,basePath),
+            };
+
+            await UniTask.WhenAll(tasks);
 
             foreach (var item in _skills)            
                 _skillByName.Add(item.name, item);
@@ -74,13 +58,13 @@ namespace CharacterCreation
     [System.Serializable]
     public class SkillList
     {
-        public List<SkillData> skills;
+        public List<SkillData> data;
     }
 
     [System.Serializable]
     public class SpecializationList
     {
-        public List<SpecializationData> specializations;
+        public List<SpecializationData> data;
     }
 
     [System.Serializable]

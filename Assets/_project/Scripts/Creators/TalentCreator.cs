@@ -10,9 +10,9 @@ namespace CharacterCreation
     public class TalentCreator : IDataCreator
     {
         private readonly List<TalentData> _talents = new();
-
-        public IReadOnlyList<TalentData> Talents => _talents;
         private Dictionary<string, TalentData> _talentByName = new Dictionary<string, TalentData>();
+        public IReadOnlyList<TalentData> Talents => _talents;
+        public TalentData TalentByName(string name) => _talentByName[name];
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -41,6 +41,7 @@ namespace CharacterCreation
                 {
                     Debug.LogWarning($"Ошибка чтения таланта из файла: {filePath}");
                 }
+                await UniTask.Yield();
             }
 
             Debug.Log($"Загружено талантов: {_talents.Count}");
