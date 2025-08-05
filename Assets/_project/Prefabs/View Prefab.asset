@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7039bf0ac6ae1a34e93abe88f976ff0e, type: 3}
+  m_Name: View Prefab
+  m_EditorClassIdentifier: 
+  views:
+  - key: MainMenuView
+    prefab: {fileID: 8122397809421263518, guid: b73004191a482d9438dd3ff7b7b26ed9, type: 3}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bbeb768d13bc8448aae2b3570e813a, type: 3}
+  m_Name: Audio Clips
+  m_EditorClassIdentifier: 
+  click: {fileID: 8300000, guid: 3698a1d33c82648498855e41a2911513, type: 3}
+  cancel: {fileID: 8300000, guid: 510037c00a633604e8d8dea9d76c9607, type: 3}
+  error: {fileID: 8300000, guid: 4da9b63b994c65048b329884bda65113, type: 3}
+  confirm: {fileID: 8300000, guid: 96ed6bfe1e59937478c90553aaaaf196, type: 3}
+  fadeIn: {fileID: 8300000, guid: 7e62591c354b9cf40b418b01eb4a02d6, type: 3}
+  fadeOut: {fileID: 8300000, guid: 7801353d22a0331439837d26dc979366, type: 3}
