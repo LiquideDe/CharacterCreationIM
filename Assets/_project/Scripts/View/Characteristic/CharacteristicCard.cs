@@ -15,7 +15,7 @@ namespace CharacterCreation
         [SerializeField] private Transform placeForInput = null;
         [SerializeField] private Transform placeForOutput = null;
 
-        [Inject] private AudioManager _audioManager = null;
+        private AudioManager _audioManager = null;
         private int _startValue = 0;
         private int _currentValue = 0;
         private CardWithNumber _lastCardWithNumber = null;
@@ -44,10 +44,15 @@ namespace CharacterCreation
         {
             _lastCardWithNumber = cardWithNumber;
             isEmpty = false;
-            cardWithNumber.GetComponent<RectTransform>().anchoredPosition = placeForInput.GetComponent<RectTransform>()
-                .anchoredPosition;
-             _currentValue = _startValue + cardWithNumber.Amount;
-            cardWithNumber.CantReplace = true;
+            cardWithNumber.transform.SetPositionAndRotation(placeForInput.position, placeForInput.rotation);
+            _currentValue = _startValue + cardWithNumber.Amount;
+            cardWithNumber.CantReplaceCard();
+            UpdateValueText();
+        }
+
+        public void SetAudioManager(AudioManager audioManager)
+        {
+            _audioManager = audioManager;
         }
 
         public void SetCharacteristicName(string name)
@@ -68,10 +73,14 @@ namespace CharacterCreation
             isEmpty = true;
             if (_lastCardWithNumber != null)
             {
-                _lastCardWithNumber.CantReplace = false;
+                _lastCardWithNumber.CanReplace();
                 _lastCardWithNumber.transform.position = placeForOutput.position;
             }
+            UpdateValueText();
         }
+
+        private void UpdateValueText() => 
+            characteristicValueText.text = _currentValue.ToString();
 
     }
 }

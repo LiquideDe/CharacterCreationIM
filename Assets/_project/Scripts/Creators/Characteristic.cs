@@ -1,9 +1,18 @@
+using System;
+
 namespace CharacterCreation
 {
+    [Serializable]
     public class Characteristic
     {
-        public string Name { get; private set; }
-        public int Level { get; private set; }
+        public string Name;
+        public int Level;
+
+        public Characteristic(string name, int level)
+        {
+            Name = name;
+            Level = level;
+        }
     }
 }
 

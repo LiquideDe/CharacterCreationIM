@@ -9,10 +9,12 @@ namespace CharacterCreation
     {
         private PresenterViewFactory _factory;
         private MainMenuPresenter _mainMenuPresenter;
+        private NewPlayerMediator _newPlayerMediator;
 
-        public StartMediator(PresenterViewFactory factory)
+        public StartMediator(PresenterViewFactory factory, NewPlayerMediator newPlayerMediator)
         {
             _factory = factory;
+            _newPlayerMediator = newPlayerMediator;
         }
 
         public void ShowMainMenu()
@@ -51,7 +53,7 @@ namespace CharacterCreation
         private void OnCreatePlayerClicked()
         {
             UnsubscribeMainMenuPresenter();
-            Debug.Log("Create Player clicked. Implement player creation logic here.");
+            _newPlayerMediator.ShowNewCharacteristic();
         }
 
         private void OnCreatePatronClicked()

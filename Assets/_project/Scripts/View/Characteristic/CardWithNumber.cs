@@ -9,14 +9,11 @@ namespace CharacterCreation
     public class CardWithNumber : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         [SerializeField] private TextMeshProUGUI numberText = null;
+        [SerializeField] private CanvasGroup _canvasGroup;
         private Vector3 _startPos;
-        private CanvasGroup _canvasGroup;
-        public bool CantReplace { get; set; }
+        
+        public bool CantReplace { get; private set; }
         public int Amount { get; private set; } = 0;
-        private void Start()
-        {
-            _canvasGroup = GetComponent<CanvasGroup>();
-        }
 
         public void SetNumber(int amount)
         {
@@ -42,6 +39,18 @@ namespace CharacterCreation
                 transform.position = _startPos;
                 _canvasGroup.blocksRaycasts = true;
             }
+        }
+
+        public void CanReplace()
+        {
+            _canvasGroup.blocksRaycasts = true;
+            CantReplace = false;
+        }
+
+        public void CantReplaceCard()
+        {
+            _canvasGroup.blocksRaycasts = false;
+            CantReplace = true;
         }
     }
 }

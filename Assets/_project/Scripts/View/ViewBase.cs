@@ -12,19 +12,14 @@ namespace CharacterCreation
         [Header("Анимация")]
         [SerializeField] private float animationDuration = 0.5f;
         [SerializeField] private float slideOffset = 2000f;
+        [SerializeField] private RectTransform rectTransform;
+        [SerializeField] private CanvasGroup canvasGroup;
 
         [Inject] private AudioManager _audio = null;
-        protected RectTransform rectTransform;
-        protected CanvasGroup canvasGroup;
+        
 
         protected virtual void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
-
-            canvasGroup = GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-                canvasGroup = gameObject.AddComponent<CanvasGroup>();
-
             canvasGroup.alpha = 0f;
         }
 

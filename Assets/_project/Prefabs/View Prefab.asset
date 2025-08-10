@@ -15,3 +15,5 @@ MonoBehaviour:
   views:
   - key: MainMenuView
     prefab: {fileID: 8122397809421263518, guid: b73004191a482d9438dd3ff7b7b26ed9, type: 3}
+  - key: CharacteristicView
+    prefab: {fileID: 5442242183721202199, guid: 870c6016d0b870a41a82e7ddb652f071, type: 3}

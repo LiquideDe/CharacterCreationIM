@@ -9,7 +9,8 @@ namespace CharacterCreation
     {
         public override void InstallBindings()
         {
-            Container.Bind<StartMediator>().AsSingle();
+            Container.Bind<NewPlayerMediator>().AsTransient();
+            Container.Bind<StartMediator>().AsSingle();            
         }
     }
 }
