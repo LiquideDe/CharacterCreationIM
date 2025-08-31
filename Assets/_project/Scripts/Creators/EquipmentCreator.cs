@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace CharacterCreation
 {
-    public class EquipmentCreator : DataCreator,IDataCreator
+    public class EquipmentCreator : DataCreator,IDataCreator, INameProvider
     {
         private readonly List<EquipmentData> _equipments = new();
         private readonly List<AmmunitionData> _ammunitions = new();
@@ -18,7 +18,7 @@ namespace CharacterCreation
         private readonly List<MeleeWeaponData> _meleeWeapons = new();
         private readonly List<RangedWeaponData> _rangeWeapons = new();
         private readonly List<MeleeWeaponData> _grenades = new();
-        private Dictionary<string, EquipmentData> _equipmentByName = new();
+        private Dictionary<string, EquipmentData> _equipmentByName = new(new NormalizingStringComparer());
 
         public IReadOnlyList<EquipmentData> Equipments => _equipments;
         public IReadOnlyList<AmmunitionData> Ammunitions => _ammunitions;
@@ -29,6 +29,7 @@ namespace CharacterCreation
         public IReadOnlyList<MeleeWeaponData> Grenades => _grenades;
         public IReadOnlyList<ForceFieldData> ForceFields => _forceFields;
         public EquipmentData EquipmentDataByName(string name) => _equipmentByName.GetValueOrDefault(name);
+        public Type ItemType => typeof(EquipmentData);
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -43,7 +44,7 @@ namespace CharacterCreation
 
             var tasks = new List<UniTask>() 
             {
-                LoadAndAddAsync<EquipmentDataList, EquipmentData>("Cнаряжение.json",
+                LoadAndAddAsync<EquipmentDataList, EquipmentData>("Снаряжение.json",
                 _equipments, cancellationToken, list => list.data, basePath),
 
                 LoadAndAddAsync<EquipmentDataList, EquipmentData>("Инструменты.json",
@@ -88,7 +89,13 @@ namespace CharacterCreation
             foreach (var item in equipments)
                 _equipmentByName.Add(item.name, item);
         }
-        
+
+        public bool TryGet(string name, out object value)
+        {
+            value = EquipmentDataByName(name);
+            return value != null;
+        }
+
     }
 
     [System.Serializable]
@@ -98,6 +105,7 @@ namespace CharacterCreation
         public string description;
         public int weight;
         public int maxWeight;
+        public List<string> properties;
     }
 
     [System.Serializable]
@@ -109,7 +117,14 @@ namespace CharacterCreation
     [System.Serializable]
     public class WeaponUpgradeData : EquipmentData
     {
-        public string typeWeapon;
+        public List<string> typeWeapon;
+    }
+
+    [System.Serializable]
+    public class WeaponSpecialization
+    {
+        public string skill;          
+        public string specialization;
     }
 
     [System.Serializable]
@@ -118,7 +133,6 @@ namespace CharacterCreation
         public string type;
         public new Dictionary<string, int> weight;
         public List<string> protectionZones;
-        public List<string> properties;
         public int armorPoints;
     }
 
@@ -126,9 +140,8 @@ namespace CharacterCreation
     public class MeleeWeaponData : EquipmentData
     {
         public string type;
-        public Dictionary<string, int> specialization;
+        public WeaponSpecialization specialization;
         public int damage;
-        public List<string> properties;
     }
 
     [System.Serializable]

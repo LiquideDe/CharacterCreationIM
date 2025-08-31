@@ -6,6 +6,8 @@ namespace CharacterCreation
     public interface ICharacterPresenter : IPresenter
     {
         R3.Observable<Character> NextClicked { get; }
+
+        public void SetCharacter(Character character);
     }
 }
 

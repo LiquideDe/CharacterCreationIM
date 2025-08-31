@@ -119,6 +119,11 @@ namespace CharacterCreation
                 sub.Dispose();
             _subscriptions.Clear();
         }
+
+        public void SetCharacter(Character character)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

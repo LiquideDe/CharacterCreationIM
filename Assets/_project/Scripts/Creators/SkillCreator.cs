@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace CharacterCreation
 {
-    public class SkillCreator : DataCreator,IDataCreator
+    public class SkillCreator : DataCreator, IDataCreator
     {
         private readonly List<SkillData> _skills = new();       
         private readonly List<SpecializationData> _specializations = new();
@@ -43,8 +44,36 @@ namespace CharacterCreation
             foreach (var item in _specializations)            
                 _specializationByName.Add(item.name, item);     
         }
+    }
 
+    public class SkillProvider : INameProvider
+    {
+        private SkillCreator _skillCreator;
+        public Type ItemType => typeof(SkillData);
+        public SkillProvider(SkillCreator skillCreator)
+        {
+            _skillCreator = skillCreator;
+        }
+        public bool TryGet(string name, out object value)
+        {
+            value = _skillCreator.SkillByName(name); 
+            return value != null;
+        }
+    }
 
+    public class SpecializationProvider : INameProvider
+    {
+        private SkillCreator _skillCreator;
+        public Type ItemType => typeof(SpecializationData);
+        public SpecializationProvider(SkillCreator skillCreator)
+        {
+            _skillCreator = skillCreator;
+        }
+        public bool TryGet(string name, out object value)
+        {
+            value = _skillCreator.SpecializationByName(name); 
+            return value != null;
+        }
     }
 
     [System.Serializable]

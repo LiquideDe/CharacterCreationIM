@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,12 +8,13 @@ using UnityEngine;
 
 namespace CharacterCreation
 {
-    public class PsycanaCreator : DataCreator,IDataCreator
+    public class PsycanaCreator : DataCreator, IDataCreator, INameProvider
     {
         private readonly List<PsyData> _psyPowers = new();
         private Dictionary<string, PsyData> _psyPowerByName = new();
         public IReadOnlyList<PsyData> PsyPowers => _psyPowers;
         public PsyData PsyPowerByName(string name) => _psyPowerByName.GetValueOrDefault(name);
+        public Type ItemType => typeof(PsyData);
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -25,6 +27,12 @@ namespace CharacterCreation
 
             foreach (var item in _psyPowers)
                 _psyPowerByName.Add(item.name,item);
+        }
+
+        public bool TryGet(string name, out object value)
+        {
+            value = PsyPowerByName(name);
+            return value != null;
         }
     }
 

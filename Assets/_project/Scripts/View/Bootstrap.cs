@@ -17,21 +17,15 @@ namespace CharacterCreation
 
         private async void Start()
         {
-            // Создаём CanvasLoading
             var loadingCanvasObj = Instantiate(loadingCanvasPrefab);
             var loadingCanvas = loadingCanvasObj.GetComponent<LoadingCanvas>();
 
-            // Запускаем загрузку всех креаторов
             var cts = new CancellationTokenSource();
             var loadTasks = _creators.Select(c => c.LoadAsync(cts.Token)).ToArray();
-
-            // Ожидаем завершения всех загрузок
             await UniTask.WhenAll(loadTasks);
 
-            // Удаляем CanvasLoading
             Destroy(loadingCanvasObj);
 
-            // Показываем главное меню
             _startMediator.ShowMainMenu();
         }
     }

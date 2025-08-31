@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,13 +8,15 @@ using UnityEngine;
 
 namespace CharacterCreation
 {
-    public class WeaponQualityCreator : DataCreator, IDataCreator
+    public class WeaponQualityCreator : DataCreator, IDataCreator, INameProvider
     {
         private readonly List<WeaponQualityData> _weaponQualities = new();
-        private Dictionary<string, WeaponQualityData> _weaponQualitiesByName = new();
+        private Dictionary<string, WeaponQualityData> _weaponQualitiesByName = new(new NormalizingStringComparer());
         public IReadOnlyList<WeaponQualityData> WeaponQualityDatas => _weaponQualities;
 
         public WeaponQualityData WeaponQualitiesByName(string name) => _weaponQualitiesByName.GetValueOrDefault(name); 
+        public Dictionary<string, WeaponQualityData> WeaponQualitiesDictionaty => _weaponQualitiesByName;
+        public Type ItemType => typeof(WeaponQualityData);
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -25,6 +28,12 @@ namespace CharacterCreation
             foreach (var item in _weaponQualities)            
                 _weaponQualitiesByName.Add(item.name, item);
             
+        }
+
+        public bool TryGet(string name, out object value)
+        {
+            value = WeaponQualitiesByName(name); // сделай безопасный метод
+            return value != null;
         }
 
         [System.Serializable]

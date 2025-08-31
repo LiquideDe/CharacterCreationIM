@@ -9,6 +9,6 @@
   "amount": 2
   }
   ],
-  "isMultiple":true
+  "isMultiple":true,
   "maxMultiple": 3
 }

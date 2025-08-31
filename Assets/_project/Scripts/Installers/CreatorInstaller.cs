@@ -6,15 +6,17 @@ namespace CharacterCreation
     {
         public override void InstallBindings()
         {
-            Container.Bind<AugmeticsCreator>().AsSingle();
-            Container.Bind<BackgroundCreator>().AsSingle();
-            Container.Bind<EquipmentCreator>().AsSingle();
-            Container.Bind<OriginCreator>().AsSingle();
-            Container.Bind<PsycanaCreator>().AsSingle();
-            Container.Bind<SkillCreator>().AsSingle();
-            Container.Bind<TalentCreator>().AsSingle();
-            Container.Bind<WeaponPropertyCreator>().AsSingle();
-            Container.Bind<WeaponQualityCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AugmeticsCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<FactionCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EquipmentCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<OriginCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PsycanaCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SkillCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TalentCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<WeaponPropertyCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<WeaponQualityCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EquipmentParser>().AsSingle();
+            Container.BindInterfacesAndSelfTo<FinderData>().AsSingle();
         }
     }
 }

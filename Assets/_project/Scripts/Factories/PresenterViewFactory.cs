@@ -35,11 +35,49 @@ namespace CharacterCreation
                 Debug.LogError($"Prefab not found for view type: {viewType.Name}");
                 return null;
             }
-            var view = _container.InstantiatePrefabForComponent<TView>(prefab);
+            //var view = _container.InstantiatePrefabForComponent<TView>(prefab);
+            var view = SafeSpawnView<TView>(prefab, _container);
             var presenter = (IPresenter)_container.Instantiate(presenterType, new object[] { view, _audioManager });
             presenter.Initialize();
-
+            view.gameObject.SetActive(true);
             return presenter;
+        }
+
+        TView SafeSpawnView<TView>(GameObject prefab, DiContainer container)
+    where TView : Component
+        {
+            if (prefab == null) throw new ArgumentNullException(nameof(prefab));
+
+            try
+            {
+                // Важно: сразу указываем родителя
+                var go = container.InstantiatePrefab(prefab);
+
+                // Логи активности
+                var rt = go.transform;
+                Debug.Log($"[Spawn] {go.name} self:{go.activeSelf} inHierarchy:{go.activeInHierarchy} " +
+                          $"parent:{rt.parent?.name} parentActive:{rt.parent?.gameObject.activeInHierarchy}");
+
+                // ЯВНО ищем компонент (и на корне, и в детях, включая неактивных)
+                var view = go.GetComponentInChildren<TView>(true);
+                if (view == null)
+                    throw new InvalidOperationException(
+                        $"На инстансе '{go.name}' не найден компонент {typeof(TView).Name} (ни на корне, ни в детях).");
+
+                // На всякий случай нормализуем трансформ
+                view.transform.localScale = Vector3.one;
+
+                // Если корень префаба в ассете выключен — инстанс родится выключенным.
+                // Включим явно на ГОшке вьюхи (если у тебя вью — не корневой объект).
+                view.gameObject.SetActive(true);
+
+                return view;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[Spawn ERROR] {typeof(TView).Name} из префаба '{prefab.name}':\n{ex}");
+                throw; // чтобы увидеть стек в консоли/дебаггере
+            }
         }
 
         private Type FindPresenterTypeFor(Type viewType)

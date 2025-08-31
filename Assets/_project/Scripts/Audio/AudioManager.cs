@@ -18,6 +18,7 @@ namespace CharacterCreation
         private void Play(AudioClip clip)
         {
             if (clip == null) return;
+            if (_audioSource.isPlaying) return;
             _audioSource.PlayOneShot(clip);
         }
     }

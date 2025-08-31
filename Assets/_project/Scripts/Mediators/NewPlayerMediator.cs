@@ -1,4 +1,5 @@
 using System;
+using CharacterCreation.Background;
 using R3;
 using UnityEngine;
 
@@ -25,9 +26,35 @@ namespace CharacterCreation
         private void ShowOrigins(Character character)
         {
             _character = character;
-            _nextClickedSubscription?.Dispose();            
-            _characterPresenter = null;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<OriginView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character =>
+            {                
+                ShowFaction(character);
+            });
+        }
 
+        private void ShowFaction(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<FactionView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => ShowRole(character));
+        }
+
+        private void ShowRole(Character character)
+        {
+            Debug.Log("ShowRole");
+        }
+
+        private void Reset()
+        {
+            _nextClickedSubscription?.Dispose();
+            _nextClickedSubscription = null;
+            _characterPresenter?.Dispose();
+            _characterPresenter = null;
         }
     }
 }
