@@ -36,7 +36,6 @@ namespace CharacterCreation
                 {
                     _audioManager.PlayClick();
                     SetOriginAndGoNext();
-                    //_nextClicked.OnNext(null); 
                 })
             );
 
@@ -86,7 +85,7 @@ namespace CharacterCreation
             // Переход к следующему индексу по кругу
             _currentOriginIndex = (_currentOriginIndex + 1) % backgrounds.Count;
             _currentOrigin = backgrounds[_currentOriginIndex];
-            SetOrigin(_currentOrigin);
+            SetOrigin();
         }
 
         private void PrevOrigin()
@@ -98,12 +97,12 @@ namespace CharacterCreation
             // Переход к предыдущему индексу по кругу
             _currentOriginIndex = (_currentOriginIndex - 1 + backgrounds.Count) % backgrounds.Count;
             _currentOrigin = backgrounds[_currentOriginIndex];
-            SetOrigin(_currentOrigin);
+            SetOrigin();
         }
 
-        private void SetOrigin(OriginData origin)
+        private void SetOrigin(bool canChange = true)
         {            
-            _view.SetSheet(_currentOrigin.name, _currentOrigin.description);
+            _view.SetSheet(_currentOrigin.name, _currentOrigin.description, canChange);
             _view.SetText("Бонусы:");
             _view.SetGaranted(_currentOrigin.fixed_bonus, "Характеристики:");
             _view.SetChoose(_currentOrigin.selectable_bonuses);
@@ -115,45 +114,28 @@ namespace CharacterCreation
 
         private void RandomOrigin()
         {
+            _audioManager.PlayClick();
             var random = new System.Random();
             var chislo = random.Next(1, 101);
             _currentOrigin = _originCreator.GetByRoll(chislo);
-            SetOriginAndGoNext(true);
+            SetOrigin(canChange: false);
         }
 
-        private void SetOriginAndGoNext(bool isFromRandom = false)
-        {
-            if (isFromRandom)
-            {
-                System.Random rng = new System.Random();
-                ApplyBonusesCharacterictis(_character, _currentOrigin.fixed_bonus);
-                string selectedKey = null;
-                if (_currentOrigin.selectable_bonuses != null && _currentOrigin.selectable_bonuses.Count > 0)
-                {
-                    var keys = _currentOrigin.selectable_bonuses.Keys.ToList();
-                    var idx = rng.Next(0, keys.Count); 
-                    selectedKey = keys[idx];
-
-                    var value = _currentOrigin.selectable_bonuses[selectedKey];
-                    ApplyBonusesCharacterictis(_character, new Dictionary<string, int> { { selectedKey, value } });
-                }                
-            }
-            else
-            {
-                ApplyBonusesCharacterictis(_character, _currentOrigin.fixed_bonus);
-                var selected = _view.GetGarantedCharacteristics();
-                foreach(var item in selected)                
-                    if(item is ChooseCharacteristicView choose)                    
-                        if (choose.IsSelected)
-                        {
-                            ApplyBonusesCharacterictis(_character, new Dictionary<string, int> { { choose.Characteristic.Name, choose.Characteristic.Level } });
-                            break;
-                        }
-            }
+        private void SetOriginAndGoNext()
+        {            
+            ApplyBonusesCharacterictis(_character, _currentOrigin.fixed_bonus);
+            var selected = _view.GetGarantedCharacteristics();
+            foreach(var item in selected)                
+                if(item is ChooseCharacteristicView choose)
+                    if (choose.IsSelected)
+                    {
+                        ApplyBonusesCharacterictis(_character, new Dictionary<string, int> { { choose.Characteristic.Name, choose.Characteristic.Level } });
+                        break;
+                    }            
 
             foreach (var item in _currentOrigin.items)
                 _character.Equipments.Add(_equipmentParser.TryGetEquipment(item));
-            _character.Origin = _currentOrigin.name;
+            _character.Origin.Value = _currentOrigin.name;
             _view.HideAndDestroyToLeft();
             _nextClicked?.OnNext(_character);
         }
@@ -175,7 +157,7 @@ namespace CharacterCreation
                     Debug.LogError($"Characteristic {name} == null");
                 }
 
-                ch.Level += delta;
+                ch.PlusLevel(delta);
             }
         }
     }

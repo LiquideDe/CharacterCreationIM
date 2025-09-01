@@ -1,3 +1,6 @@
+using ObservableCollections;
+using R3;
+using R3.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,26 +10,33 @@ namespace CharacterCreation
 {
     public class Character
     {
-        private List<Characteristic> _characteristics = new List<Characteristic>();
-        private List<EquipmentData> _equipments = new List<EquipmentData>();
-        private List<SkillData> _skills = new List<SkillData>();
-        private List<TalentData> _talents = new List<TalentData>();
-        private List<AugmeticData> _augmetics = new List<AugmeticData>();
+        private readonly ReactiveProperty<Experience> _experience = new();
+        private readonly ObservableList<Characteristic> _characteristics = new();
+        private ObservableList<EquipmentData> _equipments = new ObservableList<EquipmentData>();
+        private ObservableList<SkillData> _skills = new ObservableList<SkillData>();
+        private ObservableList<TalentData> _talents = new ObservableList<TalentData>();
+        private ObservableList<AugmeticData> _augmetics = new ObservableList<AugmeticData>();
         private Dictionary<string, int> _influence = new Dictionary<string, int>();
-        private List<string> _contacts = new List<string>();
-        public string Name { get; set; }        
-        public Experience Experience { get; set; }
-        public List<Characteristic> Characteristics => _characteristics;    
-        public List<EquipmentData> Equipments => _equipments;
-        public List<SkillData> Skills => _skills;
-        public List<TalentData> Talents => _talents;
-        public List<AugmeticData> Augmetics => _augmetics;
+        private ObservableList<string> _contacts = new ObservableList<string>();
+        public ReactiveProperty<string> Name { get; set; } = new ();
+        public Experience Experience
+        {
+            get => _experience.Value;
+            set => _experience.Value = value;
+        }
+        public IObservable<Experience> ExperienceChanged => (IObservable<Experience>)_experience;
+        public ObservableList<Characteristic> Characteristics => _characteristics;
+        public ObservableList<EquipmentData> Equipments => _equipments;
+        public ObservableList<SkillData> Skills => _skills;
+        public ObservableList<TalentData> Talents => _talents;
+        public ObservableList<AugmeticData> Augmetics => _augmetics;
         public Dictionary<string, int> Influence => _influence;
-        public List<string> Contacts => _contacts;
-        public int Money { get; set; }
+        public ObservableList<string> Contacts => _contacts;
+        public ReactiveProperty<int> Money { get; } = new();
 
-        public string Origin { get; set; }
-        public string Faction { get; set; }
+        public ReactiveProperty<string> Origin { get; set; } = new();
+        public ReactiveProperty<string> Faction { get; set; } = new();
+        public ReactiveProperty<string> Role { get; set; } = new();
     }
 
     [Serializable]

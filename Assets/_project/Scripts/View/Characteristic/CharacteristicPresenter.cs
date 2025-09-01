@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using R3;
+using Zenject;
 
 namespace CharacterCreation
 {
@@ -13,7 +14,9 @@ namespace CharacterCreation
         private readonly AudioManager _audioManager;
         private readonly CharacteristicView _characteristicView;
         private readonly List<IDisposable> _subscriptions = new();
+        [Inject] private CharacterBackgroundView _characterBackgroundView;
         private int _countReset = 0;
+        private Character _character = new Character();
         private List<Characteristic> _characteristics = new List<Characteristic>
         {
             new Characteristic("Ближний бой", 20),
@@ -74,7 +77,7 @@ namespace CharacterCreation
             SetDescription();
             GenerateRandomAmounts(_characteristics.Count);
             _characteristicView.SetCards(_characteristics);
-            _characteristicView.SetAmountsWithDelay(_amounts, 1f);
+            _characteristicView.SetAmountsWithDelay(_amounts, 1f);   
         }
 
         private void GenerateRandomAmounts(int count)
@@ -97,19 +100,19 @@ namespace CharacterCreation
 
         private void SetCharacterAndGoNext()
         {
-            var character = new Character();
+            _characterBackgroundView.SetCharacter(_character);
             var newAmounts = _characteristicView.GetCurrentValues();
             for (int i = 0; i < _characteristics.Count; i++)
             {
                 _characteristics[i].Level = newAmounts[i];
-                character.Characteristics.Add(_characteristics[i]);
+                _character.Characteristics.Add(_characteristics[i]);
             }
             if(_countReset >= _experienceCountReset.Count)
-                character.Experience = new Experience { experiencePoints = _experienceCountReset[_experienceCountReset.Count - 1], experienceSpent = 0 };
+                _character.Experience = new Experience { experiencePoints = _experienceCountReset[_experienceCountReset.Count - 1], experienceSpent = 0 };
             else
-                character.Experience = new Experience { experiencePoints = _experienceCountReset[_countReset], experienceSpent = 0 };
+                _character.Experience = new Experience { experiencePoints = _experienceCountReset[_countReset], experienceSpent = 0 };
             _characteristicView.HideAndDestroyToLeft();
-            _nextClicked.OnNext(character);
+            _nextClicked.OnNext(_character);
         }
 
         public void Dispose()

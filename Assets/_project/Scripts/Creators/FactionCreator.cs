@@ -88,6 +88,19 @@ namespace CharacterCreation
             Build(_factions);
 
         }
+
+        public FactionData GetFactionForRoll(string origin, int roll)
+        {
+            if (string.IsNullOrWhiteSpace(origin) || roll < 1 || roll > 100)
+                return null;
+
+            var key = Norm(origin);
+            if (!_byOrigin.TryGetValue(key, out var table) || table == null)
+                return null;
+
+            return table[roll];
+        }
+
         private void Build(IEnumerable<FactionData> allServices)
         {
             if (allServices == null) return;

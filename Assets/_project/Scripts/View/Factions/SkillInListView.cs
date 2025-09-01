@@ -23,7 +23,7 @@ namespace CharacterCreation.Background
 
         public int Level => _level;
 
-        private CompositeDisposable _disposables;
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         void Start()
         {
@@ -51,7 +51,7 @@ namespace CharacterCreation.Background
 
         private void OnDestroy()
         {
-            _disposables.Dispose();
+            _disposables?.Dispose();
         }
 
     }

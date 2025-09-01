@@ -57,6 +57,12 @@ namespace CharacterCreation
                 _startPanel.SetActive(false);
                 _mainPanel.SetActive(true);
             });
+
+            _randomButton.onClick.AddListener(() =>
+            {
+                _startPanel.SetActive(false);
+                _mainPanel.SetActive(true);
+            });
         }
 
         public void SetGaranted(Dictionary<string, int> dictionary, string text)
@@ -123,13 +129,7 @@ namespace CharacterCreation
             CreateText(text);
         }
 
-        public void SetImplants(List<string> implants)
-        {
-            var tGroup = CreateToggleGroup("Выберите следующий имплантат:");
-            CreateTalentInList(tGroup, implants);
-        }
-
-        public void SetSheet(string name, string decription, bool canChange = true)
+        public virtual void SetSheet(string name, string decription, bool canChange = true)
         {
             ClearLists();
             _nextItemButton.interactable = canChange;

@@ -16,6 +16,8 @@ namespace CharacterCreation
         [SerializeField] private GarantedCharacteristic garantedCharacteristicPrefab;
         [SerializeField] private ChooseCharacteristicView chooseCharacteristicPrefab;
         [SerializeField] private InfoPanelView infoTextViewPrefab;
+        [SerializeField] private BackgroundCharacterPrefab backgroundCharacterPrefab;
+        [SerializeField] private CharacteristicBackgroundView characteristicBackgroundViewPrefab;
 
         public override void InstallBindings()
         {
@@ -30,6 +32,8 @@ namespace CharacterCreation
             Container.BindIFactory<GarantedCharacteristic>().FromComponentInNewPrefab(garantedCharacteristicPrefab);
             Container.BindIFactory<ChooseCharacteristicView>().FromComponentInNewPrefab(chooseCharacteristicPrefab); 
             Container.BindIFactory<InfoPanelView>().FromComponentInNewPrefab(infoTextViewPrefab);
+            Container.BindIFactory<BackgroundCharacterPrefab>().FromComponentInNewPrefab(backgroundCharacterPrefab);
+            Container.BindIFactory<CharacteristicBackgroundView>().FromComponentInNewPrefab(characteristicBackgroundViewPrefab);
         }
     }
 }

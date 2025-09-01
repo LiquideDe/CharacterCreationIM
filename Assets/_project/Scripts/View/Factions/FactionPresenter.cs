@@ -86,7 +86,9 @@ namespace CharacterCreation.Background
 
         private void RandomFaction()
         {
-            
+            var rand = new System.Random();
+            _currentFaction = _factionCreator.GetFactionForRoll(_character.Origin.Value, rand.Next(1, 101));
+            ShowFaction(false);
         }
 
         private void PrevFaction()
@@ -143,9 +145,9 @@ namespace CharacterCreation.Background
 
         }
 
-        private void ShowFaction()
+        private void ShowFaction(bool canChangeFaction = true)
         {
-            _view.SetSheet(_currentFaction.serviceName, _currentFaction.description, true);
+            _view.SetSheet(_currentFaction.serviceName, _currentFaction.description, canChangeFaction);
             _view.SetText("Бонусы:");
             _view.SetGaranted(_currentFaction.fixed_bonus, "Характеристики:");
             _view.SetChoose(_currentFaction.selectable_bonuses);
@@ -240,7 +242,7 @@ namespace CharacterCreation.Background
                 foreach (var item in _currentFaction.gear.items)
                     _character.Equipments.Add(_equipmentParser.TryGetEquipment(item));
 
-                _character.Money += _currentFaction.gear.money;
+                _character.Money.Value += _currentFaction.gear.money;
 
                 var choseList = _view.GetCanChosen();
                 foreach (var item in choseList)
@@ -280,7 +282,7 @@ namespace CharacterCreation.Background
                 foreach (var item in _currentTemplate.gear.items)
                     _character.Equipments.Add(_equipmentParser.TryGetEquipment(item));
 
-                _character.Money += _currentTemplate.gear.money;
+                _character.Money.Value += _currentTemplate.gear.money;
             }
             else
             {
@@ -288,7 +290,7 @@ namespace CharacterCreation.Background
                 return;
             }
             
-            _character.Faction = _currentFaction.serviceName;
+            _character.Faction.Value = _currentFaction.serviceName;
             _view.HideAndDestroyToLeft();
             _nextClicked?.OnNext(_character);
         }
@@ -323,7 +325,7 @@ namespace CharacterCreation.Background
                     Debug.LogError($"Characteristic {name} == null");
                 }
 
-                ch.Level += delta;
+                ch.PlusLevel(delta);
             }
         }
     }
