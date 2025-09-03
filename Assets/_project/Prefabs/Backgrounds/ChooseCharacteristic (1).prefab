@@ -473,7 +473,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textname: {fileID: 3832010972617475817}
   textAmount: {fileID: 573170230780395716}
-  toggle: {fileID: 2461122206186602875}
+  Toggle: {fileID: 2461122206186602875}
 --- !u!114 &2461122206186602875
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -105,7 +105,7 @@ namespace CharacterCreation
             _view.SetSheet(_currentOrigin.name, _currentOrigin.description, canChange);
             _view.SetText("Бонусы:");
             _view.SetGaranted(_currentOrigin.fixed_bonus, "Характеристики:");
-            _view.SetChoose(_currentOrigin.selectable_bonuses);
+            _view.SetChoose(_currentOrigin.selectable_bonuses, 1);
             _view.SetText("Вы получаете следующее снаряжение:");
             foreach (var item in _currentOrigin.items)            
                 _view.SetText(item);

@@ -150,17 +150,17 @@ namespace CharacterCreation.Background
             _view.SetSheet(_currentFaction.serviceName, _currentFaction.description, canChangeFaction);
             _view.SetText("Бонусы:");
             _view.SetGaranted(_currentFaction.fixed_bonus, "Характеристики:");
-            _view.SetChoose(_currentFaction.selectable_bonuses);
-            _view.SetSkills(_currentFaction.skill_upgrades, _currentFaction.skill_upgrades.amount);
+            _view.SetChoose(_currentFaction.selectable_bonuses, 1);
+            _view.SetSkills(_currentFaction.skill_upgrades, _currentFaction.skill_upgrades.amount, 2);
             if(_currentFaction.talents.Count > 0)
                 foreach (var item in _currentFaction.talents)                
                     if (string.Compare(item.type,"fixed",true) == 0)
                     {
-                        _view.SetList(item.talents, "Таланты");
+                        _view.SetList(item.talents, "Таланты", 1);
                     }
                     else
                     {
-                        _view.SetChooseGroup(item.choices, "Выберите один из следующих талантов");
+                        _view.SetChooseGroup(item.choices, "Выберите один из следующих талантов", 1);
                     }
 
             if (_currentFaction.influence_bonus.amount != 0)
@@ -178,13 +178,13 @@ namespace CharacterCreation.Background
             }
 
             if (_currentFaction.gear.choice != null && _currentFaction.gear.choice.Count > 0)            
-                _view.SetList(_currentFaction.gear.choice, "Выберите следующую экипировку:");
+                _view.SetList(_currentFaction.gear.choice, "Выберите следующую экипировку:", _currentFaction.gear.amount_choice);
             
 
             if (_currentFaction.implants_data != null)
             {
-                _view.SetList(_currentFaction.implants_data.first_implants, "Выберите следующий имплант:");
-                _view.SetList(_currentFaction.implants_data.second_implants, "Выберите следующий имплант:");
+                _view.SetList(_currentFaction.implants_data.first_implants, "Выберите следующий имплант:", 1);
+                _view.SetList(_currentFaction.implants_data.second_implants, "Выберите следующий имплант:", 1);
             }
         }
 
@@ -197,7 +197,7 @@ namespace CharacterCreation.Background
             _view.SetGaranted(_currentTemplate.skill_upgrades.upgrades, "");
 
             if (_currentTemplate.talents != null && _currentTemplate.talents.Count > 0)
-                _view.SetList(_currentTemplate.talents[0].talents, "Таланты:");
+                _view.SetList(_currentTemplate.talents[0].talents, "Таланты:", 1);
             if (_currentTemplate.influence_bonus.amount != 0)
                 _view.SetText($"Вы получаете +{_currentTemplate.influence_bonus.amount} к {_currentTemplate.influence_bonus.faction}");
             if (_currentTemplate.gear.items.Count > 0)
@@ -213,7 +213,7 @@ namespace CharacterCreation.Background
 
             if (_currentTemplate.implants != null)
             {
-                _view.SetList(_currentTemplate.implants, "Импланты");
+                _view.SetList(_currentTemplate.implants, "Импланты", 1);
             }
         }
 

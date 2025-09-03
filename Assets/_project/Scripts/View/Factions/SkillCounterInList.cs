@@ -10,6 +10,8 @@ namespace CharacterCreation.Background
     {
         [SerializeField] private TextMeshProUGUI _text = null;
         public int Counter { get; set; }
+        public int MaxChoose { get; set; }
+        
         private string defaultText;
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
 
@@ -43,7 +45,7 @@ namespace CharacterCreation.Background
         {
             if(Counter > 0)
             {
-                if(skill.Level < 4)
+                if(skill.Level < MaxChoose)
                 {
                     _audioManager.PlayClick();
                     skill.PlusLevel();

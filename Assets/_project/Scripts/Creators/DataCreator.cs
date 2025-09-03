@@ -18,20 +18,6 @@ namespace CharacterCreation
             Func<TList, List<TItem>> extractList, string basePath)
         {
             string path = Path.Combine(basePath, fileName);
-            /*
-            
-            if (File.Exists(path))
-            {
-                string json = await File.ReadAllTextAsync(path, cancellationToken);
-                TList list = JsonUtility.FromJson<TList>(json);
-                var data = extractList(list);
-                if (data != null)
-                    targetList.AddRange(data);
-            }
-            else
-            {
-                Debug.LogError($"Файл с {fileName} не найден: {path}");
-            }*/
 
             if (!File.Exists(path))
             {

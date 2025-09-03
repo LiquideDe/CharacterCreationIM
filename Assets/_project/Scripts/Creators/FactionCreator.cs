@@ -213,6 +213,7 @@ namespace CharacterCreation
     {
         public List<string> items;
         public int money;
+        public int amount_choice;
         public List<string> choice; // опционально
     }
 

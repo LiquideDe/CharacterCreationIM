@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nameText: {fileID: 1446592379167949922}
-  _toggle: {fileID: 5026533445358991689}
+  Toggle: {fileID: 5026533445358991689}
   _infoButtonView: {fileID: 7882718205608549978}
 --- !u!114 &5026533445358991689
 MonoBehaviour:

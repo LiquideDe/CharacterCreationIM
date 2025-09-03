@@ -1,5 +1,6 @@
 using ObservableCollections;
 using R3;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -13,7 +14,7 @@ namespace CharacterCreation
         [Inject] private IFactory<BackgroundCharacterPrefab> factoryBackground;
         private Character _character;
         private CompositeDisposable _disposables = new CompositeDisposable();
-
+        private List<GameObject> gameObjects = new List<GameObject>();
         public void SetCharacter(Character character)
         {
             _character = character;
@@ -25,13 +26,14 @@ namespace CharacterCreation
 
         private void AddBackground(string nameBackground, string name)
         {
-            if (name.Length == 0)
+            if (name == null || name.Length == 0)
                 return;
             
             var background = factoryBackground.Create();
             background.transform.SetParent(_backgroundContent, false);
             background.TextName.text = name;
             background.TextNameBackground.text = nameBackground;
+            gameObjects.Add(background.gameObject);
         }
 
         public void AddCharacteristic(Characteristic characteristic)
@@ -40,6 +42,18 @@ namespace CharacterCreation
             gChracteristtic.transform.SetParent(_CharacteristicContent, false);
             UpdateCharacteristic(gChracteristtic, characteristic);
             characteristic.LevelChanged.Subscribe(_ => UpdateCharacteristic(gChracteristtic, characteristic)).AddTo(_disposables);
+            gameObjects.Add(gChracteristtic.gameObject);
+        }
+
+        public void Clear()
+        {
+            foreach (var go in gameObjects)
+            {
+                Destroy(go);
+            }
+            gameObjects.Clear();
+            _disposables?.Dispose();
+            _disposables = new CompositeDisposable();
         }
 
         private void UpdateCharacteristic(CharacteristicBackgroundView characteristicView, Characteristic characteristic)

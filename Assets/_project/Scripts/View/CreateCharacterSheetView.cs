@@ -42,6 +42,7 @@ namespace CharacterCreation
         private List<TalentInListView> _talents = new List<TalentInListView>();
         private List<TextMeshProUGUI> _texts = new List<TextMeshProUGUI>();
         private List<GarantedCharacteristic> _garantedCharacteristics = new List<GarantedCharacteristic>();
+        private List<ToggleGroupForTalents> _toggleGroups = new List<ToggleGroupForTalents>();
         private SkillCounterInList _skillCounterInList = null;
 
         public Observable<Unit> OnNextButtonClick => _nextButton.OnClickAsObservable();
@@ -79,9 +80,10 @@ namespace CharacterCreation
             }          
         }
 
-        public void SetChoose(Dictionary<string, int> dictionary)
+        public void SetChoose(Dictionary<string, int> dictionary, int maxChoose)
         {
             var group = CreateToggleGroup("Выберите один из:");
+            group.MaxSelected = maxChoose;
             foreach (var item in dictionary)
             {
                 var choose = _factoryChoose.Create();
@@ -89,15 +91,17 @@ namespace CharacterCreation
                 var characteristic = new Characteristic(item.Key, item.Value);
                 choose.SetCharacteristic(characteristic);
                 _garantedCharacteristics.Add(choose);
-                choose.SetToggleGroup(group);
+                group.AddToggle(choose.Toggle);
+                //choose.SetToggleGroup(group);
             }
         }
 
-        public void SetSkills(SkillUpgrade skillUpgrade, int amount)
+        public void SetSkills(SkillUpgrade skillUpgrade, int amount, int maxChoose)
         {
             _skillCounterInList = _factorySkillCounterInList.Create();
             _skillCounterInList.transform.SetParent(_contentList, worldPositionStays: false);
             _skillCounterInList.Counter = skillUpgrade.amount;
+            _skillCounterInList.MaxChoose = maxChoose;
             _skillCounterInList.SetText($"Распределите очки между следующими навыками:");
 
             foreach (var item in skillUpgrade.skills)
@@ -110,17 +114,19 @@ namespace CharacterCreation
             }
         }
 
-        public void SetChooseGroup(List<List<string>> chooseList, string text)
+        public void SetChooseGroup(List<List<string>> chooseList, string text, int maxChoose)
         {
             var group = CreateToggleGroup(text);
+            group.MaxSelected = maxChoose;
             foreach (var item in chooseList)
                 CreateListChooseInOneGroup(group, item);
 
         }
 
-        public void SetList(List<string> talent, string text)
+        public void SetList(List<string> talent, string text, int maxChoose)
         {
             var group = CreateToggleGroup(text);
+            group.MaxSelected = maxChoose;
             CreateTalentInList(group, talent);
         }
 
@@ -141,7 +147,7 @@ namespace CharacterCreation
 
         public bool IsCountEmpty()
         {
-            return _skillCounterInList != null && _skillCounterInList.Counter == 0;
+            return _skillCounterInList != null && _skillCounterInList.Counter == 0 && IsAllToggleUsed();
         }
 
         public List<GarantedCharacteristic> GetGarantedCharacteristics() => _garantedCharacteristics;
@@ -150,34 +156,36 @@ namespace CharacterCreation
 
         public List<TalentInListView> GetCanChosen() => _talents;
 
-        private ToggleGroup CreateToggleGroup(string text)
+        private ToggleGroupForTalents CreateToggleGroup(string text)
         {
             var textName = _factoryToggleGroup.Create();
             textName.transform.SetParent(_contentList, worldPositionStays: false);
             textName.Text.text = $"{text}";
             _texts.Add(textName.Text);
-            return textName.ToggleGroup;
+            _toggleGroups.Add(textName);
+            return textName;
         }
 
-        private void CreateListChooseInOneGroup(ToggleGroup toggleGroup, List<string> strings)
+        private void CreateListChooseInOneGroup(ToggleGroupForTalents toggleGroup, List<string> strings)
         {
             var equip = _factoryTalentInList.Create();
             equip.transform.SetParent(_contentList, worldPositionStays: false);
-            equip.SetToggleGroup(toggleGroup);
+            //equip.SetToggleGroup(toggleGroup);
+            toggleGroup.AddToggle(equip.Toggle);
             _talents.Add(equip);
 
             foreach (var item in strings)
                 equip.AddTalent(item);
         }
 
-        private void CreateTalentInList(ToggleGroup toggleGroup, List<string> strings)
+        private void CreateTalentInList(ToggleGroupForTalents toggleGroup, List<string> strings)
         {
             foreach (var item in strings)
             {
                 var equip = _factoryTalentInList.Create();
                 equip.transform.SetParent(_contentList, worldPositionStays: false);
                 equip.AddTalent(item);
-                equip.SetToggleGroup(toggleGroup);
+                toggleGroup.AddToggle(equip.Toggle);
                 _talents.Add(equip);
             }
         }
@@ -214,6 +222,20 @@ namespace CharacterCreation
 
             if (_skillCounterInList != null)
                 Destroy(_skillCounterInList.gameObject);
+            _toggleGroups.Clear();
+        }
+
+        private bool IsAllToggleUsed()
+        {
+            bool allUsed = true;
+            foreach (var item in _toggleGroups)
+            {
+                allUsed &= item.SelectedCount() == item.MaxSelected;
+                Debug.LogAssertion($"item = {item.name} item.SelectedCount = {item.SelectedCount()}, item.MaxSelected = {item.MaxSelected}");
+            }
+                
+            
+            return allUsed;
         }
     }
 }

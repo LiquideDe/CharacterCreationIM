@@ -12,18 +12,18 @@ namespace CharacterCreation.Background
     public class TalentInListView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _nameText;
-        [SerializeField] private Toggle _toggle;
+        [field:SerializeField] public Toggle Toggle;
         [SerializeField] private InfoButtonView _infoButtonView;
         [Inject] private AudioManager _audioManager;
         private List<string> _talents = new List<string>();   
         private IDisposable _disposable;
 
         public List<string> Talents => _talents;
-        public bool IsSelected => _toggle.isOn;
+        public bool IsSelected => Toggle.isOn;
 
         private void Start()
         {
-            _disposable = _toggle.OnValueChangedAsObservable().Subscribe(val =>
+            _disposable = Toggle.OnValueChangedAsObservable().Subscribe(val =>
             {
                 _audioManager.PlayClick();
             }).AddTo(this);
@@ -36,11 +36,10 @@ namespace CharacterCreation.Background
             SetText();
         }
 
-        public void SetToggleGroup(ToggleGroup toggleGroup) => _toggle.group = toggleGroup;
-
         private void OnDestroy()
         {
             _disposable?.Dispose();
+            Toggle.onValueChanged.RemoveAllListeners();
         }
 
         private void SetText()

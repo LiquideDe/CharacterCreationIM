@@ -8,15 +8,15 @@ namespace CharacterCreation
     public class ChooseCharacteristicView : GarantedCharacteristic
     {
         
-        [SerializeField] private Toggle toggle;
+        [field: SerializeField] public Toggle Toggle;
         [Inject] private AudioManager _audioManager;
-        public bool IsSelected => toggle.isOn;
+        public bool IsSelected => Toggle.isOn;
 
-        public void SetToggleGroup(ToggleGroup toggleGroup) => toggle.group = toggleGroup;
+        public void SetToggleGroup(ToggleGroup toggleGroup) => Toggle.group = toggleGroup;
 
         private void Start()
         {
-            toggle.onValueChanged.AddListener((bo) => _audioManager.PlayClick());
+            Toggle.onValueChanged.AddListener((bo) => _audioManager.PlayClick());
         }
     }
 }
