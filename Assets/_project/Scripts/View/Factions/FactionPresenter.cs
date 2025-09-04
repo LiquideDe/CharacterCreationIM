@@ -151,7 +151,7 @@ namespace CharacterCreation.Background
             _view.SetText("Бонусы:");
             _view.SetGaranted(_currentFaction.fixed_bonus, "Характеристики:");
             _view.SetChoose(_currentFaction.selectable_bonuses, 1);
-            _view.SetSkills(_currentFaction.skill_upgrades, _currentFaction.skill_upgrades.amount, 2);
+            _view.SetSkills(_currentFaction.skill_upgrades, 2);
             if(_currentFaction.talents.Count > 0)
                 foreach (var item in _currentFaction.talents)                
                     if (string.Compare(item.type,"fixed",true) == 0)

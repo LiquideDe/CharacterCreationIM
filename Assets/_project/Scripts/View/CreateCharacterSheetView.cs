@@ -43,7 +43,7 @@ namespace CharacterCreation
         private List<TextMeshProUGUI> _texts = new List<TextMeshProUGUI>();
         private List<GarantedCharacteristic> _garantedCharacteristics = new List<GarantedCharacteristic>();
         private List<ToggleGroupForTalents> _toggleGroups = new List<ToggleGroupForTalents>();
-        private SkillCounterInList _skillCounterInList = null;
+        private List<SkillCounterInList> _skillCountersInList = new List<SkillCounterInList>();
 
         public Observable<Unit> OnNextButtonClick => _nextButton.OnClickAsObservable();
         public Observable<Unit> OnNextItemButtonClick => _nextItemButton.OnClickAsObservable();
@@ -96,22 +96,33 @@ namespace CharacterCreation
             }
         }
 
-        public void SetSkills(SkillUpgrade skillUpgrade, int amount, int maxChoose)
+        public void SetSkills(SkillUpgrade skillUpgrade, int maxChoose)
         {
-            _skillCounterInList = _factorySkillCounterInList.Create();
-            _skillCounterInList.transform.SetParent(_contentList, worldPositionStays: false);
-            _skillCounterInList.Counter = skillUpgrade.amount;
-            _skillCounterInList.MaxChoose = maxChoose;
-            _skillCounterInList.SetText($"Распределите очки между следующими навыками:");
+            SetSkillChoice(skillUpgrade.skills, skillUpgrade.amount, maxChoose);
+        }
 
-            foreach (var item in skillUpgrade.skills)
+        public void SetSpecializations(List<string> specializations, int amountPoints, int maxChoose)
+        {
+            SetSkillChoice(specializations, amountPoints, maxChoose);
+        }
+
+        private void SetSkillChoice(List<string> skills, int amountPoints, int maxChoose)
+        {
+            var skillCounterInList = _factorySkillCounterInList.Create();
+            skillCounterInList.transform.SetParent(_contentList, worldPositionStays: false);
+            skillCounterInList.Counter = amountPoints;
+            skillCounterInList.MaxChoose = maxChoose;
+            skillCounterInList.SetText($"Распределите очки между следующими навыками:");
+
+            foreach (var item in skills)
             {
                 var skill = _factorySkillInList.Create();
                 skill.transform.SetParent(_contentList, worldPositionStays: false);
                 skill.SetName(item);
-                _skillCounterInList.SetSkill(skill);
+                skillCounterInList.SetSkill(skill);
                 _skills.Add(skill);
             }
+            _skillCountersInList.Add(skillCounterInList);
         }
 
         public void SetChooseGroup(List<List<string>> chooseList, string text, int maxChoose)
@@ -147,7 +158,7 @@ namespace CharacterCreation
 
         public bool IsCountEmpty()
         {
-            return _skillCounterInList != null && _skillCounterInList.Counter == 0 && IsAllToggleUsed();
+            return IsAllSkillUsed() && IsAllToggleUsed();
         }
 
         public List<GarantedCharacteristic> GetGarantedCharacteristics() => _garantedCharacteristics;
@@ -170,7 +181,6 @@ namespace CharacterCreation
         {
             var equip = _factoryTalentInList.Create();
             equip.transform.SetParent(_contentList, worldPositionStays: false);
-            //equip.SetToggleGroup(toggleGroup);
             toggleGroup.AddToggle(equip.Toggle);
             _talents.Add(equip);
 
@@ -220,8 +230,10 @@ namespace CharacterCreation
                     Destroy(item.gameObject);
             _garantedCharacteristics.Clear();
 
-            if (_skillCounterInList != null)
-                Destroy(_skillCounterInList.gameObject);
+            if (_skillCountersInList.Count > 0)
+                foreach(var item in _skillCountersInList)
+                    Destroy(item.gameObject);
+            _skillCountersInList.Clear();
             _toggleGroups.Clear();
         }
 
@@ -231,10 +243,18 @@ namespace CharacterCreation
             foreach (var item in _toggleGroups)
             {
                 allUsed &= item.SelectedCount() == item.MaxSelected;
-                Debug.LogAssertion($"item = {item.name} item.SelectedCount = {item.SelectedCount()}, item.MaxSelected = {item.MaxSelected}");
-            }
-                
+            }               
             
+            return allUsed;
+        }
+
+        private bool IsAllSkillUsed()
+        {
+            bool allUsed = true;
+            foreach (var item in _skillCountersInList)
+            {
+                allUsed &= item.Counter == 0;
+            }
             return allUsed;
         }
     }

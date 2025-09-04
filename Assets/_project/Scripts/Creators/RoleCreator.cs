@@ -32,10 +32,9 @@ namespace CharacterCreation
         public string roleName;
         public string description;
         public int amountTalents;
-        public int amountSkills;
         public int specializationAmount;
         public List<string> talents;
-        public List<string> skills;
+        public SkillUpgrade skills;
         public List<string> specialization;
         public List<List<string>> equipment;
     }
