@@ -3,6 +3,7 @@ using R3;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -108,21 +109,25 @@ namespace CharacterCreation
 
         private void SetSkillChoice(List<string> skills, int amountPoints, int maxChoose)
         {
-            var skillCounterInList = _factorySkillCounterInList.Create();
-            skillCounterInList.transform.SetParent(_contentList, worldPositionStays: false);
-            skillCounterInList.Counter = amountPoints;
-            skillCounterInList.MaxChoose = maxChoose;
-            skillCounterInList.SetText($"Распределите очки между следующими навыками:");
+            try 
+            { 
+                var skillCounterInList = _factorySkillCounterInList.Create();
+                skillCounterInList.transform.SetParent(_contentList, worldPositionStays: false);
+                skillCounterInList.Counter = amountPoints;
+                skillCounterInList.MaxChoose = maxChoose;
+                skillCounterInList.SetText($"Распределите очки между следующими навыками:");
 
-            foreach (var item in skills)
-            {
-                var skill = _factorySkillInList.Create();
-                skill.transform.SetParent(_contentList, worldPositionStays: false);
-                skill.SetName(item);
-                skillCounterInList.SetSkill(skill);
-                _skills.Add(skill);
+                foreach (var item in skills)
+                {
+                    var skill = _factorySkillInList.Create();
+                    skill.transform.SetParent(_contentList, worldPositionStays: false);
+                    skill.SetName(item);
+                    skillCounterInList.SetSkill(skill);
+                    _skills.Add(skill);
+                }
+                _skillCountersInList.Add(skillCounterInList);
             }
-            _skillCountersInList.Add(skillCounterInList);
+            catch { Debug.LogAssertion($"Не получилось создать панель со скиллом"); }       
         }
 
         public void SetChooseGroup(List<List<string>> chooseList, string text, int maxChoose)

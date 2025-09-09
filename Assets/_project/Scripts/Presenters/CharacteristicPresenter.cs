@@ -108,9 +108,9 @@ namespace CharacterCreation
                 _character.Characteristics.Add(_characteristics[i]);
             }
             if(_countReset >= _experienceCountReset.Count)
-                _character.Experience = new Experience { experiencePoints = _experienceCountReset[_experienceCountReset.Count - 1], experienceSpent = 0 };
+                _character.Experience.Value = new Experience { experiencePoints = _experienceCountReset[_experienceCountReset.Count - 1], experienceSpent = 0 };
             else
-                _character.Experience = new Experience { experiencePoints = _experienceCountReset[_countReset], experienceSpent = 0 };
+                _character.Experience.Value = new Experience { experiencePoints = _experienceCountReset[_countReset], experienceSpent = 0 };
             _characteristicView.HideAndDestroyToLeft();
             _nextClicked.OnNext(_character);
         }

@@ -118,6 +118,7 @@ namespace CharacterCreation
             var random = new System.Random();
             var chislo = random.Next(1, 101);
             _currentOrigin = _originCreator.GetByRoll(chislo);
+            _character.Experience.Value.experiencePoints += 25;
             SetOrigin(canChange: false);
         }
 

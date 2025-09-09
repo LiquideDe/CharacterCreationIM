@@ -38,7 +38,6 @@ namespace CharacterCreation.Background
             _subscriptions.Add(
                 _view.OnNextButtonClick.Subscribe(_ =>
                 {
-                    _audioManager.PlayClick();
                     SetFactionAndGoNext();
                 })
             );
@@ -88,6 +87,7 @@ namespace CharacterCreation.Background
         {
             var rand = new System.Random();
             _currentFaction = _factionCreator.GetFactionForRoll(_character.Origin.Value, rand.Next(1, 101));
+            _character.Experience.Value.experiencePoints += 75;
             ShowFaction(false);
         }
 
@@ -221,6 +221,7 @@ namespace CharacterCreation.Background
         {  
             if (_isFactionShow && _view.IsCountEmpty())
             {
+                _audioManager.PlayConfirm();
                 ApplyBonusesCharacterictis(_character, _currentFaction.fixed_bonus);
                 var charactristics = _view.GetGarantedCharacteristics();
                 foreach (var item in charactristics)
@@ -235,7 +236,8 @@ namespace CharacterCreation.Background
                         _character.Skills.Add(new SkillData()
                         {
                             name = skillPrefab.name,
-                            characteristic = skillPrefab.characteristic
+                            characteristic = skillPrefab.characteristic,
+                            level = skill.Level
                         });
                     }
 
@@ -264,6 +266,7 @@ namespace CharacterCreation.Background
             }
             else if(!_isFactionShow)
             {
+                _audioManager.PlayConfirm();
                 ApplyBonusesCharacterictis(_character, _currentTemplate.fixed_bonus);
                 foreach (var item in _currentTemplate.skill_upgrades.upgrades)
                 {
@@ -271,7 +274,8 @@ namespace CharacterCreation.Background
                     _character.Skills.Add(new SkillData()
                     {
                         name = skillPrefab.name,
-                        characteristic = skillPrefab.characteristic
+                        characteristic = skillPrefab.characteristic,
+                        level = item.Value
                     });
                 }
                 if (_currentTemplate.talents != null && _currentTemplate.talents.Count > 0)

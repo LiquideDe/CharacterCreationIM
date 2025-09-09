@@ -63,7 +63,13 @@ namespace CharacterCreation
         public void SetSkill(string nameSkill)
         {
             SkillData skillData = _skillCreator.SkillByName(nameSkill);
-            _infoText = $"{nameSkill} - {skillData.description}, основная характеристика - {skillData.characteristic}";
+            SpecializationData specializationData = null;
+            if(skillData == null)
+                specializationData = _skillCreator.SpecializationByName(nameSkill);
+            if (skillData != null)
+                _infoText = $"{nameSkill} - {skillData.description}, основная характеристика - {skillData.characteristic}";
+            else if(specializationData != null)
+                _infoText = $"{nameSkill} - {specializationData.description} Основной навык - {specializationData.skill}";
         }
 
         private void ParseEquipment(EquipmentData equipmentData)

@@ -10,11 +10,13 @@ namespace CharacterCreation
         private PresenterViewFactory _factory;
         private ICharacterPresenter _characterPresenter;
         private IDisposable _nextClickedSubscription;
-        private Character _character;        
+        private Character _character;
+        private CharacterBackgroundView _characterBackground;
 
-        public NewPlayerMediator(PresenterViewFactory factory)
+        public NewPlayerMediator(PresenterViewFactory factory, CharacterBackgroundView characterBackground)
         {
             _factory = factory;
+            _characterBackground = characterBackground;
         }
 
         public void ShowNewCharacteristic()
@@ -46,7 +48,46 @@ namespace CharacterCreation
 
         private void ShowRole(Character character)
         {
-            Debug.Log("ShowRole");
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<RoleView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => SetAppearance(character));
+        }
+
+        private void SetAppearance(Character character)
+        {
+            _characterBackground.ClearList();
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<LookView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => SetTargets(character));
+        }
+
+        private void SetTargets(Character character)
+        {
+            _characterBackground.ClearList();
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<TargetView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => SetConnections(character));
+        }
+
+        private void SetConnections(Character character)
+        {
+            _characterBackground.ClearList();
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<ConnectionView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => Upgrade(character));
+        }
+
+        private void Upgrade(Character character)
+        {
+
         }
 
         private void Reset()

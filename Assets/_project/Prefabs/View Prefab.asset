@@ -21,3 +21,11 @@ MonoBehaviour:
     prefab: {fileID: 2341750661237573662, guid: f6367749d54323d439d65d55de77242c, type: 3}
   - key: FactionView
     prefab: {fileID: 8017656427241355901, guid: ee1b53dab3732cb4ea5c2b0faacb5387, type: 3}
+  - key: RoleView
+    prefab: {fileID: 2232216725540732888, guid: b2d7223b370fa7f48b478ef6305dd27e, type: 3}
+  - key: LookView
+    prefab: {fileID: 9095898241790188656, guid: 3ac1ee4b361ed764b93b1f37cf782b89, type: 3}
+  - key: TargetView
+    prefab: {fileID: 635153648740219158, guid: ab16954545bd91e4aaccb468d2ac33f2, type: 3}
+  - key: ConnectionView
+    prefab: {fileID: 5974340065584764103, guid: 83970a52c479a3a4ba8304479e3e724a, type: 3}

@@ -55,10 +55,37 @@ namespace CharacterCreation
 
             Vector2 targetBodyPosition = rectTransform.anchoredPosition;
             Vector2 finishShift = new Vector2(-Screen.width / 2, targetBodyPosition.y);
+            Vector2 startShift = new Vector2(Screen.width / 2, targetBodyPosition.y);
             _audio.PlayFadeOut();
 
             seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
                 OnComplete(() => Destroy(gameObject));
+        }
+
+        public void HideAndShow()
+        {
+            Vector2 targetBodyPosition = rectTransform.anchoredPosition;
+            Vector2 finishShift = new Vector2(-Screen.width / 2f, targetBodyPosition.y); // уходит влево
+            Vector2 startShift = new Vector2(Screen.width / 2f, targetBodyPosition.y);  // входит справа
+
+            Sequence seq = DOTween.Sequence();
+
+            // шаг 1 — уходим влево
+            seq.AppendCallback(() => _audio.PlayFadeOut());
+            seq.Append(canvasGroup.DOFade(0, 0.6f).From(1f))
+               .Join(rectTransform.DOAnchorPos(finishShift, 0.6f).From(targetBodyPosition));
+
+            // шаг 2 — по завершении скрыть, сбросить на правый край
+            seq.AppendCallback(() =>
+            {
+                rectTransform.anchoredPosition = startShift;
+                canvasGroup.alpha = 0;
+            });
+
+            // шаг 3 — вход справа
+            seq.AppendCallback(() => _audio.PlayFadeIn());
+            seq.Append(canvasGroup.DOFade(1, 0.6f).From(0f))
+               .Join(rectTransform.DOAnchorPos(targetBodyPosition, 0.6f).From(startShift));
         }
 
         public virtual void HideAndDestroyToRight()

@@ -14,7 +14,9 @@ namespace CharacterCreation
         [Inject] private IFactory<BackgroundCharacterPrefab> factoryBackground;
         private Character _character;
         private CompositeDisposable _disposables = new CompositeDisposable();
-        private List<GameObject> gameObjects = new List<GameObject>();
+        private CompositeDisposable _disposablesCharacterists = new CompositeDisposable();
+        private List<GameObject> _gameObjects = new List<GameObject>();
+        private List<GameObject> _characteristics = new List<GameObject>();
         public void SetCharacter(Character character)
         {
             _character = character;
@@ -33,7 +35,7 @@ namespace CharacterCreation
             background.transform.SetParent(_backgroundContent, false);
             background.TextName.text = name;
             background.TextNameBackground.text = nameBackground;
-            gameObjects.Add(background.gameObject);
+            _gameObjects.Add(background.gameObject);
         }
 
         public void AddCharacteristic(Characteristic characteristic)
@@ -41,19 +43,26 @@ namespace CharacterCreation
             var gChracteristtic = factoryCharacteristic.Create();
             gChracteristtic.transform.SetParent(_CharacteristicContent, false);
             UpdateCharacteristic(gChracteristtic, characteristic);
-            characteristic.LevelChanged.Subscribe(_ => UpdateCharacteristic(gChracteristtic, characteristic)).AddTo(_disposables);
-            gameObjects.Add(gChracteristtic.gameObject);
+            characteristic.LevelChanged.Subscribe(_ => UpdateCharacteristic(gChracteristtic, characteristic)).AddTo(_disposablesCharacterists);
+            _characteristics.Add(gChracteristtic.gameObject);
         }
 
         public void Clear()
         {
-            foreach (var go in gameObjects)
-            {
+            foreach (var go in _gameObjects)            
                 Destroy(go);
-            }
-            gameObjects.Clear();
+            
+            _gameObjects.Clear();
             _disposables?.Dispose();
             _disposables = new CompositeDisposable();
+        }
+
+        public void ClearList() 
+        {
+            foreach (var item in _characteristics)            
+                Destroy(item);
+            _characteristics.Clear();
+            _disposablesCharacterists?.Clear();
         }
 
         private void UpdateCharacteristic(CharacteristicBackgroundView characteristicView, Characteristic characteristic)
