@@ -34,7 +34,7 @@ namespace CharacterCreation
         public int amountTalents;
         public int specializationAmount;
         public List<string> talents;
-        public SkillUpgrade skills;
+        public SkillUpgrade skill_upgrades;
         public List<string> specialization;
         public List<List<string>> equipment;
     }

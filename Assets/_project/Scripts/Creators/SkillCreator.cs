@@ -17,9 +17,9 @@ namespace CharacterCreation
 
         public IReadOnlyList<SkillData> Skills => _skills;
         public IReadOnlyList<SpecializationData> Specializations => _specializations;
-        public SkillData SkillByName(string name) => _skillByName[name];
-        public SpecializationData SpecializationByName(string name) => _specializationByName[name];
-        
+        public SkillData SkillByName(string name) => _skillByName.TryGetValue(name, out var data) ? data : null;
+        public SpecializationData SpecializationByName(string name) => _specializationByName.TryGetValue(name, out var data) ? data : null;
+
 
         public async UniTask LoadAsync(CancellationToken cancellationToken = default)
         {
@@ -43,6 +43,18 @@ namespace CharacterCreation
 
             foreach (var item in _specializations)            
                 _specializationByName.Add(item.name, item);     
+        }
+
+        public List<string> GetSpecializations(string nameSkill)
+        {
+            Debug.LogAssertion($"Ищим у когоо скилл = {nameSkill}");
+            var list = new List<string>();
+            foreach (var item in _specializations)            
+                if (string.Compare(nameSkill, item.skill) == 0)                
+                    list.Add(item.name);
+
+            Debug.LogAssertion($"list.count = {list.Count}");
+            return list;
         }
     }
 
@@ -82,6 +94,7 @@ namespace CharacterCreation
         public string name;
         public string characteristic;
         public string description;
+        public int level;
     }
 
     [System.Serializable]
@@ -106,6 +119,7 @@ namespace CharacterCreation
         public bool specialSpecialization;
         public string requireSkill;
         public int lvlRequireSkill;
+        public int level;
     }
 }
 
