@@ -35,6 +35,11 @@ namespace CharacterCreation
 
         public string InputField => _inputField.text;
 
+        private void Start()
+        {
+            Show();
+        }
+
         public void SetNameCategory(string name, string description)
         {
             Clear();            

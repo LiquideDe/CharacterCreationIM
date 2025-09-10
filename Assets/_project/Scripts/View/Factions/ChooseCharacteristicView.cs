@@ -1,7 +1,9 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using R3;
 
 namespace CharacterCreation
 {
@@ -11,12 +13,24 @@ namespace CharacterCreation
         [field: SerializeField] public Toggle Toggle;
         [Inject] private AudioManager _audioManager;
         public bool IsSelected => Toggle.isOn;
-
-        public void SetToggleGroup(ToggleGroup toggleGroup) => Toggle.group = toggleGroup;
+        private IDisposable _disposable;
+        private bool _isFirstTime = true;
 
         private void Start()
         {
-            Toggle.onValueChanged.AddListener((bo) => _audioManager.PlayClick());
+            _disposable = Toggle.OnValueChangedAsObservable().Subscribe(val =>
+            {
+                if (!_isFirstTime && val)
+                {
+                    _audioManager.PlayClick();
+                    _isFirstTime = false;
+                }
+            }).AddTo(this);
+        }
+
+        private void OnDestroy()
+        {
+            _disposable?.Dispose();
         }
     }
 }

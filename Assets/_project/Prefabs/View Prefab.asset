@@ -29,3 +29,5 @@ MonoBehaviour:
     prefab: {fileID: 635153648740219158, guid: ab16954545bd91e4aaccb468d2ac33f2, type: 3}
   - key: ConnectionView
     prefab: {fileID: 5974340065584764103, guid: 83970a52c479a3a4ba8304479e3e724a, type: 3}
+  - key: QuestionsView
+    prefab: {fileID: 6325359468142994988, guid: 811d354792a97d148978479a1c263949, type: 3}

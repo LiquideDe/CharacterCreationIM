@@ -31,6 +31,7 @@ namespace CharacterCreation
         [Header("Content")]
         [SerializeField] private Transform _contentList;
 
+        [Inject] private AudioManager _audioManager;
         [Inject] private IFactory<SkillInListView> _factorySkillInList = null;
         [Inject] private IFactory<TalentInListView> _factoryTalentInList = null;
         [Inject] private IFactory<SkillCounterInList> _factorySkillCounterInList = null;
@@ -56,6 +57,7 @@ namespace CharacterCreation
             Show();
             _closePanelButton.onClick.AddListener(() =>
             {
+                _audioManager.PlayClick();
                 _startPanel.SetActive(false);
                 _mainPanel.SetActive(true);
             });

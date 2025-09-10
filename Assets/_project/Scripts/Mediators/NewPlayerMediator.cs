@@ -11,12 +11,10 @@ namespace CharacterCreation
         private ICharacterPresenter _characterPresenter;
         private IDisposable _nextClickedSubscription;
         private Character _character;
-        private CharacterBackgroundView _characterBackground;
 
-        public NewPlayerMediator(PresenterViewFactory factory, CharacterBackgroundView characterBackground)
+        public NewPlayerMediator(PresenterViewFactory factory)
         {
             _factory = factory;
-            _characterBackground = characterBackground;
         }
 
         public void ShowNewCharacteristic()
@@ -57,7 +55,6 @@ namespace CharacterCreation
 
         private void SetAppearance(Character character)
         {
-            _characterBackground.ClearList();
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<LookView>();
@@ -67,7 +64,6 @@ namespace CharacterCreation
 
         private void SetTargets(Character character)
         {
-            _characterBackground.ClearList();
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<TargetView>();
@@ -77,15 +73,23 @@ namespace CharacterCreation
 
         private void SetConnections(Character character)
         {
-            _characterBackground.ClearList();
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<ConnectionView>();
             _characterPresenter.SetCharacter(_character);
-            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => Upgrade(character));
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => TenQuestions(character));
         }
 
-        private void Upgrade(Character character)
+        private void TenQuestions(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<QuestionsView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeCharacteristic(character));
+        }
+
+        private void UpgradeCharacteristic(Character character)
         {
 
         }

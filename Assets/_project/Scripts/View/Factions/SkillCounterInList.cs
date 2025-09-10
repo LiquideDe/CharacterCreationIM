@@ -52,6 +52,8 @@ namespace CharacterCreation.Background
                     Counter--;
                     UpdateText();
                 }
+                else
+                    _audioManager?.PlayError();
             }
             else
                 _audioManager.PlayError();

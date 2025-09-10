@@ -20,12 +20,17 @@ namespace CharacterCreation.Background
 
         public List<string> Talents => _talents;
         public bool IsSelected => Toggle.isOn;
+        private bool _isFirstTime = true;
 
         private void Start()
         {
             _disposable = Toggle.OnValueChangedAsObservable().Subscribe(val =>
             {
-                _audioManager.PlayClick();
+                if (!_isFirstTime && val)
+                {
+                    _audioManager.PlayClick();
+                    _isFirstTime = false;
+                }                
             }).AddTo(this);
         }
 

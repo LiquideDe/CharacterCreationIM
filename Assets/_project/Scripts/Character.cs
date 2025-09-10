@@ -44,7 +44,8 @@ namespace CharacterCreation
         public ReactiveProperty<string> Omen { get; set; } = new();
         public ReactiveProperty<string> ShortTarget { get; set; } = new();
         public ReactiveProperty<string> LongTarget { get; set; } = new();
-        public ReactiveProperty<string> Connections { get; set; } = new();        
+        public ReactiveProperty<string> Connections { get; set; } = new();         
+        public ReactiveProperty<string> TenQuestions { get; set; } = new();
     }
 
     [Serializable]

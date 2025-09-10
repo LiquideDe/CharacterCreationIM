@@ -116,8 +116,9 @@ namespace CharacterCreation
                 if (Text.Length == 0)
                     Text = _inputFieldConnection.text;
                 else
-                    Text += $"\n _inputFieldConnection.text";
+                    Text += $"\n {_inputFieldConnection.text}";
                 _inputFieldConnection.text = string.Empty;
+                _inputFieldName.text = string.Empty;
                 _textWithConnections.text = Text;
             }
         }
