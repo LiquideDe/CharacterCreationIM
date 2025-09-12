@@ -20,11 +20,10 @@ namespace CharacterCreation
         {
             _disposable = Toggle.OnValueChangedAsObservable().Subscribe(val =>
             {
-                if (!_isFirstTime && val)
-                {
-                    _audioManager.PlayClick();
+                if (!_isFirstTime && val)                
+                    _audioManager.PlayClick(); 
+                else
                     _isFirstTime = false;
-                }
             }).AddTo(this);
         }
 

@@ -24,6 +24,11 @@ namespace CharacterCreation
         public Observable<Unit> OnButtonCancelClick => _buttonCancel.OnClickAsObservable();
         public Observable<Unit> OnButtonNextClick => _buttonNext.OnClickAsObservable();
 
+        private void Start()
+        {
+            Show();
+        }
+
         public void SetCharacteristics(List<Characteristic> characteristics)
         {
             foreach (var item in characteristics)
@@ -34,8 +39,9 @@ namespace CharacterCreation
                 panel.gameObject.SetActive(true);
                 panel.SetName(item.Name);
                 panel.TextAmount.text = item.Level.ToString();
+                panel.HelpText.text = $"Стоимость следующего уровня - {_levelCostTable.GetCostForNextLevel(characteristic.Level)} ОО";
                 panel.OnUpgradeButtonClick.Subscribe(_ => { _characteristicClicked.OnNext(characteristic); }).AddTo(_disposables);
-                characteristic.LevelChanged.Subscribe(level => { 
+                characteristic.LevelChanged.Subscribe(level => {
                     panel.TextAmount.text = level.ToString(); 
                     panel.HelpText.text = $"Стоимость следующего уровня - {_levelCostTable.GetCostForNextLevel(level)} ОО";
                 }).AddTo(_disposables);
@@ -46,6 +52,11 @@ namespace CharacterCreation
         public void SetExperience(int experience)
         {
             _textExperience.text = experience.ToString();
+        }
+
+        private void OnDestroy()
+        {
+            _disposables?.Dispose();
         }
     }    
 }

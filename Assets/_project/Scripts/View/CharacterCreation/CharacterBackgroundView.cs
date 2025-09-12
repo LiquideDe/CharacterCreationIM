@@ -28,9 +28,9 @@ namespace CharacterCreation
             _character.Eyes.Subscribe(eyes => AddBackground("Глаза", eyes)).AddTo(_disposables);
             _character.HairColor.Subscribe(hair => AddBackground("Цвет волос", hair)).AddTo(_disposables);
             _character.HairStyle.Subscribe(hair => AddBackground("Стиль прически", hair)).AddTo(_disposables);
-            _character.Omen.Subscribe(omen => AddBackground("Особые приметы", omen)).AddTo(_disposables);
-            _character.ShortTarget.Subscribe(target => AddBackground("Краткосрочные цели", target)).AddTo(_disposables);
-            _character.LongTarget.Subscribe(target => AddBackground("Долгосрочные цели", target )).AddTo(_disposables);
+            //_character.Omen.Subscribe(omen => AddBackground("Особые приметы", omen)).AddTo(_disposables);
+            //_character.ShortTarget.Subscribe(target => AddBackground("Краткосрочные цели", target)).AddTo(_disposables);
+            //_character.LongTarget.Subscribe(target => AddBackground("Долгосрочные цели", target )).AddTo(_disposables);
 
         }
 

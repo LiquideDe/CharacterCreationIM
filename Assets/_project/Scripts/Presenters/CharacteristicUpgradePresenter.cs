@@ -2,6 +2,7 @@ using R3;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CharacterCreation
@@ -14,7 +15,6 @@ namespace CharacterCreation
         private CharacteristicUpgradeView _view;
         private readonly List<IDisposable> _subscriptions = new();
         private Character _character;
-        private readonly UndoRedoManager _history = new();
         private readonly LevelCostTable _costs = new();
 
         public CharacteristicUpgradePresenter(AudioManager audioManager, CharacteristicUpgradeView view)
@@ -23,7 +23,13 @@ namespace CharacterCreation
             _view = view;
         }
 
-        public void SetCharacter(Character character) => _character = character;
+        public void SetCharacter(Character character) 
+        {
+            _character = character;
+            _view.SetExperience(_character.Experience.Value.experiencePoints);
+            SetCharacteristics();
+        }
+        
 
         public void Initialize()
         {
@@ -45,31 +51,36 @@ namespace CharacterCreation
                 _view.CharacteristicClicked.Subscribe(ch => { UpgradeCharacteristic(ch); }));
         }
 
+        private void SetCharacteristics()
+        {
+            _view.SetCharacteristics(_character.Characteristics.ToList());
+        }
+
         private void UpgradeCharacteristic(Characteristic ch)
         {
             var cmd = new UpgradeCharacteristicCommand(_character, ch, delta: 1, xpCost: _costs.GetCostForNextLevel(ch.Level));
-            var ok = _history.Do(cmd);
+            var ok = _character.CharacteristicHistory.Do(cmd);
             if (!ok)            
                 _audioManager.PlayError();
             else
             {
                 _view.SetExperience(_character.Experience.Value.experiencePoints);
                 _audioManager.PlayClick();
-            }
-                
-            
+            }   
         }
 
         private void CancelUpgrade()
         {
-            _history.Undo();
+            _character.CharacteristicHistory.Undo();
             _audioManager.PlayClick();
             _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 
         private void GoToNext()
         {
-            throw new NotImplementedException();
+            _audioManager.PlayClick();
+            _view.HideAndDestroyToLeft();
+            _nextClicked.OnNext(_character);
         }
 
         public void Dispose()
@@ -115,7 +126,7 @@ namespace CharacterCreation
             _prevExpSpent = _character.Experience.Value.experienceSpent;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
-            _ch.Level += _delta;
+            _ch.PlusLevel(_delta);
 
             _applied = true;
             return true;
@@ -125,6 +136,7 @@ namespace CharacterCreation
         {
             if (!_applied) return;
             _ch.Level = _prevLevel;
+            _ch.PlusLevel(0);
             _character.Experience.Value.experiencePoints = _prevXP;
             _character.Experience.Value.experienceSpent = _prevExpSpent;
             _applied = false;
@@ -151,15 +163,6 @@ namespace CharacterCreation
             cmd.Undo();
             _redo.Push(cmd);
         }
-
-        public void Redo()
-        {
-            if (_redo.Count == 0) return;
-            var cmd = _redo.Pop();
-            if (cmd.Execute())
-                _undo.Push(cmd);
-        }
-
         // опционально ограничить размер стека
         public int MaxDepth { get; set; } = 50;
     }

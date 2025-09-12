@@ -36,8 +36,11 @@ namespace CharacterCreation
                 return null;
             }
             //var view = _container.InstantiatePrefabForComponent<TView>(prefab);
+            //Debug.LogAssertion($"SafeSpawnView");
             var view = SafeSpawnView<TView>(prefab, _container);
+            //Debug.LogAssertion($"Presenter");
             var presenter = (IPresenter)_container.Instantiate(presenterType, new object[] { view, _audioManager });
+            //Debug.LogAssertion($"Initialize");
             presenter.Initialize();
             view.gameObject.SetActive(true);
             return presenter;

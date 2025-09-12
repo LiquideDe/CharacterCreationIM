@@ -46,6 +46,8 @@ namespace CharacterCreation
         public ReactiveProperty<string> LongTarget { get; set; } = new();
         public ReactiveProperty<string> Connections { get; set; } = new();         
         public ReactiveProperty<string> TenQuestions { get; set; } = new();
+
+        public UndoRedoManager CharacteristicHistory = new();
     }
 
     [Serializable]

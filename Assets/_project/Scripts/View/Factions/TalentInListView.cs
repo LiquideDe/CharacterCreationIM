@@ -29,8 +29,8 @@ namespace CharacterCreation.Background
                 if (!_isFirstTime && val)
                 {
                     _audioManager.PlayClick();
-                    _isFirstTime = false;
-                }                
+                }
+                else { _isFirstTime = false; }
             }).AddTo(this);
         }
 

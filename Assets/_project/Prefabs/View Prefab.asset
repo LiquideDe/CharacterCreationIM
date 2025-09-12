@@ -31,3 +31,7 @@ MonoBehaviour:
     prefab: {fileID: 5974340065584764103, guid: 83970a52c479a3a4ba8304479e3e724a, type: 3}
   - key: QuestionsView
     prefab: {fileID: 6325359468142994988, guid: 811d354792a97d148978479a1c263949, type: 3}
+  - key: CharacteristicUpgradeView
+    prefab: {fileID: 5920270042767413562, guid: e75e8f364fbcada44acb6adf499c85ac, type: 3}
+  - key: SkillUpgradeView
+    prefab: {fileID: 8813620094169763052, guid: fe8b3622537f810478c0bf21aab3645c, type: 3}

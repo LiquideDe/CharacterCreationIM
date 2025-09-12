@@ -18,6 +18,9 @@ namespace CharacterCreation
         [SerializeField] private InfoPanelView infoTextViewPrefab;
         [SerializeField] private BackgroundCharacterPrefab backgroundCharacterPrefab;
         [SerializeField] private CharacteristicBackgroundView characteristicBackgroundViewPrefab;
+        [SerializeField] private CharacteristicPanel characteristicPanelPrefab;
+        [SerializeField] private SkillPanelUpgrade skillPanelUpgradePrefab;
+        [SerializeField] private NewSpecializationPanel newSpecializationPanelPrefab;
 
         public override void InstallBindings()
         {
@@ -34,6 +37,9 @@ namespace CharacterCreation
             Container.BindIFactory<InfoPanelView>().FromComponentInNewPrefab(infoTextViewPrefab);
             Container.BindIFactory<BackgroundCharacterPrefab>().FromComponentInNewPrefab(backgroundCharacterPrefab);
             Container.BindIFactory<CharacteristicBackgroundView>().FromComponentInNewPrefab(characteristicBackgroundViewPrefab);
+            Container.BindIFactory<CharacteristicPanel>().FromComponentInNewPrefab(characteristicPanelPrefab);
+            Container.BindIFactory<SkillPanelUpgrade>().FromComponentInNewPrefab(skillPanelUpgradePrefab);
+            Container.BindIFactory<NewSpecializationPanel>().FromComponentInNewPrefab(newSpecializationPanelPrefab);
         }
     }
 }

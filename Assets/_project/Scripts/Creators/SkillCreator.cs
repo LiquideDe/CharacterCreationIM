@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using R3;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -95,6 +96,16 @@ namespace CharacterCreation
         public string characteristic;
         public string description;
         public int level;
+
+        [NonSerialized] private Subject<int> _levelChanged;
+        [Newtonsoft.Json.JsonIgnore]
+        public Observable<int> LevelChanged => _levelChanged ??= new Subject<int>();
+
+        public void PlusLevel(int value)
+        {
+            level += value;
+            _levelChanged?.OnNext(level);
+        }
     }
 
     [System.Serializable]
@@ -120,6 +131,16 @@ namespace CharacterCreation
         public string requireSkill;
         public int lvlRequireSkill;
         public int level;
+
+        [NonSerialized] private Subject<int> _levelChanged;
+        [Newtonsoft.Json.JsonIgnore]
+        public Observable<int> LevelChanged => _levelChanged ??= new Subject<int>();
+
+        public void PlusLevel(int value)
+        {
+            level += value;
+            _levelChanged?.OnNext(level);
+        }
     }
 }
 

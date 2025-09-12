@@ -10,6 +10,7 @@ namespace CharacterCreation
         private PresenterViewFactory _factory;
         private ICharacterPresenter _characterPresenter;
         private IDisposable _nextClickedSubscription;
+        private IDisposable _prevClicked;
         private Character _character;
 
         public NewPlayerMediator(PresenterViewFactory factory)
@@ -91,6 +92,27 @@ namespace CharacterCreation
 
         private void UpgradeCharacteristic(Character character)
         {
+            Debug.LogAssertion($"UpgradeCharacteristic");
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<CharacteristicUpgradeView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeSkills(character));
+        }
+
+        private void UpgradeSkills(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<SkillUpgradeView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeTalent(character));
+            var pres = _characterPresenter as SkillUpgradePresenter;
+            _prevClicked = pres.PrevClicked.Subscribe(character => UpgradeCharacteristic(character));
+        }
+
+        private void UpgradeTalent(Character character)
+        {
 
         }
 
@@ -100,6 +122,8 @@ namespace CharacterCreation
             _nextClickedSubscription = null;
             _characterPresenter?.Dispose();
             _characterPresenter = null;
+            _prevClicked?.Dispose();
+            _prevClicked = null;
         }
     }
 }
