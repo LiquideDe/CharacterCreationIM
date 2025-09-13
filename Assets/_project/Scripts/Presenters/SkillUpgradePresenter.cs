@@ -180,7 +180,6 @@ namespace CharacterCreation
         {
             _audioManager.PlayClick();
             _character.CharacteristicHistory.Undo();
-            _audioManager.PlayClick();
             _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 

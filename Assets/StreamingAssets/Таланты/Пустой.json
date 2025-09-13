@@ -5,9 +5,7 @@
   {
       "type": "exclusive_with",
       "talents": ["Псайкер"]
-    },
-    {
-      "type": "character_creation_only"
     }
-  ]
+  ],
+  "character_creation_only" : true
 }

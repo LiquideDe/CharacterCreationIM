@@ -13,6 +13,7 @@ namespace CharacterCreation
         private readonly ReactiveProperty<Experience> _experience = new();
         private readonly ObservableList<Characteristic> _characteristics = new();
         private ObservableList<EquipmentData> _equipments = new ObservableList<EquipmentData>();
+        private ObservableList<PsyData> _psyPowers = new ObservableList<PsyData>();
         private ObservableList<SkillData> _skills = new ObservableList<SkillData>();
         private ObservableList<SpecializationData> _specializations = new ObservableList<SpecializationData>();
         private ObservableList<TalentData> _talents = new ObservableList<TalentData>();
@@ -28,6 +29,7 @@ namespace CharacterCreation
         public ObservableList<SpecializationData> Specializations => _specializations;
         public ObservableList<TalentData> Talents => _talents;
         public ObservableList<AugmeticData> Augmetics => _augmetics;
+        public ObservableList<PsyData> PsyPowers => _psyPowers;
         public Dictionary<string, int> Influence => _influence;
         public ObservableList<string> Contacts => _contacts;
         public ReactiveProperty<int> Money { get; } = new();

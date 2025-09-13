@@ -92,7 +92,6 @@ namespace CharacterCreation
 
         private void UpgradeCharacteristic(Character character)
         {
-            Debug.LogAssertion($"UpgradeCharacteristic");
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<CharacteristicUpgradeView>();
@@ -112,6 +111,17 @@ namespace CharacterCreation
         }
 
         private void UpgradeTalent(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<TalentUpgradeView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeSkills(character));
+            var pres = _characterPresenter as TalentUpgradePresenter;
+            _prevClicked = pres.PrevClicked.Subscribe(character => UpgradePsyPowers(character));
+        }
+
+        private void UpgradePsyPowers(Character character)
         {
 
         }

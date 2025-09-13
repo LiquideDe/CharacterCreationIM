@@ -5,9 +5,7 @@
   {
       "type": "requirement_talent",
       "talents": ["Псайкер"]
-    },
-	{
-		"type": "character_creation_only"
-	}
-  ]
+    }
+  ],
+  "character_creation_only" : true
 }

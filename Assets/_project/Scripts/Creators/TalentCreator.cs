@@ -146,10 +146,11 @@ namespace CharacterCreation
         public string name;
         public string description;
         public List<TalentRequirement> requirements;
-        public List<string> tags;
         public bool isMultiple;
         public int maxMultiple;
+        public int currentMultiple;
         public bool uniqeText;
+        public bool character_creation_only;
     }
 }
 
