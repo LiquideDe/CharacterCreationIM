@@ -123,7 +123,26 @@ namespace CharacterCreation
 
         private void UpgradePsyPowers(Character character)
         {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<UpgradePsyView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => SetName(character));
+            var pres = _characterPresenter as UpgradePsyPresenter;
+            _prevClicked = pres.PrevClicked.Subscribe(character => UpgradeTalent(character));
+        }
 
+        private void SetName(Character character)
+        {
+
+        }
+
+        private void Print(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<UpgradePsyView>();
+            _characterPresenter.SetCharacter(_character);
         }
 
         private void Reset()

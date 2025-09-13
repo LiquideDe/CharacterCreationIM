@@ -1,4 +1,5 @@
 using R3;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -23,10 +24,12 @@ namespace CharacterCreation
 
         private CompositeDisposable _cd = new CompositeDisposable();
         private Subject<string> _showPsyClick = new Subject<string>();
-        public Observable<string> ShowTalentClicked => _showPsyClick;
+        public Observable<string> ShowPsyClicked => _showPsyClick;
         public Observable<Unit> OnButtonBuyClick => _buyButton.OnClickAsObservable();
         public Observable<Unit> OnButtonNextClick => _nextButton.OnClickAsObservable();
+        public Observable<Unit> OnButtonNextSchoolClick => _nextSchoolButton.OnClickAsObservable();
         public Observable<Unit> OnButtonPrevClick => _prevButton.OnClickAsObservable();
+        public Observable<Unit> OnButtonPrevSchoolClick => _prevSchoolButton.OnClickAsObservable();
         public Observable<Unit> OnButtonCancelClick => _cancelButton.OnClickAsObservable();
 
         private void Start()
@@ -36,12 +39,14 @@ namespace CharacterCreation
             _buyButton.OnClickAsObservable().Subscribe(_ => ClearTexts()).AddTo(_cd);
         }
 
-        public void SetPsyPowers(List<string> names)
+        public void SetPsyPowers(List<string> names, string nameSchool)
         {
             _virtualListView.SetNames(names);
             _virtualListView.ItemClicked
             .Subscribe(t => _showPsyClick.OnNext(t.name))
             .AddTo(gameObject);
+
+            _textNameSchool.text = nameSchool;
         }
 
         public void ShowPsy(PsyData psy)
@@ -56,6 +61,7 @@ namespace CharacterCreation
             _textDescriptionPsy.text += $"Стоимость в варп зарядах {psy.warpCharge}\n\n";
             _textDescriptionPsy.text = psy.description;
 
+            _buyButton.gameObject.SetActive(true);
         }
 
         private void ClearTexts()
@@ -65,6 +71,10 @@ namespace CharacterCreation
             _buyButton.gameObject.SetActive(false);
         }
 
+        internal void SetExperience(int experiencePoints)
+        {
+            _textExperience.text = $"Опыт: {experiencePoints}";
+        }
     }
 }
 

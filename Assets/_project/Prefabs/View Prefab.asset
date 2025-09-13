@@ -37,3 +37,5 @@ MonoBehaviour:
     prefab: {fileID: 8813620094169763052, guid: fe8b3622537f810478c0bf21aab3645c, type: 3}
   - key: TalentUpgradeView
     prefab: {fileID: 636092062860921154, guid: 30280b57b36c9c949a5479f228d053e9, type: 3}
+  - key: UpgradePsyView
+    prefab: {fileID: 7441830914650178629, guid: 6772e53f99902394b8a704fe94ffaa2b, type: 3}
