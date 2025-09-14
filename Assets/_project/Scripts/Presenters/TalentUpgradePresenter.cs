@@ -1,6 +1,7 @@
 using R3;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Zenject;
 
 namespace CharacterCreation
@@ -29,16 +30,46 @@ namespace CharacterCreation
         public void SetCharacter(Character character)
         {
             _character = character;
-            SetTalents();
-            SetListToView(true);
-            _view.SetExperience(_character.Experience.Value.experiencePoints);
+            try
+            {
+                SetTalents();
+                Debug.Log("[TalentUpgradePresenter] SetTalents OK");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return;
+            }
+
+            try
+            {
+                SetListToView(true);
+                Debug.Log("[TalentUpgradePresenter] SetListToView OK");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return;
+            }
+
+            try
+            {
+                _view.SetExperience(_character.Experience.Value.experiencePoints);
+                Debug.Log("[TalentUpgradePresenter] SetExperience OK");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return;
+            }
         }
 
         public void Initialize()
         {
+            Debug.Log("[TalentUpgradePresenter] Initialize");
             _view.OnButtonBuyClick.Subscribe(_ => { BuyTalent(); }).AddTo(_cd);
             _view.OnButtonCancelClick.Subscribe(_ => { _audioManager.PlayClick(); CancelUpgrade(); }).AddTo(_cd);
-            _view.OnButtonNextClick.Subscribe(_ => { _audioManager.PlayConfirm(); GoNext(); }).AddTo(_cd);
+            _view.OnButtonNextClick.Subscribe(_ => { Debug.Log("[TalentUpgradePresenter] Next button click"); _audioManager.PlayConfirm(); GoNext(); }).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { _audioManager.PlayClick(); GoPrev(); }).AddTo(_cd);
             _view.ShowTalentClicked.Subscribe(name => { _audioManager.PlayClick(); ShowTalent(name); }).AddTo(_cd);
             _view.ToggleShowAvailableClicked.Subscribe(avalaible => 
@@ -51,14 +82,15 @@ namespace CharacterCreation
 
         private void GoNext()
         {
+            Debug.Log($" GoNext emit. HasObservers? {_nextClicked}");
             _nextClicked.OnNext(_character);
-            _view.HideAndDestroyToLeft();
+            _view.HideAndDestroyToLeft();                        
         }
 
         private void GoPrev()
         {
             _prevClicked.OnNext(_character);
-            _view.HideAndDestroyToRight();
+            _view.HideAndDestroyToRight();                       
         }
 
         private void BuyTalent()
@@ -84,6 +116,7 @@ namespace CharacterCreation
 
         public void Dispose()
         {
+            Debug.LogAssertion("Dispose");
             _cd.Dispose();
         }
 
@@ -156,7 +189,10 @@ namespace CharacterCreation
                     return CheckSkill(requirement.specialization, requirement.amount); 
 
                 case "attribute_min":
-                    return CheckCharacteristic(requirement.attribute, requirement.value); 
+                    return CheckCharacteristic(requirement.attribute, requirement.value);
+
+                case "attribute_max":
+                    return CheckCharacteristic(requirement.attribute, requirement.value);
 
                 case "no_improvement":
                     return NoSkill(requirement.skill);

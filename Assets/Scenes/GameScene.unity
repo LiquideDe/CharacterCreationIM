@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 1205669461}
   - component: {fileID: 1205669462}
   - component: {fileID: 1205669463}
+  - component: {fileID: 1205669464}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -613,6 +614,7 @@ MonoBehaviour:
   - {fileID: 1205669457}
   - {fileID: 1205669459}
   - {fileID: 1205669463}
+  - {fileID: 1205669464}
   - {fileID: 1205669460}
   - {fileID: 1205669461}
   _installerPrefabs: []
@@ -698,6 +700,8 @@ MonoBehaviour:
   characteristicPanelPrefab: {fileID: 5359277293577951858, guid: 8a861d0014cbe5f4099c3a16d7e6b1cd, type: 3}
   skillPanelUpgradePrefab: {fileID: 5355723488295231794, guid: 1fa352a5b6bec0945988431ae25157f4, type: 3}
   newSpecializationPanelPrefab: {fileID: 1749562382450004211, guid: c1c40980d9692ba4ab83c98e67fee929, type: 3}
+  firstPagePrefab: {fileID: 89477606331616650, guid: 2e8487f00e91a5742acd36ce006feb80, type: 3}
+  secondPagePrefab: {fileID: 4436996793424571268, guid: b7acfbcfad078f049892254675c0e4ac, type: 3}
 --- !u!114 &1205669460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,6 +753,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterBackgroundView: {fileID: 2069675182}
+--- !u!114 &1205669464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205669454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51473da7f93b9be4c92709cfa0323438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1212611364
 GameObject:
   m_ObjectHideFlags: 0

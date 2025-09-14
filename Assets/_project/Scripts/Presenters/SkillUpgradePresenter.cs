@@ -144,7 +144,6 @@ namespace CharacterCreation
         {
             CheckNewSkills();
             CheckNewSpecializations();
-
         }
 
         private void CheckNewSkills()

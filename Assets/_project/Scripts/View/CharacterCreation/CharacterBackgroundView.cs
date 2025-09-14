@@ -19,16 +19,18 @@ namespace CharacterCreation
         private List<GameObject> _characteristics = new List<GameObject>();
         public void SetCharacter(Character character)
         {
+            Debug.LogAssertion("CharacterBackgroundView");
             _character = character;
-            _character.Characteristics.ObserveAdd().Subscribe(c => AddCharacteristic(c.Value)).AddTo(_disposables);
-            _character.Origin.Subscribe(origin => AddBackground("Происхождение", origin)).AddTo(_disposables);
-            _character.Faction.Subscribe(faction => AddBackground("Служба", faction)).AddTo(_disposables);
-            _character.Role.Subscribe(role => { AddBackground("Роль", role); ClearList(); }).AddTo(_disposables);
-            _character.Age.Subscribe(age => { if(age > 0)AddBackground("Возраст", age.ToString()); }).AddTo(_disposables);
-            _character.Eyes.Subscribe(eyes => AddBackground("Глаза", eyes)).AddTo(_disposables);
-            _character.HairColor.Subscribe(hair => AddBackground("Цвет волос", hair)).AddTo(_disposables);
-            _character.HairStyle.Subscribe(hair => AddBackground("Стиль прически", hair)).AddTo(_disposables);
-            _character.Omen.Subscribe(omen => Clear()).AddTo(_disposables);
+            Debug.LogAssertion(_character != null);
+            _character.Characteristics.ObserveAdd().Subscribe(c => AddCharacteristic(c.Value), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Origin.Subscribe(origin => AddBackground("Происхождение", origin), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Faction.Subscribe(faction => AddBackground("Служба", faction), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Role.Subscribe(role => { AddBackground("Роль", role); ClearList(); }, ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Age.Subscribe(age => { if(age > 0)AddBackground("Возраст", age.ToString()); }, ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Eyes.Subscribe(eyes => AddBackground("Глаза", eyes), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.HairColor.Subscribe(hair => AddBackground("Цвет волос", hair), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.HairStyle.Subscribe(hair => AddBackground("Стиль прически", hair), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
+            _character.Omen.Subscribe(omen => Clear(), ex => Debug.LogException(ex.Exception)).AddTo(_disposables);
             //_character.ShortTarget.Subscribe(target => AddBackground("Краткосрочные цели", target)).AddTo(_disposables);
             //_character.LongTarget.Subscribe(target => AddBackground("Долгосрочные цели", target )).AddTo(_disposables);
 
@@ -48,6 +50,7 @@ namespace CharacterCreation
 
         public void AddCharacteristic(Characteristic characteristic)
         {
+            Debug.LogAssertion($"AddCharacteristic");
             var gChracteristtic = factoryCharacteristic.Create();
             gChracteristtic.transform.SetParent(_CharacteristicContent, false);
             UpdateCharacteristic(gChracteristtic, characteristic);

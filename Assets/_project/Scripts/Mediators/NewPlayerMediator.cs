@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using CharacterCreation.Background;
 using R3;
 using UnityEngine;
@@ -12,10 +13,11 @@ namespace CharacterCreation
         private IDisposable _nextClickedSubscription;
         private IDisposable _prevClicked;
         private Character _character;
-
-        public NewPlayerMediator(PresenterViewFactory factory)
+        private PrintCharacterPresenter _printCharacter;
+        public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
         {
             _factory = factory;
+            _printCharacter = printCharacter;
         }
 
         public void ShowNewCharacteristic()
@@ -116,9 +118,9 @@ namespace CharacterCreation
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<TalentUpgradeView>();
             _characterPresenter.SetCharacter(_character);
-            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeSkills(character));
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { UpgradePsyPowers(character); }, ex => Debug.LogException(ex.Exception));
             var pres = _characterPresenter as TalentUpgradePresenter;
-            _prevClicked = pres.PrevClicked.Subscribe(character => UpgradePsyPowers(character));
+            _prevClicked = pres.PrevClicked.Subscribe(character => UpgradeSkills(character));
         }
 
         private void UpgradePsyPowers(Character character)
@@ -134,15 +136,20 @@ namespace CharacterCreation
 
         private void SetName(Character character)
         {
-
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<SetNameView>();
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => Print(character));
         }
 
         private void Print(Character character)
         {
             _character = character;
+            var path = Path.Combine(Application.streamingAssetsPath, $"Characters/{character.Name}.json");
+            CharacterStorage.SaveToFile(_character, path);
             Reset();
-            _characterPresenter = (ICharacterPresenter)_factory.Create<UpgradePsyView>();
-            _characterPresenter.SetCharacter(_character);
+            _printCharacter.PrintCharacter(character);
         }
 
         private void Reset()

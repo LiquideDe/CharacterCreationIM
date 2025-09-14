@@ -1,9 +1,9 @@
 using ObservableCollections;
 using R3;
-using R3.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CharacterCreation
@@ -18,11 +18,11 @@ namespace CharacterCreation
         private ObservableList<SpecializationData> _specializations = new ObservableList<SpecializationData>();
         private ObservableList<TalentData> _talents = new ObservableList<TalentData>();
         private ObservableList<AugmeticData> _augmetics = new ObservableList<AugmeticData>();
+        private ObservableList<Mutation> _mutations = new ObservableList<Mutation>();
         private Dictionary<string, int> _influence = new Dictionary<string, int>();
         private ObservableList<string> _contacts = new ObservableList<string>();
         public ReactiveProperty<string> Name { get; set; } = new ();
         public ReactiveProperty<Experience> Experience => _experience;
-        public IObservable<Experience> ExperienceChanged => (IObservable<Experience>)_experience;
         public ObservableList<Characteristic> Characteristics => _characteristics;
         public ObservableList<EquipmentData> Equipments => _equipments;
         public ObservableList<SkillData> Skills => _skills;
@@ -48,8 +48,52 @@ namespace CharacterCreation
         public ReactiveProperty<string> LongTarget { get; set; } = new();
         public ReactiveProperty<string> Connections { get; set; } = new();         
         public ReactiveProperty<string> TenQuestions { get; set; } = new();
+        public ReactiveProperty<string> Prophecy { get; set; } = new();
+        public ReactiveProperty<string> Hand { get; set; } = new();
+        public ReactiveProperty<int> Height { get; set; } = new();
+        public ReactiveProperty<int> Weight { get; set; } = new();
+        public ReactiveProperty<int> FatePoints { get; set; } = new();
+        public ReactiveProperty<int> CorruptionPoints { get; set; } = new();
+        public ObservableList<Mutation> Mutations => _mutations;
 
         public UndoRedoManager CharacteristicHistory = new();
+
+        private CompositeDisposable _cd = new CompositeDisposable();
+
+        public bool IsPsyker { get; private set; }
+        
+        public Character()
+        {
+            Talents.ObserveAdd()
+            .Subscribe(e =>
+            {
+                RecalcIsPsyker();
+            }, ex => Debug.LogException(ex.Exception))
+            .AddTo(_cd);
+
+            Talents.ObserveRemove()
+                .Subscribe(_ => RecalcIsPsyker(), ex => Debug.LogException(ex.Exception))
+                .AddTo(_cd);
+
+            Talents.ObserveReplace()
+                .Subscribe(_ => RecalcIsPsyker(), ex => Debug.LogException(ex.Exception))
+                .AddTo(_cd);
+
+            Talents.ObserveReset()
+                .Subscribe(_ => RecalcIsPsyker(), ex => Debug.LogException(ex.Exception))
+                .AddTo(_cd);
+
+        }
+
+        public void Release()
+        {
+            _cd.Dispose();
+        }
+
+        private void RecalcIsPsyker()
+        {
+            IsPsyker = Talents.Any(t => string.Compare(t.name,"Псайкер",true)== 0);
+        }
     }
 
     [Serializable]
@@ -57,6 +101,13 @@ namespace CharacterCreation
     {
         public int experiencePoints;
         public int experienceSpent;
+    }
+
+    [Serializable]
+    public class Mutation
+    {
+        public string name;
+        public string description;
     }
 }
 

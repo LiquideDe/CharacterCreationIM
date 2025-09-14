@@ -385,17 +385,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043316224735229840}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4336218357221200542}
-  m_Father: {fileID: 1033610430484227409}
+  m_Father: {fileID: 565627385009583703}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.001083374, y: 55.7778}
+  m_AnchoredPosition: {x: -7.056656, y: 408.77768}
   m_SizeDelta: {x: 325, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2824387783130513656
@@ -804,7 +804,7 @@ MonoBehaviour:
   _scrollRect: {fileID: 1253650104128181410}
   _viewport: {fileID: 8217048274861235787}
   _content: {fileID: 1033610430484227409}
-  itemPrefab: {fileID: 382164364127738275}
+  itemPrefab: {fileID: 3902487381543975879}
   poolSize: 15
   itemHeight: 120
   spacing: 10
@@ -1017,6 +1017,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 382164364127738275}
   - {fileID: 4261022383366285737}
   m_Father: {fileID: 5492374156808698659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2591,8 +2592,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 382164364127738275}
+  m_Children: []
   m_Father: {fileID: 8217048274861235787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}

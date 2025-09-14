@@ -8,6 +8,7 @@ namespace CharacterCreation
     {
         public string Name;
         public int Level;
+        public int BaseLevel;
         [NonSerialized] private Subject<int> _levelChanged;
         [Newtonsoft.Json.JsonIgnore]
         public Observable<int> LevelChanged => _levelChanged ??= new Subject<int>();
@@ -16,6 +17,7 @@ namespace CharacterCreation
         {
             Name = name;
             Level = level;
+            BaseLevel = level;
         }
 
         public void PlusLevel(int value)

@@ -1,0 +1,72 @@
+{
+  "Name": "444",
+  "Experience": {
+    "experiencePoints": 50,
+    "experienceSpent": 0
+  },
+  "Characteristics": [
+    {
+      "Name": "Ближний бой",
+      "Level": 33,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Дальний бой",
+      "Level": 35,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Сила",
+      "Level": 21,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Выносливость",
+      "Level": 38,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Ловкость",
+      "Level": 39,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Интеллект",
+      "Level": 21,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Восприятие",
+      "Level": 23,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Сила воли",
+      "Level": 38,
+      "BaseLevel": 20
+    },
+    {
+      "Name": "Товарищество",
+      "Level": 32,
+      "BaseLevel": 20
+    }
+  ],
+  "Equipments": [],
+  "PsyPowers": [],
+  "Skills": [],
+  "Specializations": [],
+  "Talents": [],
+  "Augmetics": [],
+  "Mutations": [],
+  "Contacts": [],
+  "Influence": {},
+  "Money": 0,
+  "FreeSmallPsyPower": 0,
+  "FreePsyPower": 0,
+  "Age": 0,
+  "Prophecy": "Усомниться – значит выказать слабость.",
+  "Height": 44,
+  "Weight": 44,
+  "FatePoints": 0,
+  "CorruptionPoints": 0
+}

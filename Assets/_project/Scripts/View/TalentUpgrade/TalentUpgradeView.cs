@@ -104,6 +104,11 @@ namespace CharacterCreation
         {
             _textExperience.text = $"Опыт: {experiencePoints}";
         }
+
+        private void OnDestroy()
+        {
+            _cd.Dispose();
+        }
     }
 }
 

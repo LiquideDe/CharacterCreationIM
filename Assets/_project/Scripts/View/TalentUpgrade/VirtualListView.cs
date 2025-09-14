@@ -10,16 +10,17 @@ namespace CharacterCreation
 {
     public class VirtualListView : MonoBehaviour
     {
-
         [Serializable] public class BindCellEvent : UnityEvent<int, TalentItemInList> { }
+
+        [Header("Refs (assign in Inspector)")]
         [SerializeField] private ScrollRect _scrollRect;
-        [SerializeField]  private RectTransform _viewport;
-        [SerializeField]  private RectTransform _content;
+        [SerializeField] private RectTransform _viewport;
+        [SerializeField] private RectTransform _content;
 
         [Header("Core")]
-        public RectTransform itemPrefab;     // префаб, на котором есть TalentItemView (или он добавится)
+        // Типизированный префаб — теперь без GetComponent
+        public TalentItemInList itemPrefab;
         [Min(1)] public int poolSize = 15;
-        
 
         [Header("Layout")]
         public float itemHeight = 80f;
@@ -30,11 +31,11 @@ namespace CharacterCreation
         public float paddingRight = 6f;
 
         [Header("Binding (на выбор)")]
-        public BindCellEvent OnBind;               // Инспекторный путь: вы сами делаете cell.Bind(names[index])
-        public Func<int, string> nameProvider;     // Кодовый путь: listView.nameProvider = i => names[i];
+        public BindCellEvent OnBind;               // Инспектор: OnBind(index, cell)
+        public Func<int, string> nameProvider;     // Код: listView.nameProvider = i => names[i];
 
-        // R3: централизованный поток кликов из списка (index, name)
-        public readonly Subject<(int index, string name)> ItemClicked = new Subject<(int, string)>();        
+        // Глобальный поток кликов
+        public readonly Subject<(int index, string name)> ItemClicked = new Subject<(int, string)>();
 
         private readonly List<RectTransform> _pool = new();
         private readonly List<TalentItemInList> _cells = new();
@@ -49,6 +50,14 @@ namespace CharacterCreation
 
         void Awake()
         {
+            // sanity checks
+            if (_scrollRect == null || _viewport == null || _content == null)
+            {
+                Debug.LogError("[VirtualListView] Assign _scrollRect/_viewport/_content в инспекторе.");
+                enabled = false;
+                return;
+            }
+
             _scrollRect.horizontal = false;
             _scrollRect.vertical = true;
             _scrollRect.movementType = ScrollRect.MovementType.Clamped;
@@ -68,6 +77,8 @@ namespace CharacterCreation
             if (!isActiveAndEnabled) return;
             Refresh(true);
         }
+
+        // ---- ПУБЛИЧНОЕ API ----
 
         public void SetNames(IList<string> names, bool keepPosition = true)
         {
@@ -93,25 +104,35 @@ namespace CharacterCreation
             UpdateVisible();
         }
 
+        // ---- ВНУТРЕННЕЕ ----
+
         void EnsureInitialized()
         {
             if (_initialized) return;
-            if (itemPrefab == null) { Debug.LogError("[VirtualListView] Не назначен itemPrefab."); enabled = false; return; }
+            if (itemPrefab == null)
+            {
+                Debug.LogError("[VirtualListView] Не назначен itemPrefab.");
+                enabled = false;
+                return;
+            }
 
             // очистка
             for (int i = _content.childCount - 1; i >= 0; i--) Destroy(_content.GetChild(i).gameObject);
-            _pool.Clear(); _cells.Clear();
+            _pool.Clear();
+            _cells.Clear();
 
-            int count = Mathf.Min(poolSize, Math.Max(1, totalCount));
+            // ВАЖНО: создаём ровно poolSize элементов (НЕ завязываемся на totalCount)
+            int count = Mathf.Max(1, poolSize);
             for (int i = 0; i < count; i++)
             {
-                var rt = Instantiate(itemPrefab, _content);
+                // Инстанциируем компонент ячейки
+                var cell = Instantiate(itemPrefab, _content);
+                var rt = (RectTransform)cell.transform;
+
                 SetupItemRect(rt);
                 rt.gameObject.name = $"Item_{i}";
-                _pool.Add(rt);
 
-                // кешируем компонент ячейки один раз
-                var cell = rt.GetComponent<TalentItemInList>() ?? rt.gameObject.AddComponent<TalentItemInList>();
+                _pool.Add(rt);
                 _cells.Add(cell);
 
                 // одна подписка на клик на весь срок жизни объекта
@@ -119,6 +140,7 @@ namespace CharacterCreation
                     .Subscribe(name => ItemClicked.OnNext((cell.Index, name)))
                     .AddTo(rt.gameObject);
             }
+
             _initialized = true;
         }
 
@@ -126,12 +148,15 @@ namespace CharacterCreation
         {
             if (!_initialized) EnsureInitialized();
 
+            // Обновляем размер контента
             float contentHeight = paddingTop + paddingBottom + Mathf.Max(0, totalCount) * Stride - spacing;
             if (contentHeight < 0f) contentHeight = 0f;
 
             var size = _content.sizeDelta; size.y = contentHeight; _content.sizeDelta = size;
 
+            // Обновляем геометрию ячеек
             foreach (var rt in _pool) SetupItemRect(rt);
+
             if (forceRebuild) _firstVisible = -1;
 
             ClampContentPosition();
@@ -144,7 +169,11 @@ namespace CharacterCreation
 
             int newFirst = Mathf.FloorToInt((_content.anchoredPosition.y - paddingTop) / Stride);
             if (float.IsNaN(newFirst)) newFirst = 0;
-            newFirst = Mathf.Clamp(newFirst, 0, Mathf.Max(0, totalCount - 1));
+
+            // Разумные границы окна
+            int maxFirst = Mathf.Max(0, totalCount - 1);
+            newFirst = Mathf.Clamp(newFirst, 0, maxFirst);
+
             if (newFirst == _firstVisible) return;
             _firstVisible = newFirst;
 
@@ -163,12 +192,10 @@ namespace CharacterCreation
                 rt.gameObject.SetActive(true);
                 PositionItem(rt, dataIndex);
 
-                // ВАЖНО: СНАЧАЛА индекс (для корректного ItemClicked), затем Bind(...)
+                // Сначала индекс (для корректного ItemClicked), потом Bind
                 cell.Index = dataIndex;
 
-                // 3 варианта получения имени: OnBind (ручной), nameProvider (код), SetNames (список)
                 bool bound = false;
-
                 if (OnBind != null && OnBind.GetPersistentEventCount() > 0)
                 {
                     OnBind.Invoke(dataIndex, cell);
@@ -187,7 +214,7 @@ namespace CharacterCreation
 
                 if (!bound && !_warnedNoData)
                 {
-                    Debug.LogWarning("[VirtualListView] Нет данных для биндинга: используйте SetNames(...), nameProvider или подпишитесь на OnBind.");
+                    Debug.LogWarning("[VirtualListView] Нет данных: используйте SetNames(...), nameProvider или подпишитесь на OnBind.");
                     _warnedNoData = true;
                 }
             }
@@ -241,7 +268,7 @@ namespace CharacterCreation
                 rt.sizeDelta = oldSize;
             }
         }
-    }
 
+    }
 }
 
