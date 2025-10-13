@@ -41,3 +41,5 @@ MonoBehaviour:
     prefab: {fileID: 7441830914650178629, guid: 6772e53f99902394b8a704fe94ffaa2b, type: 3}
   - key: SetNameView
     prefab: {fileID: 431473851656781828, guid: 2fa0d7ce7b3deb44a9d46a6047e912b6, type: 3}
+  - key: LoadCharacterView
+    prefab: {fileID: 4334104747330049752, guid: 6c64a7eeccffedf4db50f47278fce003, type: 3}
