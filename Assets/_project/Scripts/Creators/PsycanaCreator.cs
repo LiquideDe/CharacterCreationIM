@@ -45,7 +45,7 @@ namespace CharacterCreation
         public bool isLesser;
         public int warpCharge;
         public int range;
-        public string testDifficulty;
+        public int testDifficulty;
         public string target;
         public string duration;
         public string specialization;

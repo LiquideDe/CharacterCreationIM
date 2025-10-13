@@ -16,8 +16,8 @@ namespace CharacterCreation
         public Characteristic(string name, int level)
         {
             Name = name;
-            Level = level;
             BaseLevel = level;
+            Level = level;
         }
 
         public void PlusLevel(int value)

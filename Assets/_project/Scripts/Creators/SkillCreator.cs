@@ -48,13 +48,11 @@ namespace CharacterCreation
 
         public List<string> GetSpecializations(string nameSkill)
         {
-            Debug.LogAssertion($"Ищим у когоо скилл = {nameSkill}");
             var list = new List<string>();
             foreach (var item in _specializations)            
                 if (string.Compare(nameSkill, item.skill) == 0)                
                     list.Add(item.name);
 
-            Debug.LogAssertion($"list.count = {list.Count}");
             return list;
         }
     }

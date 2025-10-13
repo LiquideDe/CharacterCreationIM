@@ -131,7 +131,7 @@ namespace CharacterCreation
     public class ArmorData : EquipmentData
     {
         public string type;
-        public new Dictionary<string, int> weight;
+        public int weightCarried;
         public List<string> protectionZones;
         public int armorPoints;
     }
