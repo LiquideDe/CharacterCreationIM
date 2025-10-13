@@ -14,12 +14,19 @@ namespace CharacterCreation
         private readonly List<IDisposable> _subscriptions = new();
 
         // События для внешней логики
-        public event Action CreatePlayerClicked;
-        public event Action CreatePatronClicked;
-        public event Action EditCharacterClicked;
-        public event Action DevelopCharacterClicked;
-        public event Action PrintCharacterClicked;
-        public event Action ExitClicked;
+        public Observable<Unit> CreatePlayerClicked => _createPlayer;
+        public Observable<Unit> CreatePatronClicked => _createPatron;
+        public Observable<Unit> EditCharacterClicked => _editCharacter;
+        public Observable<Unit> DevelopCharacterClicked => _developCharacter;
+        public Observable<Unit> PrintCharacterClicked => _printCharacter;
+        public Observable<Unit> ExitClicked => _exit;
+
+        private Subject<Unit> _createPlayer = new Subject<Unit>();
+        private Subject<Unit> _createPatron = new Subject<Unit>();
+        private Subject<Unit> _editCharacter = new Subject<Unit>();
+        private Subject<Unit> _developCharacter = new Subject<Unit>();
+        private Subject<Unit> _printCharacter = new Subject<Unit>();
+        private Subject<Unit> _exit = new Subject<Unit>();
 
         public MainMenuPresenter(MainMenuView view, AudioManager audioManager)
         {
@@ -39,37 +46,37 @@ namespace CharacterCreation
             _subscriptions.Add(_view.OnCreatePlayerClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                CreatePlayerClicked?.Invoke();
+                _createPlayer.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
             _subscriptions.Add(_view.OnCreatePatronClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                CreatePatronClicked?.Invoke();
+                _createPatron.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
             _subscriptions.Add(_view.OnEditCharacterClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                EditCharacterClicked?.Invoke();
+                _editCharacter.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
             _subscriptions.Add(_view.OnDevelopCharacterClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                DevelopCharacterClicked?.Invoke();
+                _developCharacter.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
             _subscriptions.Add(_view.OnPrintCharacterClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                PrintCharacterClicked?.Invoke();
+                _printCharacter.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
             _subscriptions.Add(_view.OnExitClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                ExitClicked?.Invoke();
+                _exit.OnNext(Unit.Default);
                 _view.HideAndDestroyToLeft();
             }));
         }

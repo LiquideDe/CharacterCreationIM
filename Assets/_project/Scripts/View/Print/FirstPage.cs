@@ -37,6 +37,7 @@ namespace CharacterCreation
         [SerializeField] private TextMeshProUGUI _corruption;
         [SerializeField] private TextMeshProUGUI _fatepoints;
         [SerializeField] private TextMeshProUGUI _mutations;
+        [SerializeField] private TextMeshProUGUI _money;
         [Inject] private SkillCreator _skillCreator;
 
         private Dictionary<string, CharacteristicPrint> _characteristicBaseDictionary = new Dictionary<string, CharacteristicPrint>();
@@ -161,6 +162,7 @@ namespace CharacterCreation
             _marks.text = _character.Omen.Value;
             _exp.text = _character.Experience.Value.experiencePoints.ToString();
             _expSpent.text = _character.Experience.Value.experienceSpent.ToString();
+            _money.text = $"Соляров: {_character.Money.Value}";
 
             _goals.text = $"Краткосрочные: {_character.ShortTarget.Value} \nДолгосрочные: {_character.LongTarget.Value}";
             _prophecy.text = _character.Prophecy.Value;
@@ -178,8 +180,8 @@ namespace CharacterCreation
             {
                 var characteristic = _nameToCharacterCharacteristicDict[item];
                 _characteristicBaseDictionary[item].Set(characteristic.BaseLevel.ToString());
+                _characteristicTotalDictionary[item].Set((characteristic.Level).ToString());
                 _characteristicUpgradesDictionary[item].Set((characteristic.Level - characteristic.BaseLevel).ToString());
-                _characteristicBaseDictionary[item].Set(characteristic.Level.ToString());
             }                 
         }
 

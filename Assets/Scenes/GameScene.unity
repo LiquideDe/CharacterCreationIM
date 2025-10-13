@@ -702,6 +702,8 @@ MonoBehaviour:
   newSpecializationPanelPrefab: {fileID: 1749562382450004211, guid: c1c40980d9692ba4ab83c98e67fee929, type: 3}
   firstPagePrefab: {fileID: 89477606331616650, guid: 2e8487f00e91a5742acd36ce006feb80, type: 3}
   secondPagePrefab: {fileID: 4436996793424571268, guid: b7acfbcfad078f049892254675c0e4ac, type: 3}
+  thirdPagePrefab: {fileID: 228000130255433520, guid: ccd13c53b15f88a428b6f371ca51deee, type: 3}
+  buttonInListPrefab: {fileID: 6390344414324461004, guid: 752f6391d2135374d85f8d9996a42cba, type: 3}
 --- !u!114 &1205669460
 MonoBehaviour:
   m_ObjectHideFlags: 0

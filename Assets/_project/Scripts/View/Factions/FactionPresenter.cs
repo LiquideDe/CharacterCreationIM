@@ -148,7 +148,7 @@ namespace CharacterCreation.Background
         private void ShowFaction(bool canChangeFaction = true)
         {
             _view.SetSheet(_currentFaction.serviceName, _currentFaction.description, canChangeFaction);
-            _view.SetText("Бонусы:");
+            _view.SetText("Бонусы:", false);
             _view.SetGaranted(_currentFaction.fixed_bonus, "Характеристики:");
             _view.SetChoose(_currentFaction.selectable_bonuses, 1);
             _view.SetSkills(_currentFaction.skill_upgrades, 2);
@@ -164,17 +164,17 @@ namespace CharacterCreation.Background
                     }
 
             if (_currentFaction.influence_bonus.amount != 0)
-                _view.SetText($"Вы получаете +{_currentFaction.influence_bonus.amount} к {_currentFaction.influence_bonus.faction}");
+                _view.SetText($"Вы получаете +{_currentFaction.influence_bonus.amount} к {_currentFaction.influence_bonus.faction}", false);
 
             if (_currentFaction.gear.items.Count > 0)
             {
-                _view.SetText($"Вы получаете следующую экипировку:");
+                _view.SetText($"Вы получаете следующую экипировку:", false);
 
                 foreach (var item in _currentFaction.gear.items)
-                    _view.SetText(item);
+                    _view.SetText(item, true);
 
                 if (_currentFaction.gear.money > 0)
-                    _view.SetText($"Вы получаете {_currentFaction.gear.money} соляров");
+                    _view.SetText($"Вы получаете {_currentFaction.gear.money} соляров", false);
             }
 
             if (_currentFaction.gear.choice != null && _currentFaction.gear.choice.Count > 0)            
@@ -191,24 +191,24 @@ namespace CharacterCreation.Background
         private void ShowTemplate()
         {
             _view.SetSheet(_currentTemplate.templateName, _currentTemplate.description, true);
-            _view.SetText("Бонусы:");
+            _view.SetText("Бонусы:", false);
             _view.SetGaranted(_currentTemplate.fixed_bonus, "Характеристики");
-            _view.SetText("Навыки:");
+            _view.SetText("Навыки:", false);
             _view.SetGaranted(_currentTemplate.skill_upgrades.upgrades, "");
 
             if (_currentTemplate.talents != null && _currentTemplate.talents.Count > 0)
                 _view.SetList(_currentTemplate.talents[0].talents, "Таланты:", 1);
             if (_currentTemplate.influence_bonus.amount != 0)
-                _view.SetText($"Вы получаете +{_currentTemplate.influence_bonus.amount} к {_currentTemplate.influence_bonus.faction}");
+                _view.SetText($"Вы получаете +{_currentTemplate.influence_bonus.amount} к {_currentTemplate.influence_bonus.faction}", false);
             if (_currentTemplate.gear.items.Count > 0)
             {
-                _view.SetText($"Вы получаете следующую экипировку:");
+                _view.SetText($"Вы получаете следующую экипировку:", false);
 
                 foreach (var item in _currentTemplate.gear.items)
-                    _view.SetText(item);
+                    _view.SetText(item, true);
 
                 if (_currentTemplate.gear.money > 0)
-                    _view.SetText($"Вы получаете {_currentTemplate.gear.money} соляров");
+                    _view.SetText($"Вы получаете {_currentTemplate.gear.money} соляров", false);
             }
 
             if (_currentTemplate.implants != null)

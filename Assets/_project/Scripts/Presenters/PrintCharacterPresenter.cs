@@ -9,6 +9,7 @@ namespace CharacterCreation
     {
         [Inject] private IFactory<FirstPage> _firstFactory;
         [Inject] private IFactory<SecondPage> _secondFactory;
+        [Inject] private IFactory<ThirdPage> _thirdFactory;
         private Subject<Unit> _workIsFinished = new Subject<Unit>();
         public Observable<Unit> WorkIsFinished => _workIsFinished;
         private Character _character;
@@ -29,13 +30,17 @@ namespace CharacterCreation
         {
             var view = _firstFactory.Create();
             view.WorkIsFinished.Subscribe(_ => TakesScreenShotSecond()).AddTo(_cd);
-            view.SetCharacter(_character);
+            try { view.SetCharacter(_character); }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         private void TakesScreenShotSecond()
         {
             var view = _secondFactory.Create();
-            view.WorkIsFinished.Subscribe(_ => EndSavePicture()).AddTo(_cd);
+            view.WorkIsFinished.Subscribe(_ => TakeScreenshotThird()).AddTo(_cd);
             try { view.SetCharacter(_character); }
             catch(Exception ex)
             {
@@ -43,9 +48,20 @@ namespace CharacterCreation
             }
         }
 
+        private void TakeScreenshotThird()
+        {
+            var view = _thirdFactory.Create();
+            view.WorkIsFinished.Subscribe(_ => EndSavePicture()).AddTo(_cd);
+            try { view.SetCharacter(_character); }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+
         private void EndSavePicture()
         {
-            //_character.Release();
+            _character.Release();
             _workIsFinished.OnNext(Unit.Default);
         }
     }

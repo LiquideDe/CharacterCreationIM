@@ -15,6 +15,7 @@ namespace CharacterCreation
         public static string ToJson(Character c)
         {
             var dto = CharacterMapper.ToDto(c);
+            EnsureCollections(dto); // на всякий — перед сериализацией
             return JsonConvert.SerializeObject(dto, Settings);
         }
 
@@ -25,7 +26,9 @@ namespace CharacterCreation
 
         public static CharacterDto LoadDtoFromJson(string json)
         {
-            return JsonConvert.DeserializeObject<CharacterDto>(json, Settings);
+            var dto = JsonConvert.DeserializeObject<CharacterDto>(json, Settings);
+            EnsureCollections(dto); // после десериализации «подлечим» null → []
+            return dto;
         }
 
         public static CharacterDto LoadDtoFromFile(string path)
@@ -38,6 +41,21 @@ namespace CharacterCreation
         {
             var dto = LoadDtoFromJson(json);
             CharacterMapper.ApplyDto(c, dto);
+        }
+
+        public static void EnsureCollections(CharacterDto d)
+        {
+            if (d == null) return;
+            d.Characteristics ??= new();
+            d.Equipments ??= new();
+            d.PsyPowers ??= new();
+            d.Skills ??= new();
+            d.Specializations ??= new();
+            d.Talents ??= new();
+            d.Augmetics ??= new();
+            d.Mutations ??= new();
+            d.Contacts ??= new();
+            d.Influence ??= new();
         }
     }
 }

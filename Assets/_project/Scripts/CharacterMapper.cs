@@ -8,6 +8,9 @@ namespace CharacterCreation
 {
     public static class CharacterMapper
     {
+        static List<T> CopyOrEmpty<T>(IEnumerable<T> src) => src != null ? new List<T>(src) : new List<T>();
+        static Dictionary<TKey, TVal> CopyOrEmpty<TKey, TVal>(IDictionary<TKey, TVal> src)
+            => src != null ? new Dictionary<TKey, TVal>(src) : new Dictionary<TKey, TVal>();
         public static CharacterDto ToDto(Character c)
         {
             return new CharacterDto
@@ -15,16 +18,16 @@ namespace CharacterCreation
                 Name = c.Name.Value,
                 Experience = c.Experience.Value,
 
-                Characteristics = c.Characteristics.ToList(),
-                Equipments = c.Equipments.ToList(),
-                PsyPowers = c.PsyPowers.ToList(),
-                Skills = c.Skills.ToList(),
-                Specializations = c.Specializations.ToList(),
-                Talents = c.Talents.ToList(),
-                Augmetics = c.Augmetics.ToList(),
-                Mutations = c.Mutations.ToList(),
-                Contacts = c.Contacts.ToList(),
-                Influence = new Dictionary<string, int>(c.Influence),
+                Characteristics = CopyOrEmpty(c.Characteristics),
+                Equipments = CopyOrEmpty(c.Equipments),
+                PsyPowers = CopyOrEmpty(c.PsyPowers),
+                Skills = CopyOrEmpty(c.Skills),
+                Specializations = CopyOrEmpty(c.Specializations),
+                Talents = CopyOrEmpty(c.Talents),
+                Augmetics = CopyOrEmpty(c.Augmetics),
+                Mutations = CopyOrEmpty(c.Mutations),
+                Contacts = CopyOrEmpty(c.Contacts),
+                Influence = CopyOrEmpty(c.Influence),
 
                 Money = c.Money.Value,
 
@@ -53,6 +56,8 @@ namespace CharacterCreation
 
         public static void ApplyDto(Character c, CharacterDto d)
         {
+            Debug.LogAssertion($"CharacterDto d ==null = {d == null}");
+            Debug.LogAssertion($"ApplyDto d = {d.Name}");
             c.Name.Value = d.Name;
             c.Experience.Value = d.Experience;
 
@@ -96,8 +101,9 @@ namespace CharacterCreation
 
         private static void Replace<T>(ObservableList<T> target, List<T> src)
         {
-                target.Clear();
-                if (src != null) target.AddRange(src);            
+            target.Clear();
+            if (src != null && src.Count > 0)
+                target.AddRange(src);
         }
     }
 }

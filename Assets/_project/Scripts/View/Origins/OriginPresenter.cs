@@ -103,12 +103,12 @@ namespace CharacterCreation
         private void SetOrigin(bool canChange = true)
         {            
             _view.SetSheet(_currentOrigin.name, _currentOrigin.description, canChange);
-            _view.SetText("Бонусы:");
+            _view.SetText("Бонусы:", false);
             _view.SetGaranted(_currentOrigin.fixed_bonus, "Характеристики:");
             _view.SetChoose(_currentOrigin.selectable_bonuses, 1);
-            _view.SetText("Вы получаете следующее снаряжение:");
+            _view.SetText("Вы получаете следующее снаряжение:", false);
             foreach (var item in _currentOrigin.items)            
-                _view.SetText(item);
+                _view.SetText(item, true);
             
         }
 

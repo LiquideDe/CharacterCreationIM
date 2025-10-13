@@ -48,6 +48,7 @@ namespace CharacterCreation
             
 
             _view.SetSkills(_skillDatas);
+            _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 
         private void InitialSpecializations()
@@ -67,6 +68,7 @@ namespace CharacterCreation
 
         private void SetSpecializations(string nameSkill)
         {
+            _audioManager.PlayClick();
             var skill = _skillDatas.Where(skill => skill.name == nameSkill).First();
             if (skill != null)
                 SetSpecializations(skill);

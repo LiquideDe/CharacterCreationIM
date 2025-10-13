@@ -23,6 +23,8 @@ namespace CharacterCreation
         [SerializeField] private NewSpecializationPanel newSpecializationPanelPrefab;
         [SerializeField] private FirstPage firstPagePrefab;
         [SerializeField] private SecondPage secondPagePrefab;
+        [SerializeField] private ThirdPage thirdPagePrefab;
+        [SerializeField] private ButtonInList buttonInListPrefab;
 
         public override void InstallBindings()
         {
@@ -44,6 +46,8 @@ namespace CharacterCreation
             Container.BindIFactory<NewSpecializationPanel>().FromComponentInNewPrefab(newSpecializationPanelPrefab);
             Container.BindIFactory<FirstPage>().FromComponentInNewPrefab(firstPagePrefab);
             Container.BindIFactory<SecondPage>().FromComponentInNewPrefab(secondPagePrefab);
+            Container.BindIFactory<ThirdPage>().FromComponentInNewPrefab(thirdPagePrefab);
+            Container.BindIFactory<ButtonInList>().FromComponentInNewPrefab(buttonInListPrefab);
         }
     }
 }

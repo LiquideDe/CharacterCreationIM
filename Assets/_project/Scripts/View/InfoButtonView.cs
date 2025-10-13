@@ -41,15 +41,22 @@ namespace CharacterCreation
             if (_finderData.TryGet(nameSheet, out TalentData talentData)) 
                 _infoText += $"{nameSheet} - {talentData.description}\n\n";
 
-            else if (_finderData.TryGet(nameSheet, out EquipmentData equipmentData))
-                ParseEquipment(equipmentData);
+           // else if (_finderData.TryGet(nameSheet, out EquipmentData equipmentData))
+            //    ParseEquipment(equipmentData);
 
             else if (_finderData.TryGet(nameSheet, out AugmeticData augmeticData))
                 _infoText += $"{nameSheet} - {augmeticData.description}\n\n";
+
             else
             {
-                //Debug.LogAssertion($"Не нашли {nameSheet}");
-                gameObject.SetActive(false);
+                EquipmentData equipmentData = _equipmentParser.TryGetEquipment(nameSheet);
+                if (equipmentData != null)
+                    ParseEquipment(equipmentData);
+                else
+                {
+                    Debug.LogAssertion($"Не нашли {nameSheet}");
+                    gameObject.SetActive(false);
+                }                
             }
                 
         }

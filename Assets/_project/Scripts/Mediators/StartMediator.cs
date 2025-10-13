@@ -1,33 +1,44 @@
 using CharacterCreation;
+using R3;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace CharacterCreation
 {
-    public class StartMediator
+    public class StartMediator : IDisposable, IInitializable
     {
         private PresenterViewFactory _factory;
         private MainMenuPresenter _mainMenuPresenter;
         private NewPlayerMediator _newPlayerMediator;
+        private UpgradeMediator _upgradeMediator;
+        private CompositeDisposable _cd = new CompositeDisposable();
+        private CompositeDisposable _ppcd = new CompositeDisposable();
+        [Inject] private PrintCharacterPresenter _printPresenter;
 
-        public StartMediator(PresenterViewFactory factory, NewPlayerMediator newPlayerMediator)
+        public StartMediator(PresenterViewFactory factory, NewPlayerMediator newPlayerMediator
+        , UpgradeMediator upgradeMediator)
         {
             _factory = factory;
             _newPlayerMediator = newPlayerMediator;
+            _upgradeMediator = upgradeMediator;
         }
 
         public void ShowMainMenu()
         {
+            _cd = new CompositeDisposable();
             _mainMenuPresenter = (MainMenuPresenter)_factory.Create<MainMenuView>();
             if (_mainMenuPresenter != null)
             {
-                _mainMenuPresenter.CreatePlayerClicked += OnCreatePlayerClicked;
-                _mainMenuPresenter.CreatePatronClicked += OnCreatePatronClicked;
-                _mainMenuPresenter.EditCharacterClicked += OnEditCharacterClicked;
-                _mainMenuPresenter.DevelopCharacterClicked += OnDevelopCharacterClicked;
-                _mainMenuPresenter.PrintCharacterClicked += OnPrintCharacterClicked;
-                _mainMenuPresenter.ExitClicked += OnExitClicked;
+                _cd.Clear();
+                _mainMenuPresenter.CreatePlayerClicked.Subscribe(_ => OnCreatePlayerClicked()).AddTo(_cd);
+                _mainMenuPresenter.CreatePatronClicked.Subscribe(_ => OnCreatePatronClicked()).AddTo(_cd);
+                _mainMenuPresenter.EditCharacterClicked.Subscribe(_ => OnEditCharacterClicked()).AddTo(_cd);
+                _mainMenuPresenter.DevelopCharacterClicked.Subscribe(_ => OnUpgradeCharacterClicked()).AddTo(_cd);
+                _mainMenuPresenter.PrintCharacterClicked.Subscribe(_ => OnPrintCharacterClicked()).AddTo(_cd);
+                _mainMenuPresenter.ExitClicked.Subscribe(_ => OnExitClicked()).AddTo(_cd);
             }
             else
             {
@@ -35,50 +46,54 @@ namespace CharacterCreation
             }
         }
 
-        private void UnsubscribeMainMenuPresenter()
-        {
-            if (_mainMenuPresenter != null)
-            {
-                _mainMenuPresenter.CreatePlayerClicked -= OnCreatePlayerClicked;
-                _mainMenuPresenter.CreatePatronClicked -= OnCreatePatronClicked;
-                _mainMenuPresenter.EditCharacterClicked -= OnEditCharacterClicked;
-                _mainMenuPresenter.DevelopCharacterClicked -= OnDevelopCharacterClicked;
-                _mainMenuPresenter.PrintCharacterClicked -= OnPrintCharacterClicked;
-                _mainMenuPresenter.ExitClicked -= OnExitClicked;
-                _mainMenuPresenter.Dispose();
-                _mainMenuPresenter = null;
-            }
-        }
-
         private void OnCreatePlayerClicked()
         {
-            UnsubscribeMainMenuPresenter();
+            _newPlayerMediator.NewPlayerIsDone.Take(1).Subscribe(_ => ShowMainMenu());
             _newPlayerMediator.ShowNewCharacteristic();
         }
 
         private void OnCreatePatronClicked()
         {
-            UnsubscribeMainMenuPresenter();
+
         }
 
         private void OnEditCharacterClicked()
         {
-            UnsubscribeMainMenuPresenter();
+
         }
 
-        private void OnDevelopCharacterClicked()
+        private void OnUpgradeCharacterClicked()
         {
-            UnsubscribeMainMenuPresenter();
+            _upgradeMediator.CharacterUpgraded.Take(1).Subscribe(_ => ShowMainMenu());
+            _upgradeMediator.ShowLoads();
         }
 
         private void OnPrintCharacterClicked()
         {
-            UnsubscribeMainMenuPresenter();
+            ShowLoads();
         }
 
         private void OnExitClicked()
         {
-            UnsubscribeMainMenuPresenter();
+
+        }
+
+        private void ShowLoads()
+        {
+            LoadCharacterPresenter presenter = (LoadCharacterPresenter)_factory.Create<LoadCharacterView>();
+            presenter.LoadedCharacter.Subscribe(character => { _printPresenter.PrintCharacter(character); }).AddTo(_cd);
+            presenter.ShowSaves();
+        }
+
+        public void Dispose()
+        {
+            _cd.Dispose();
+            _ppcd.Dispose();
+        }
+
+        public void Initialize()
+        {
+            _printPresenter.WorkIsFinished.Subscribe(_ => ShowMainMenu()).AddTo(_ppcd);
         }
     }
 }

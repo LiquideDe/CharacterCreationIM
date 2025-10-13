@@ -11,16 +11,16 @@ namespace CharacterCreation
         public string Name;
         public Experience Experience;
 
-        public List<Characteristic> Characteristics;
-        public List<EquipmentData> Equipments;
-        public List<PsyData> PsyPowers;
-        public List<SkillData> Skills;
-        public List<SpecializationData> Specializations;
-        public List<TalentData> Talents;
-        public List<AugmeticData> Augmetics;
-        public List<Mutation> Mutations;
-        public List<string> Contacts;
-        public Dictionary<string, int> Influence;
+        public List<Characteristic> Characteristics { get; set; }
+        public List<EquipmentData> Equipments { get; set; }
+        public List<PsyData> PsyPowers { get; set; }
+        public List<SkillData> Skills { get; set; }
+        public List<SpecializationData> Specializations { get; set; }
+        public List<TalentData> Talents { get; set; }
+        public List<AugmeticData> Augmetics { get; set; }
+        public List<Mutation> Mutations { get; set; }
+        public List<string> Contacts { get; set; }
+        public Dictionary<string, int> Influence { get; set; }
 
         public int Money;
 
@@ -46,6 +46,20 @@ namespace CharacterCreation
         public int Weight;
         public int FatePoints;
         public int CorruptionPoints;
+
+        public CharacterDto()
+        {
+            Characteristics = new();
+            Equipments = new();
+            PsyPowers = new();
+            Skills = new();
+            Specializations = new();
+            Talents = new();
+            Augmetics = new();
+            Mutations = new();
+            Contacts = new();
+            Influence = new();
+        }
     }
 }
 

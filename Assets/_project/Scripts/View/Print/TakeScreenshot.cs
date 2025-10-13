@@ -97,9 +97,9 @@ namespace CharacterCreation
             UnityEngine.Graphics.Blit(savedImages[3], renderTexture);
             finalTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
 
-            if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/CharacterSheets/{_character.Name.Value}"))
-                Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/CharacterSheets/{_character.Name.Value}");
-            File.WriteAllBytes($"{Application.dataPath}/StreamingAssets/CharacterSheets/{_character.Name.Value}/CharacterSheet{_pageName}.png", finalTexture.EncodeToPNG());
+            if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))
+                Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}");
+            File.WriteAllBytes($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}/CharacterSheet{_pageName}.png", finalTexture.EncodeToPNG());
 
             if (_isManyPages == false)
             {

@@ -81,7 +81,6 @@ namespace CharacterCreation
                 foreach (var a in armors)
                 {
                     if (a?.protectionZones == null) continue;
-
                     foreach (var token in a.protectionZones)
                     {
                         foreach (var z in MapZones(token))

@@ -14,6 +14,8 @@ namespace CharacterCreation
         [SerializeField] private TextMeshProUGUI _textNamePsy;
         [SerializeField] private TextMeshProUGUI _textNameSchool;
         [SerializeField] private TextMeshProUGUI _textDescriptionPsy;
+        [SerializeField] private TextMeshProUGUI _textFreeSmall;
+        [SerializeField] private TextMeshProUGUI _textFree;
         [SerializeField] private VirtualListView _virtualListView;
         [SerializeField] private Button _cancelButton;
         [SerializeField] private Button _nextButton;
@@ -23,6 +25,7 @@ namespace CharacterCreation
         [SerializeField] private Button _buyButton;
 
         private CompositeDisposable _cd = new CompositeDisposable();
+        private CompositeDisposable _psyDisposables = new CompositeDisposable();
         private Subject<string> _showPsyClick = new Subject<string>();
         public Observable<string> ShowPsyClicked => _showPsyClick;
         public Observable<Unit> OnButtonBuyClick => _buyButton.OnClickAsObservable();
@@ -41,12 +44,27 @@ namespace CharacterCreation
 
         public void SetPsyPowers(List<string> names, string nameSchool)
         {
+            _psyDisposables.Clear();
             _virtualListView.SetNames(names);
             _virtualListView.ItemClicked
             .Subscribe(t => _showPsyClick.OnNext(t.name))
-            .AddTo(gameObject);
+            .AddTo(_psyDisposables);
 
             _textNameSchool.text = nameSchool;
+        }
+
+        public void SetFree(Character character)
+        {
+            _textFreeSmall.text = $"Бесплатные малые силы: {character.FreeSmallPsyPower.Value}";
+            _textFree.text = $"Бесплатные пси-силы: {character.FreePsyPower.Value}";
+
+            character.FreeSmallPsyPower
+                .Subscribe(v => _textFreeSmall.text = $"Бесплатные малые силы: {v}")
+                .AddTo(_cd);
+
+            character.FreePsyPower
+                .Subscribe(v => _textFree.text = $"Бесплатные пси-силы: {v}")
+                .AddTo(_cd);
         }
 
         public void ShowPsy(PsyData psy)
@@ -75,6 +93,7 @@ namespace CharacterCreation
         {
             _textExperience.text = $"Опыт: {experiencePoints}";
         }
+        
     }
 }
 

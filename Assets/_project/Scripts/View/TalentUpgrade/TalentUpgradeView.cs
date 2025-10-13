@@ -21,6 +21,7 @@ namespace CharacterCreation
         [SerializeField] private Button _buyButton;
         [SerializeField] private Toggle _toggleAvailable;
         private CompositeDisposable _cd = new CompositeDisposable();
+        private CompositeDisposable _listDisposables = new CompositeDisposable();
         private Subject<string> _showTalentClick = new Subject<string> ();
         public Observable<string> ShowTalentClicked => _showTalentClick;
         public Observable<bool> ToggleShowAvailableClicked => _toggleAvailable.OnValueChangedAsObservable();
@@ -38,10 +39,11 @@ namespace CharacterCreation
 
         public void SetTalents(List<string> names)
         {
+            _listDisposables?.Clear();
             _virtualListView.SetNames(names);
             _virtualListView.ItemClicked
             .Subscribe(t => _showTalentClick.OnNext(t.name))
-            .AddTo(gameObject);
+            .AddTo(_listDisposables);
         }
 
         public void ShowTalent(TalentData talent, bool isAvailable)

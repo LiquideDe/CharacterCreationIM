@@ -72,7 +72,7 @@ namespace CharacterCreation
         public void SetGaranted(Dictionary<string, int> dictionary, string text)
         {
             if(text.Length > 0)
-                CreateText(text);
+                CreateText(text, false);
             foreach (var item in dictionary)
             {
                 var garanted = _factoryGaranted.Create();
@@ -148,9 +148,9 @@ namespace CharacterCreation
             CreateTalentInList(group, talent);
         }
 
-        public void SetText(string text)
+        public void SetText(string text, bool isEquip)
         {
-            CreateText(text);
+            CreateText(text, isEquip);
         }
 
         public virtual void SetSheet(string name, string decription, bool canChange = true)
@@ -207,11 +207,11 @@ namespace CharacterCreation
             }
         }
 
-        private void CreateText(string text)
+        private void CreateText(string text, bool isEquip)
         {
             var textEquip = _factoryText.Create();
             textEquip.transform.SetParent(_contentList, worldPositionStays: false);
-            textEquip.SetText(text);
+            textEquip.SetText(isEquip, text);
             _texts.Add(textEquip);
         }
 

@@ -14,6 +14,10 @@ namespace CharacterCreation
         private IDisposable _prevClicked;
         private Character _character;
         private PrintCharacterPresenter _printCharacter;
+        private Subject<Unit> _newPlayerDone = new Subject<Unit>();
+        public Observable<Unit> NewPlayerIsDone => _newPlayerDone;
+
+
         public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
         {
             _factory = factory;
@@ -146,9 +150,12 @@ namespace CharacterCreation
         private void Print(Character character)
         {
             _character = character;
-            var path = Path.Combine(Application.streamingAssetsPath, $"Characters/{character.Name}.json");
+            if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))
+                Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}");
+            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{character.Name.Value}/{character.Name.Value}.json");
             CharacterStorage.SaveToFile(_character, path);
             Reset();
+            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ => _newPlayerDone.OnNext(Unit.Default));
             _printCharacter.PrintCharacter(character);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace CharacterCreation
 {
@@ -21,6 +22,7 @@ namespace CharacterCreation
         [SerializeField] private ZonesPrint _zonesPrints;
         [SerializeField] private List<TextMeshProUGUI> _equipments;
         [SerializeField] private List<PsyPowerPrint> _psyPowerPrints;
+        [Inject] private SkillCreator _skillCreator;
 
         private Dictionary<string, Characteristic> _nameToCharacterCharacteristicDict = new Dictionary<string, Characteristic>();
         private Dictionary<string, SkillData> _nameToCharacterSkillDict = new Dictionary<string, SkillData>();
@@ -73,8 +75,10 @@ namespace CharacterCreation
                 _textReflex.text = _nameToCharacterCharacteristicDict["Ловкость"].Level.ToString();
             }
 
-            _textWeightMax.text = (_nameToCharacterCharacteristicDict["Сила"].Level/10 + _nameToCharacterCharacteristicDict["Выносливость"].Level/10).ToString();
-            _textWeight.text = CalculateWeight().ToString();
+            int bonusWeight = 0;
+            _textWeight.text = CalculateWeight(out bonusWeight).ToString();
+            _textWeightMax.text = (_nameToCharacterCharacteristicDict["Сила"].Level/10 + _nameToCharacterCharacteristicDict["Выносливость"].Level/10 + bonusWeight).ToString() ;
+            
 
             if (_character.IsPsyker)
             {
@@ -87,12 +91,16 @@ namespace CharacterCreation
             }
         }
 
-        private int CalculateWeight()
+        private int CalculateWeight(out int weight)
         {
             int countZero = 0;
             int countTotalWeight = 0;
+            weight = 0;
             foreach (var item in _character.Equipments)
             {
+                if(item == null)
+                    continue;
+
                 if(item.weight == 0)
                     countZero++;
 
@@ -103,22 +111,26 @@ namespace CharacterCreation
                 }
 
                 countTotalWeight += item.weight;
+                if(item.maxWeight > 0)
+                    weight = item.maxWeight;
             }
 
-            return countZero;
+            return countTotalWeight;
         }
 
         private void FillWeapons()
         {
             var list = _character.Equipments.Where(e => e != null && e.GetType() == typeof(MeleeWeaponData)).Cast<MeleeWeaponData>().ToList();
             int index = 0;
+            
             foreach (var weaponPanel in _weaponPrints) 
             {
                 if (index >= list.Count)
                     break;
                 if (weaponPanel.IsEmpty)
                 {
-                    weaponPanel.SetWeapon(list[index], CalculateTotalWeapon(list[index], "Ближний бой"));
+                    string nameCharacteristic = _skillCreator.SkillByName(list[index].specialization.skill).characteristic;
+                    weaponPanel.SetWeapon(list[index], CalculateTotalWeapon(list[index], nameCharacteristic));
                     index++;
                 }                    
             }
@@ -131,7 +143,8 @@ namespace CharacterCreation
                     break;
                 if (weaponPanel.IsEmpty)
                 {
-                    weaponPanel.SetWeapon(rangedList[index], CalculateTotalWeapon(rangedList[index], "Дальний бой"));
+                    string nameCharacteristic = _skillCreator.SkillByName(rangedList[index].specialization.skill).characteristic;
+                    weaponPanel.SetWeapon(rangedList[index], CalculateTotalWeapon(rangedList[index], nameCharacteristic));
                     index++;
                 }                    
             }
@@ -140,12 +153,17 @@ namespace CharacterCreation
         private int CalculateTotalWeapon(MeleeWeaponData meleeWeaponData, string characteristicName)
         {
             _nameToCharacterSpecDict.TryGetValue(meleeWeaponData.specialization.specialization, out SpecializationData specialization);
-            _nameToCharacterSkillDict.TryGetValue(meleeWeaponData.specialization.specialization, out SkillData skill);
+            _nameToCharacterSkillDict.TryGetValue(meleeWeaponData.specialization.skill, out SkillData skill);
             int totalCount = _nameToCharacterCharacteristicDict[characteristicName].Level;
             if (specialization != null)
+            {
                 totalCount += specialization.level * 5;
+            }
+                
             if(skill != null)
+            {
                 totalCount += skill.level * 5;
+            }
             return totalCount;
         }
 
@@ -189,7 +207,7 @@ namespace CharacterCreation
                     break;
 
                 var psyPower = _character.PsyPowers[index];
-                item.SetPsyPower(psyPower, CalculateForcePsyPower(psyPower.specialization));
+                item.SetPsyPower(psyPower, CalculateForcePsyPower(psyPower.specialization) + psyPower.testDifficulty);
                 index++;
             }
         }

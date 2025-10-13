@@ -99,9 +99,17 @@ namespace CharacterCreation
         public void SetCharacter(Character character)
         {
             _character = character;
+            if(IsCharacterHasNotPsyPower("Психический удар"))
+            {
+                var psyPower = _psyCreator.PsyPowerByName("Психический удар");
+                _character.PsyPowers.Add(psyPower);
+            }
             SetPsyPowers();
             _currentPsyIdSchool = 0;
             ConvertPsyToStringAndShow();
+            _view.SetFree(character);
+            _view.SetExperience(character.Experience.Value.experiencePoints);
+            
         }
 
         private void SetPsyPowers()
@@ -124,7 +132,7 @@ namespace CharacterCreation
             var list = _psyCreator.PsyPowers.Where(psy => string.Compare(psy.specialization, school, true) == 0);
             foreach (var psyData in list)
             {
-                if (IsCharacterHasNotPsyPower(psyData.name))
+                if (IsCharacterHasNotPsyPower(psyData.name) && (IsCharacterHasSpecialization(school) || psyData.isLesser))
                 {
                     psyDatas.Add(new PsyData()
                     {
@@ -145,11 +153,20 @@ namespace CharacterCreation
 
         private bool IsCharacterHasNotPsyPower(string name)
         {
-            foreach (var item in _character.PsyPowers)            
-                if(string.Compare(name, item.name, true) == 0)
+            foreach (var item in _character.PsyPowers)
+                if (string.Compare(name, item.name, true) == 0)
                     return false;
-            
+
             return true;
+        }
+        
+        private bool IsCharacterHasSpecialization(string name)
+        {
+            foreach (var item in _character.Specializations)            
+                if (string.Compare(item.name, name, true) == 0 && item.level > 0)
+                    return true;            
+
+            return false;
         }
 
         private void NextSchool(int delta = 0)
@@ -212,6 +229,7 @@ namespace CharacterCreation
                 _prevXP = _character.Experience.Value.experiencePoints;
                 _prevExpSpent = _character.Experience.Value.experienceSpent;
                 _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
+                _prevFreePoints = _character.FreePsyPower.Value;
                 _character.FreeSmallPsyPower.Value -= 1;
                 _character.PsyPowers.Add(_psy);
             }
@@ -220,6 +238,7 @@ namespace CharacterCreation
                 _prevXP = _character.Experience.Value.experiencePoints;
                 _prevExpSpent = _character.Experience.Value.experienceSpent;
                 _prevFreePoints = _character.FreePsyPower.Value;
+                _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
                 _character.FreePsyPower.Value -= 1;
                 _character.PsyPowers.Add(_psy);
             }
@@ -227,6 +246,8 @@ namespace CharacterCreation
             {
                 _prevXP = _character.Experience.Value.experiencePoints;
                 _prevExpSpent = _character.Experience.Value.experienceSpent;
+                _prevFreePoints = _character.FreePsyPower.Value;
+                _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
                 _character.Experience.Value.experiencePoints -= _xpCost;
                 _character.Experience.Value.experienceSpent += _xpCost;
                 _character.PsyPowers.Add(_psy);

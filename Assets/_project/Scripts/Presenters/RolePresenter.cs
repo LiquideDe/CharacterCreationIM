@@ -113,9 +113,9 @@ namespace CharacterCreation.Background
             bool isMystic = string.Compare(_currentRole.roleName, "Мистик", true) == 0;
 
             _view.SetSheet(_currentRole.roleName, _currentRole.description);
-            _view.SetText("Бонусы:");
+            _view.SetText("Бонусы:", false);
             if(isMystic)            
-                _view.SetText("Вы получаете талант Псайкер, если ещё не имели его. Если у вас уже был талант Псайкер, вы получаете одну малую психосилу, а также одну психосилу из известной вам дисциплины");
+                _view.SetText("Вы получаете талант Псайкер, если ещё не имели его. Если у вас уже был талант Псайкер, вы получаете одну малую психосилу, а также одну психосилу из известной вам дисциплины", false);
             
             _view.SetList(_currentRole.talents, $"Выберите {_currentRole.amountTalents} таланта:", _currentRole.amountTalents);
             _view.SetSkills(_currentRole.skill_upgrades, 2);
@@ -129,7 +129,15 @@ namespace CharacterCreation.Background
                     listSpecializations.Add(item);
             }
 
-                _view.SetSpecializations(listSpecializations, _currentRole.specializationAmount, 1);
+            foreach (var item in _currentRole.equipments)
+            {
+                if (item.Count > 1)
+                    _view.SetList(item, "Выберите следующую экипировку:", 1);
+                else
+                    _view.SetText(item[0], true);
+            }
+
+            _view.SetSpecializations(listSpecializations, _currentRole.specializationAmount, 1);
         }
 
         private void SetRoleAndGoNext()
@@ -156,15 +164,30 @@ namespace CharacterCreation.Background
                 foreach (var skill in skills)
                     if (skill.Level > 0)
                     {
-                        var skillPrefab = _skillCreator.SkillByName(skill.NameSkill);
-                        if(skillPrefab != null)
+                        SkillData skillPrefab = null;
+                        bool isCharacterSkill = false;
+                        foreach (var item in _character.Skills)                        
+                            if(string.Compare(item.name, skill.NameSkill) == 0)
+                            {
+                                skillPrefab = item;
+                                isCharacterSkill = true;
+                                skillPrefab.level += skill.Level;
+                                break;
+                            } 
+
+                        if(skillPrefab == null)
+                            skillPrefab = _skillCreator.SkillByName(skill.NameSkill);
+
+                        if(skillPrefab != null && isCharacterSkill == false)
+                        {
                             _character.Skills.Add(new SkillData()
                             {
                                 name = skillPrefab.name,
                                 characteristic = skillPrefab.characteristic,
                                 level = skill.Level
                             });
-                        else
+                        }                            
+                        else if(!isCharacterSkill)
                         {
                             var specializationPrefab = _skillCreator.SpecializationByName(skill.NameSkill);
                             if (specializationPrefab != null)

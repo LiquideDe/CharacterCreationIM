@@ -104,7 +104,13 @@ namespace CharacterCreation
                 int.TryParse(_view.InputfieldHeight.text, out int height);
                 _character.Weight.Value = weight;
                 _character.Height.Value = height;
-                _audioManager.PlayConfirm();
+                _character.FatePoints.Value = 3;
+                if (_view.ToggleRightHand.isOn)
+                    _character.Hand.Value = "Правая";
+                else
+                    _character.Hand.Value = "Левая";
+
+                    _audioManager.PlayConfirm();
                 _view.HideAndDestroyToLeft();
                 SetProphecy();
             }

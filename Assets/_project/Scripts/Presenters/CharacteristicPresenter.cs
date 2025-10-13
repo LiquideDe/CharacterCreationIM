@@ -100,10 +100,12 @@ namespace CharacterCreation
 
         private void SetCharacterAndGoNext()
         {
-            _characterBackgroundView.SetCharacter(_character);
+            try { _characterBackgroundView.SetCharacter(_character); }
+            catch(Exception ex) { Debug.LogAssertion($"Exception {ex} "); }
             var newAmounts = _characteristicView.GetCurrentValues();
             for (int i = 0; i < _characteristics.Count; i++)
             {
+                _characteristics[i].BaseLevel = newAmounts[i];
                 _characteristics[i].Level = newAmounts[i];
                 _character.Characteristics.Add(_characteristics[i]);
             }

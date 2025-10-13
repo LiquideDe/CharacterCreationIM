@@ -4,7 +4,7 @@
   "type": "Болтерное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 8,
   "range":24,
@@ -65,7 +65,7 @@
   "type": "Зажигательное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 7,
   "range":12,
@@ -105,7 +105,7 @@
   "type": "Лазерное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 5,
   "range":24,
@@ -185,7 +185,7 @@
   "type": "Лазерное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 8,
   "range":24,
@@ -283,7 +283,7 @@
   "type": "Мельта оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 16,
   "range":12,
@@ -323,7 +323,7 @@
   "type": "Плазменное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 10,
   "range":24,
@@ -334,7 +334,7 @@
 	"clip": 500
   },
   "properties": [
-    "Удобное","Громкое","Бронебойное(6)","Сверхзаряд(4),Непредсказуемое"
+    "Удобное","Громкое","Бронебойное(6)","Сверхзаряд(4)","Непредсказуемое"
   ],
   "description": "Плазменное оружие наносит высокий урон и наделено свойствами Сверхзаряд и Непредсказуемое. Если сверхзаряженный плазмомёт даёт осечку, он проваливает бросок на свою непредсказуемость и взрывается."
 },
@@ -363,7 +363,7 @@
   "type": "Стабберное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 5,
   "range":24,
@@ -403,7 +403,7 @@
   "type": "Стабберное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 8,
   "range":24,
@@ -503,7 +503,7 @@
   "type": "Стабберное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 6,
   "range":24,
@@ -523,7 +523,7 @@
   "type": "Стабберное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 6,
   "range":24,
@@ -543,7 +543,7 @@
   "type": "Специальное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 1,
   "range":24,
@@ -583,7 +583,7 @@
   "type": "Специальное оружие",
   "specialization": {
     "skill": "Стрельба",
-    "specialization": "Пистолет"
+    "specialization": "Пистолеты"
   },
   "damage": 0,
   "range":12,

@@ -38,11 +38,12 @@ namespace CharacterCreation
                 panel.transform.SetParent(_content, false);
                 panel.gameObject.SetActive(true);
                 panel.SetName(item.Name);
-                panel.TextAmount.text = item.Level.ToString();
+                panel.TextAmount.text = $"{characteristic.Level}";
                 panel.HelpText.text = $"Стоимость следующего уровня - {_levelCostTable.GetCostForNextLevel(characteristic.Level)} ОО";
                 panel.OnUpgradeButtonClick.Subscribe(_ => { _characteristicClicked.OnNext(characteristic); }).AddTo(_disposables);
                 characteristic.LevelChanged.Subscribe(level => {
-                    panel.TextAmount.text = level.ToString(); 
+                    panel.TextAmount.text = $"{characteristic.Level}";
+                    Debug.LogAssertion($"characteristic.BaseLevel = {characteristic.BaseLevel}, characteristic.Level = {characteristic.Level}");
                     panel.HelpText.text = $"Стоимость следующего уровня - {_levelCostTable.GetCostForNextLevel(level)} ОО";
                 }).AddTo(_disposables);
                 _panelList.Add(panel);
