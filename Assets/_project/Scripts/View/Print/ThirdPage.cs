@@ -1,4 +1,5 @@
 using R3;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -73,7 +74,15 @@ namespace CharacterCreation
             _text.text += $"<indent=15%><size=150%>Экипировка:</indent> \n<size=100%>";
             foreach (EquipmentData equipment in character.Equipments)
             {
-                _text.text += $"<b>{equipment.name}</b>. \nОписание: {equipment.description}. Вес: {equipment.weight} \n \n";
+                try
+                {
+                    _text.text += $"<b>{equipment.name}</b>. \nОписание: {equipment.description}. Вес: {equipment.weight} \n \n";
+                }
+                catch ( Exception ex)
+                {
+                    Debug.LogAssertion(ex);
+                }
+                
                 if (equipment is MeleeWeaponData weapon)
                 {
                     if (weapon.properties.Count > 0)

@@ -122,7 +122,10 @@ namespace CharacterCreation
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<TalentUpgradeView>();
             _characterPresenter.SetCharacter(_character);
-            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { UpgradePsyPowers(character); }, ex => Debug.LogException(ex.Exception));
+            if(character.IsPsyker)
+                _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { UpgradePsyPowers(character); }, ex => Debug.LogException(ex.Exception));
+            else
+                _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { SetName(character); }, ex => Debug.LogException(ex.Exception));
             var pres = _characterPresenter as TalentUpgradePresenter;
             _prevClicked = pres.PrevClicked.Subscribe(character => UpgradeSkills(character));
         }
