@@ -73,6 +73,7 @@ namespace CharacterCreation
             _character.Omen.Value = _view.MarksText;
             if (int.TryParse(_view.FatePointsText, out var fate)) _character.FatePoints.Value = fate;
             if (int.TryParse(_view.CorruptionPointsText, out var corruption)) _character.CorruptionPoints.Value = corruption;
+            if (int.TryParse(_view.MoneyText, out var money)) _character.Money.Value = money;
             _character.ShortTarget.Value = _view.ShortTargetText;
             _character.LongTarget.Value = _view.LongTargetText;
             _character.Connections.Value = _view.ConnectionsText;

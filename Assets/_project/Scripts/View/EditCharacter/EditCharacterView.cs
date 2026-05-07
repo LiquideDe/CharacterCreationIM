@@ -28,6 +28,7 @@ namespace CharacterCreation
         [SerializeField] private TMP_InputField _inputMarks;
         [SerializeField] private TMP_InputField _inputFatePoints;
         [SerializeField] private TMP_InputField _inputCorruptionPoints;
+        [SerializeField] private TMP_InputField _inputMoney;
         [SerializeField] private TMP_InputField _inputMutations;
         [SerializeField] private TMP_InputField _inputShortTarget;
         [SerializeField] private TMP_InputField _inputLongTarget;
@@ -68,6 +69,7 @@ namespace CharacterCreation
         public string MarksText => _inputMarks.text;
         public string FatePointsText => _inputFatePoints.text;
         public string CorruptionPointsText => _inputCorruptionPoints.text;
+        public string MoneyText => _inputMoney.text;
         public string MutationsText => _inputMutations.text;
         public string ShortTargetText => _inputShortTarget.text;
         public string LongTargetText => _inputLongTarget.text;
@@ -88,6 +90,7 @@ namespace CharacterCreation
             _inputWeight.text = character.Weight.Value.ToString();
             _inputMarks.text = character.Omen.Value;
             _inputFatePoints.text = character.FatePoints.Value.ToString();
+            _inputMoney.text = character.Money.Value.ToString();
             _inputShortTarget.text = character.ShortTarget.Value;
             _inputLongTarget.text = character.LongTarget.Value;
             _inputConnections.text = character.Connections.Value;
