@@ -17,7 +17,6 @@ namespace CharacterCreation
         private Subject<Unit> _newPlayerDone = new Subject<Unit>();
         public Observable<Unit> NewPlayerIsDone => _newPlayerDone;
 
-
         public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
         {
             _factory = factory;

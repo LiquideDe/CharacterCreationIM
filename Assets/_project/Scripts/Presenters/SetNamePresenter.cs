@@ -111,8 +111,7 @@ namespace CharacterCreation
                     _character.Hand.Value = "Левая";
 
                     _audioManager.PlayConfirm();
-                _view.HideAndDestroyToLeft();
-                SetProphecy();
+                _view.HideAndDestroyToLeft(() => { SetProphecy(); });
             }
             else
                 _audioManager.PlayError();

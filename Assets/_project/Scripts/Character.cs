@@ -21,6 +21,7 @@ namespace CharacterCreation
         private ObservableList<Mutation> _mutations = new ObservableList<Mutation>();
         private Dictionary<string, int> _influence = new Dictionary<string, int>();
         private ObservableList<string> _contacts = new ObservableList<string>();
+        private ObservableList<string> _psyDisciplineAccess = new ObservableList<string>();
         public ReactiveProperty<string> Name { get; set; } = new ();
         public ReactiveProperty<Experience> Experience => _experience;
         public ObservableList<Characteristic> Characteristics => _characteristics;
@@ -55,6 +56,7 @@ namespace CharacterCreation
         public ReactiveProperty<int> FatePoints { get; set; } = new();
         public ReactiveProperty<int> CorruptionPoints { get; set; } = new();
         public ObservableList<Mutation> Mutations => _mutations;
+        public ObservableList<string> PsyDisciplineAccess => _psyDisciplineAccess;
 
         public UndoRedoManager CharacteristicHistory = new();
 
@@ -88,6 +90,35 @@ namespace CharacterCreation
         public void Release()
         {
             _cd.Dispose();
+        }
+
+        public bool HasPsyDisciplineAccess(string name)
+        {
+            foreach (var item in _psyDisciplineAccess)
+                if (string.Compare(item, name, true) == 0)
+                    return true;
+
+            foreach (var item in _specializations)
+                if (string.Compare(item.name, name, true) == 0 && item.level > 0)
+                {
+                    _psyDisciplineAccess.Add(item.name);
+                    return true;
+                }
+
+            return false;
+        }
+
+        public void SyncPsyDisciplineAccessFromSpecializations()
+        {
+            foreach (var item in _specializations)
+            {
+                if (item.level <= 0)
+                    continue;
+                if (string.Compare(item.skill, "Психическое мастерство", true) != 0)
+                    continue;
+                if (!HasPsyDisciplineAccess(item.name))
+                    _psyDisciplineAccess.Add(item.name);
+            }
         }
 
         private void RecalcIsPsyker()

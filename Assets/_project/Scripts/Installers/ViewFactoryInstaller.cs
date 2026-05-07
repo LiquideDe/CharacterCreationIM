@@ -19,6 +19,9 @@ namespace CharacterCreation
         [SerializeField] private BackgroundCharacterPrefab backgroundCharacterPrefab;
         [SerializeField] private CharacteristicBackgroundView characteristicBackgroundViewPrefab;
         [SerializeField] private CharacteristicPanel characteristicPanelPrefab;
+        [SerializeField] private CharacteristicEditPanel characteristicEditPanelPrefab;
+        [SerializeField] private InfluenceEntryView influenceEntryViewPrefab;
+        [SerializeField] private EquipmentEntryView equipmentEntryViewPrefab;
         [SerializeField] private SkillPanelUpgrade skillPanelUpgradePrefab;
         [SerializeField] private NewSpecializationPanel newSpecializationPanelPrefab;
         [SerializeField] private FirstPage firstPagePrefab;
@@ -42,6 +45,9 @@ namespace CharacterCreation
             Container.BindIFactory<BackgroundCharacterPrefab>().FromComponentInNewPrefab(backgroundCharacterPrefab);
             Container.BindIFactory<CharacteristicBackgroundView>().FromComponentInNewPrefab(characteristicBackgroundViewPrefab);
             Container.BindIFactory<CharacteristicPanel>().FromComponentInNewPrefab(characteristicPanelPrefab);
+            Container.BindIFactory<CharacteristicEditPanel>().FromComponentInNewPrefab(characteristicEditPanelPrefab);
+            Container.BindIFactory<InfluenceEntryView>().FromComponentInNewPrefab(influenceEntryViewPrefab);
+            Container.BindIFactory<EquipmentEntryView>().FromComponentInNewPrefab(equipmentEntryViewPrefab);
             Container.BindIFactory<SkillPanelUpgrade>().FromComponentInNewPrefab(skillPanelUpgradePrefab);
             Container.BindIFactory<NewSpecializationPanel>().FromComponentInNewPrefab(newSpecializationPanelPrefab);
             Container.BindIFactory<FirstPage>().FromComponentInNewPrefab(firstPagePrefab);

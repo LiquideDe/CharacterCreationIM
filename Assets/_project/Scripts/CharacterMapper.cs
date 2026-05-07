@@ -27,6 +27,7 @@ namespace CharacterCreation
                 Augmetics = CopyOrEmpty(c.Augmetics),
                 Mutations = CopyOrEmpty(c.Mutations),
                 Contacts = CopyOrEmpty(c.Contacts),
+                PsyDisciplineAccess = CopyOrEmpty(c.PsyDisciplineAccess),
                 Influence = CopyOrEmpty(c.Influence),
 
                 Money = c.Money.Value,
@@ -70,6 +71,8 @@ namespace CharacterCreation
             Replace(c.Augmetics, d.Augmetics);
             Replace(c.Mutations, d.Mutations);
             Replace(c.Contacts, d.Contacts);
+            c.SyncPsyDisciplineAccessFromSpecializations();
+            Replace(c.PsyDisciplineAccess, d.PsyDisciplineAccess);
 
             c.Influence.Clear();
             if (d.Influence != null)

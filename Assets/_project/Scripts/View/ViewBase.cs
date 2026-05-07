@@ -15,7 +15,7 @@ namespace CharacterCreation
         [SerializeField] private RectTransform rectTransform;
         [SerializeField] private CanvasGroup canvasGroup;
 
-        [Inject] private AudioManager _audio = null;
+        [Inject] protected AudioManager _audio = null;
         
 
         protected virtual void Awake()
@@ -60,6 +60,35 @@ namespace CharacterCreation
 
             seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
                 OnComplete(() => Destroy(gameObject));
+        }
+
+        public virtual void HideAndDestroyToLeft(Action onComplete)
+        {
+            Sequence seq = DOTween.Sequence();
+
+            Vector2 targetBodyPosition = rectTransform.anchoredPosition;
+            Vector2 finishShift = new Vector2(-Screen.width / 2, targetBodyPosition.y);
+            _audio.PlayFadeOut();
+
+            seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
+                OnComplete(() =>
+                {
+                    onComplete?.Invoke();
+                    Destroy(gameObject);
+                });
+        }
+
+        public virtual void HideToRight()
+        {
+            Sequence seq = DOTween.Sequence();
+
+            Vector2 targetBodyPosition = rectTransform.anchoredPosition;
+            Vector2 finishShift = new Vector2(-Screen.width / 2, targetBodyPosition.y);
+            Vector2 startShift = new Vector2(Screen.width / 2, targetBodyPosition.y);
+            _audio.PlayFadeOut();
+
+            seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
+                OnComplete(() => gameObject.SetActive(false));
         }
 
         public void HideAndShow()

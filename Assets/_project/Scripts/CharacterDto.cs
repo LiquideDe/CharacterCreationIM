@@ -20,6 +20,7 @@ namespace CharacterCreation
         public List<AugmeticData> Augmetics { get; set; }
         public List<Mutation> Mutations { get; set; }
         public List<string> Contacts { get; set; }
+        public List<string> PsyDisciplineAccess { get; set; }
         public Dictionary<string, int> Influence { get; set; }
 
         public int Money;
@@ -58,6 +59,7 @@ namespace CharacterCreation
             Augmetics = new();
             Mutations = new();
             Contacts = new();
+            PsyDisciplineAccess = new();
             Influence = new();
         }
     }

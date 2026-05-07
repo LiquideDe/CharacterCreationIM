@@ -182,7 +182,7 @@ namespace CharacterCreation
             new LevelCostBand(){ FromLevel = 26, ToLevel = 30, CostPerLevel = 25},
             new LevelCostBand(){ FromLevel = 31, ToLevel = 35, CostPerLevel = 30},
             new LevelCostBand(){ FromLevel = 36, ToLevel = 40, CostPerLevel = 40},
-            new LevelCostBand(){ FromLevel = 41, ToLevel = 44, CostPerLevel = 60},
+            new LevelCostBand(){ FromLevel = 41, ToLevel = 45, CostPerLevel = 60},
             new LevelCostBand(){ FromLevel = 46, ToLevel = 50, CostPerLevel = 80},
             new LevelCostBand(){ FromLevel = 51, ToLevel = 55, CostPerLevel = 110},
             new LevelCostBand(){ FromLevel = 56, ToLevel = 60, CostPerLevel = 140},

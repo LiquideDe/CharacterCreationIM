@@ -19,6 +19,7 @@ namespace CharacterCreation
         private SkillUpgradeView _view;
         private readonly CompositeDisposable _cd = new CompositeDisposable();
         private Character _character;
+        private bool _isFreeEdit;
         private List<SkillData> _skillDatas = new List<SkillData>();
         private List<SpecializationData> _specializationDatas = new List<SpecializationData>();
 
@@ -35,6 +36,11 @@ namespace CharacterCreation
             InitialSpecializations();
         }
 
+        public void SetFreeEdit(bool isFreeEdit)
+        {
+            _isFreeEdit = isFreeEdit;
+        }
+
         private void SetSkills()
         {
             foreach (var item in _character.Skills)            
@@ -45,8 +51,11 @@ namespace CharacterCreation
                 if(IsSkillUnUsed(item))
                     _skillDatas.Add(new SkillData() 
                     { name = item.name, characteristic = item.characteristic, description = item.description, level = item.level});
-            
 
+            _skillDatas = _skillDatas
+                .OrderByDescending(s => s.level > 0)
+                .ThenBy(s => s.name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
             _view.SetSkills(_skillDatas);
             _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
@@ -113,9 +122,16 @@ namespace CharacterCreation
 
         private void UpgradeSkill(SkillData skill)
         {
+            if (!_isFreeEdit && string.Compare(skill.name, "Психическое мастерство", true) == 0 && !_character.IsPsyker)
+            {
+                _audioManager.PlayError();
+                return;
+            }
+
             if(skill.level < 5)
             {
-                var cmd = new UpgradeSkillCommand(_character, skill, 1, (skill.level + 1) * 50);
+                int cost = _isFreeEdit ? 0 : (skill.level + 1) * 50;
+                var cmd = new UpgradeSkillCommand(_character, skill, 1, cost);
                 var ok = _character.CharacteristicHistory.Do(cmd);
                 if (!ok)
                     _audioManager.PlayError();
@@ -186,9 +202,24 @@ namespace CharacterCreation
 
         private void UpgradeSpecialization(SpecializationData spec)
         {
-            if(IsRequireTalent(spec.requireTalent) && IsRequireSkill(spec.skill, spec.lvlRequireSkill) && spec.level < 5)
+            if (!_isFreeEdit)
             {
-                var cmd = new UpgradeSpecializationCommand(_character, spec, 1, (spec.level + 1) * 50);
+                if (string.Compare(spec.skill, "Психическое мастерство", true) == 0 && !_character.IsPsyker)
+                {
+                    _audioManager.PlayError();
+                    return;
+                }
+                if (string.Compare(spec.skill, "Психическое мастерство", true) == 0 && !_character.HasPsyDisciplineAccess(spec.name))
+                {
+                    _audioManager.PlayError();
+                    return;
+                }
+            }
+
+            if ((_isFreeEdit || IsRequireTalent(spec.requireTalent)) && (_isFreeEdit || IsRequireSkill(spec.skill, spec.lvlRequireSkill)) && spec.level < 5)
+            {
+                int cost = _isFreeEdit ? 0 : (spec.level + 1) * 50;
+                var cmd = new UpgradeSpecializationCommand(_character, spec, 1, cost);
                 var ok = _character.CharacteristicHistory.Do(cmd);
                 if (!ok)
                     _audioManager.PlayError();

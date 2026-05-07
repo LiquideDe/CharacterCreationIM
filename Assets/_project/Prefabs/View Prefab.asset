@@ -43,3 +43,9 @@ MonoBehaviour:
     prefab: {fileID: 431473851656781828, guid: 2fa0d7ce7b3deb44a9d46a6047e912b6, type: 3}
   - key: LoadCharacterView
     prefab: {fileID: 4334104747330049752, guid: 6c64a7eeccffedf4db50f47278fce003, type: 3}
+  - key: AddExperienceView
+    prefab: {fileID: 4992011027438828397, guid: 0270ea7892891494aa45a0fc797dd54d, type: 3}
+  - key: EditCharacterView
+    prefab: {fileID: 5207966524670892189, guid: 78e5298f12219c544b5ecffd60159e97, type: 3}
+  - key: EditCharacteristicsView
+    prefab: {fileID: 1186017284720652822, guid: b19eba948531b9b4eaae43c87e198fe6, type: 3}

@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 0
@@ -698,6 +695,9 @@ MonoBehaviour:
   backgroundCharacterPrefab: {fileID: 1649407829850138296, guid: 99d17c269d44a9a49adedf3e3c354901, type: 3}
   characteristicBackgroundViewPrefab: {fileID: 1346453317109903979, guid: 8e80940c730d2244983a7efbbe86ef24, type: 3}
   characteristicPanelPrefab: {fileID: 5359277293577951858, guid: 8a861d0014cbe5f4099c3a16d7e6b1cd, type: 3}
+  characteristicEditPanelPrefab: {fileID: 1582718639705069097, guid: 0518fc3bd2dce2d44809794d3f524a22, type: 3}
+  influenceEntryViewPrefab: {fileID: 1330107027593604518, guid: 97763cb97434da84fad7a968c2b930fe, type: 3}
+  equipmentEntryViewPrefab: {fileID: 7470269464781052471, guid: 8cc4327ce32e8f64aa72cc6276716bfd, type: 3}
   skillPanelUpgradePrefab: {fileID: 5355723488295231794, guid: 1fa352a5b6bec0945988431ae25157f4, type: 3}
   newSpecializationPanelPrefab: {fileID: 1749562382450004211, guid: c1c40980d9692ba4ab83c98e67fee929, type: 3}
   firstPagePrefab: {fileID: 89477606331616650, guid: 2e8487f00e91a5742acd36ce006feb80, type: 3}
@@ -963,6 +963,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.252
   m_Pitch: 1
@@ -1394,7 +1395,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &2069675181
 RectTransform:

@@ -17,9 +17,11 @@ namespace CharacterCreation
         private readonly CompositeDisposable _cd = new CompositeDisposable();
         private Character _character;
         [Inject] private TalentCreator _talentCreator;
+        [Inject] private SkillCreator _skillCreator;
         private List<TalentDecorator> _talents = new List<TalentDecorator>();
         private TalentDecorator _currentTalent;
         private bool _lastToggle;
+        private bool _isFreeEdit;
 
         public TalentUpgradePresenter(AudioManager audioManager, TalentUpgradeView view)
         {
@@ -62,6 +64,14 @@ namespace CharacterCreation
                 Debug.LogException(ex);
                 return;
             }
+
+            _character.SyncPsyDisciplineAccessFromSpecializations();
+            EnsurePsyDisciplineAccessPrompt();
+        }
+
+        public void SetFreeEdit(bool isFreeEdit)
+        {
+            _isFreeEdit = isFreeEdit;
         }
 
         public void Initialize()
@@ -78,6 +88,7 @@ namespace CharacterCreation
                 SetListToView(avalaible); 
                 _lastToggle = avalaible; 
             }).AddTo(_cd);
+            _view.DisciplineChosen.Subscribe(name => { AddPsyDisciplineAccess(name); }).AddTo(_cd);
         }
 
         private void GoNext()
@@ -95,7 +106,11 @@ namespace CharacterCreation
 
         private void BuyTalent()
         {
-            var cmd = new UpgradeTalentCommand(_character, _currentTalent.TalentData,100);
+            int cost = _isFreeEdit ? 0 : 100;
+            IGameCommand cmd = new UpgradeTalentCommand(_character, _currentTalent.TalentData, cost);
+            if (string.Compare(_currentTalent.TalentData.name, "Псайкер", true) == 0)
+                cmd = new UpgradePsykerTalentCommand(_character, _currentTalent.TalentData, cost);
+
             var ok = _character.CharacteristicHistory.Do(cmd);
             if (!ok)
                 _audioManager.PlayError();
@@ -105,6 +120,8 @@ namespace CharacterCreation
                 _audioManager.PlayClick();
                 SetTalents();
                 SetListToView(_lastToggle);
+                if (string.Compare(_currentTalent.TalentData.name, "Псайкер", true) == 0)
+                    ShowChooseDiscipline();
             }
         }
 
@@ -140,7 +157,7 @@ namespace CharacterCreation
                             requirements = item.requirements,
                             uniqeText = item.uniqeText,                            
                         };
-                    decorator.IsAvailable = IsTalentRequireDone(item);
+                    decorator.IsAvailable = _isFreeEdit ? true : IsTalentRequireDone(item);
                     _talents.Add(decorator);
                 }
             }
@@ -148,21 +165,94 @@ namespace CharacterCreation
 
         private bool IsCharacterHasNotTalent(string name)
         {
+            int count = 0;
             TalentData data = null;
             foreach (var item in _character.Talents)
             {
-                if(string.Compare(item.name, name, true) == 0)
+                if (string.Compare(item.name, name, true) == 0)
                 {
-                    data = item; break;
+                    count++;
+                    if (data == null)
+                        data = item;
                 }
             }
 
-            if (data == null) return true;
+            if (string.Compare(name, "Псайкер", true) == 0)
+            {
+                int wpBonus = GetCharacteristicBonus("Сила воли");
+                return count < wpBonus;
+            }
 
-            if(data.isMultiple && data.maxMultiple > data.currentMultiple)
-                return true;
+            if (count == 0) return true;
+            if (data == null) return false;
 
-            return false;
+            if (!data.isMultiple) return false;
+
+            // maxMultiple == 0 считаем "без лимита"
+            if (data.maxMultiple <= 0) return true;
+
+            return count < data.maxMultiple;
+        }
+
+        private int GetCharacteristicBonus(string name)
+        {
+            foreach (var item in _character.Characteristics)
+                if (string.Compare(name, item.Name, true) == 0)
+                    return item.Level / 10;
+            return 0;
+        }
+
+        private void ShowChooseDiscipline()
+        {
+            var disciplines = new List<string>();
+            foreach (var spec in _skillCreator.Specializations)
+            {
+                if (string.Compare(spec.skill, "Психическое мастерство", true) != 0)
+                    continue;
+                if (_character.HasPsyDisciplineAccess(spec.name))
+                    continue;
+                disciplines.Add(spec.name);
+            }
+
+            if (disciplines.Count == 0)
+                return;
+
+            _view.ShowChooseDiscipline(disciplines);
+        }
+
+        private void AddPsyDisciplineAccess(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            var cmd = new AddPsyDisciplineAccessCommand(_character, name);
+            var ok = _character.CharacteristicHistory.Do(cmd);
+            if (!ok)
+                _audioManager.PlayError();
+            else
+                _audioManager.PlayClick();
+
+            EnsurePsyDisciplineAccessPrompt();
+        }
+
+        private void EnsurePsyDisciplineAccessPrompt()
+        {
+            int psykerCount = GetTalentCount("Псайкер");
+            int accessCount = _character.PsyDisciplineAccess.Count;
+            if (psykerCount <= 0)
+                return;
+            if (accessCount >= psykerCount)
+                return;
+            ShowChooseDiscipline();
+        }
+
+        private int GetTalentCount(string name)
+        {
+            int count = 0;
+            foreach (var item in _character.Talents)
+                if (string.Compare(item.name, name, true) == 0)
+                    count++;
+            return count;
         }
 
         private bool IsTalentRequireDone(TalentData talent)
@@ -344,6 +434,85 @@ namespace CharacterCreation
             _character.Experience.Value.experiencePoints = _prevXP;
             _character.Experience.Value.experienceSpent = _prevExpSpent;
             _applied = false;
+        }
+    }
+
+    public sealed class UpgradePsykerTalentCommand : IGameCommand
+    {
+        private readonly Character _character;
+        private readonly TalentData _talent;
+        private readonly int _xpCost;
+        private int _prevXP;
+        private int _prevExpSpent;
+        private int _prevFreeSmall;
+        private int _prevFreeBig;
+        private bool _applied;
+
+        public UpgradePsykerTalentCommand(Character player, TalentData ch, int xpCost)
+        {
+            _character = player;
+            _talent = ch;
+            _xpCost = xpCost;
+        }
+
+        public bool Execute()
+        {
+            if (_character.Experience.Value.experiencePoints < _xpCost) return false;
+
+            _prevXP = _character.Experience.Value.experiencePoints;
+            _prevExpSpent = _character.Experience.Value.experienceSpent;
+            _prevFreeSmall = _character.FreeSmallPsyPower.Value;
+            _prevFreeBig = _character.FreePsyPower.Value;
+            _character.Experience.Value.experiencePoints -= _xpCost;
+            _character.Experience.Value.experienceSpent += _xpCost;
+            _character.Talents.Add(_talent);
+            _character.FreeSmallPsyPower.Value += 1;
+            _character.FreePsyPower.Value += 1;
+
+            _applied = true;
+            return true;
+        }
+
+        public void Undo()
+        {
+            if (!_applied) return;
+            _character.Talents.Remove(_talent);
+            _character.Experience.Value.experiencePoints = _prevXP;
+            _character.Experience.Value.experienceSpent = _prevExpSpent;
+            _character.FreeSmallPsyPower.Value = _prevFreeSmall;
+            _character.FreePsyPower.Value = _prevFreeBig;
+            _applied = false;
+        }
+    }
+
+    public sealed class AddPsyDisciplineAccessCommand : IGameCommand
+    {
+        private readonly Character _character;
+        private readonly string _disciplineName;
+        private bool _added;
+
+        public AddPsyDisciplineAccessCommand(Character player, string disciplineName)
+        {
+            _character = player;
+            _disciplineName = disciplineName;
+        }
+
+        public bool Execute()
+        {
+            foreach (var item in _character.PsyDisciplineAccess)
+                if (string.Compare(item, _disciplineName, true) == 0)
+                    return true;
+
+            _character.PsyDisciplineAccess.Add(_disciplineName);
+            _added = true;
+            return true;
+        }
+
+        public void Undo()
+        {
+            if (!_added) return;
+            _character.PsyDisciplineAccess.Remove(_disciplineName);
+            _added = false;
         }
     }
 }

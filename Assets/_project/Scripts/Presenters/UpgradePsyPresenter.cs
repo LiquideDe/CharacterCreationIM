@@ -18,6 +18,7 @@ namespace CharacterCreation
         private UpgradePsyView _view;
         private readonly CompositeDisposable _cd = new CompositeDisposable();
         private Character _character;
+        private bool _isFreeEdit;
         [Inject] private PsycanaCreator _psyCreator;
         private PsyData _currentPsy;
         private int _currentPsyIdSchool;
@@ -46,6 +47,11 @@ namespace CharacterCreation
             _view.ShowPsyClicked.Subscribe(name => { _audioManager.PlayClick(); ShowPsy(name); }).AddTo(_cd);
         }
 
+        public void SetFreeEdit(bool isFreeEdit)
+        {
+            _isFreeEdit = isFreeEdit;
+        }
+
         private void GoNext()
         {
             _audioManager.PlayClick();
@@ -62,6 +68,22 @@ namespace CharacterCreation
 
         private void BuyPsyPower()
         {
+            if (_isFreeEdit)
+            {
+                var cmdFree = new FreeUpgradePsyPowerCommand(_character, _currentPsy);
+                var okFree = _character.CharacteristicHistory.Do(cmdFree);
+                if (!okFree)
+                    _audioManager.PlayError();
+                else
+                {
+                    _view.SetExperience(_character.Experience.Value.experiencePoints);
+                    _audioManager.PlayClick();
+                    _psyDatas[_currentPsyIdSchool].Remove(_currentPsy);
+                    ConvertPsyToStringAndShow();
+                }
+                return;
+            }
+
             int cost = 100;
             if (_currentPsy.isLesser)
                 cost = 60;
@@ -132,7 +154,7 @@ namespace CharacterCreation
             var list = _psyCreator.PsyPowers.Where(psy => string.Compare(psy.specialization, school, true) == 0);
             foreach (var psyData in list)
             {
-                if (IsCharacterHasNotPsyPower(psyData.name) && (IsCharacterHasSpecialization(school) || psyData.isLesser))
+                if (IsCharacterHasNotPsyPower(psyData.name) && (_isFreeEdit || IsCharacterHasSpecialization(school) || psyData.isLesser))
                 {
                     psyDatas.Add(new PsyData()
                     {
@@ -162,11 +184,7 @@ namespace CharacterCreation
         
         private bool IsCharacterHasSpecialization(string name)
         {
-            foreach (var item in _character.Specializations)            
-                if (string.Compare(item.name, name, true) == 0 && item.level > 0)
-                    return true;            
-
-            return false;
+            return _character.HasPsyDisciplineAccess(name);
         }
 
         private void NextSchool(int delta = 0)
@@ -213,7 +231,7 @@ namespace CharacterCreation
 
         public bool Execute()
         {
-            bool enoughExp = _character.Experience.Value.experiencePoints < _xpCost;
+            bool enoughExp = _character.Experience.Value.experiencePoints >= _xpCost;
             bool freeLesser = false;
             bool freeBig = false;
             if(_psy.isLesser && _character.FreeSmallPsyPower.Value > 0)
@@ -265,6 +283,33 @@ namespace CharacterCreation
             _character.Experience.Value.experienceSpent = _prevExpSpent;
             _character.FreePsyPower.Value = _prevFreePoints;
             _character.FreeSmallPsyPower.Value = _prevFreeSmallPoints;
+            _applied = false;
+        }
+    }
+
+    public sealed class FreeUpgradePsyPowerCommand : IGameCommand
+    {
+        private readonly Character _character;
+        private readonly PsyData _psy;
+        private bool _applied;
+
+        public FreeUpgradePsyPowerCommand(Character player, PsyData psy)
+        {
+            _character = player;
+            _psy = psy;
+        }
+
+        public bool Execute()
+        {
+            _character.PsyPowers.Add(_psy);
+            _applied = true;
+            return true;
+        }
+
+        public void Undo()
+        {
+            if (!_applied) return;
+            _character.PsyPowers.Remove(_psy);
             _applied = false;
         }
     }

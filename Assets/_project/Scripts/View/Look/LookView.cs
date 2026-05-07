@@ -42,9 +42,11 @@ namespace CharacterCreation
 
         public void SetNameCategory(string name, string description)
         {
-            Clear();            
+            Clear();      
+            
             _textNameCategory.text = name;
             _textDescription.text = description;
+            _inputField.text = string.Empty;
             HideAndShow();
         }
 

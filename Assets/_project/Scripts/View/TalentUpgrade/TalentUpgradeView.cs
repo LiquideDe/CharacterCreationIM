@@ -20,6 +20,7 @@ namespace CharacterCreation
         [SerializeField] private Button _prevButton;
         [SerializeField] private Button _buyButton;
         [SerializeField] private Toggle _toggleAvailable;
+        [SerializeField] private ChooseDisciplineView _chooseDisciplineView;
         private CompositeDisposable _cd = new CompositeDisposable();
         private CompositeDisposable _listDisposables = new CompositeDisposable();
         private Subject<string> _showTalentClick = new Subject<string> ();
@@ -29,6 +30,7 @@ namespace CharacterCreation
         public Observable<Unit> OnButtonNextClick => _nextButton.OnClickAsObservable();
         public Observable<Unit> OnButtonPrevClick => _prevButton.OnClickAsObservable();
         public Observable<Unit> OnButtonCancelClick => _cancelButton.OnClickAsObservable();
+        public Observable<string> DisciplineChosen => _chooseDisciplineView.NameDisciplineChosen;
 
         private void Start()
         {
@@ -59,10 +61,23 @@ namespace CharacterCreation
                 }
             }
             if (talent.isMultiple)
-                _textDescriptionTalent.text += $"Можно брать несколько раз. Максимум {talent.maxMultiple} раз. \n";
+            {
+                string multtext = $"{talent.maxMultiple}";
+                if (talent.maxMultiple == 0)                
+                    multtext = "бесконечно";
+                
+                _textDescriptionTalent.text += $"Можно брать несколько раз. Максимум {multtext} раз. \n";
+            }
+                
             if (talent.character_creation_only)
                 _textDescriptionTalent.text += $"Можно взять только при создании персонажа";
             _buyButton.gameObject.SetActive(isAvailable);
+        }
+
+        public void ShowChooseDiscipline(List<string> disciplines)
+        {
+            _chooseDisciplineView.gameObject.SetActive(true);
+            _chooseDisciplineView.ShowDisciplines(disciplines);
         }
 
         private string ParseRequire(TalentRequirement requirement)

@@ -151,12 +151,14 @@ namespace CharacterCreation.Background
                     if (_character.Talents.FirstOrDefault(t =>
                 string.Equals(t.name, "Псайкер", StringComparison.OrdinalIgnoreCase)) != null)
                     {
-                        _character.FreePsyPower.Value = 1;
-                        _character.FreeSmallPsyPower.Value = 1;
+                        _character.FreePsyPower.Value += 1;
+                        _character.FreeSmallPsyPower.Value += 1;
                     }
                     else
                     {
                         _character.Talents.Add(new TalentData() { name = "Псайкер" });
+                        _character.FreePsyPower.Value += 1;
+                        _character.FreeSmallPsyPower.Value += 1;
                     }
                 }
                                    
@@ -211,7 +213,7 @@ namespace CharacterCreation.Background
                         foreach (var name in item.Talents)
                         {
                             if (_finderData.TryGet(name, out TalentData talentData))
-                                _character.Talents.Add(talentData);
+                                AddTalentToCharacter(talentData);
 
                             else if (_equipmentParser.TryGetEquipment(name) is EquipmentData equipmentData)
                                 _character.Equipments.Add(equipmentData);
@@ -227,6 +229,16 @@ namespace CharacterCreation.Background
 
             _view.HideAndDestroyToLeft();
             _nextClicked?.OnNext(_character);
+        }
+
+        private void AddTalentToCharacter(TalentData talentData)
+        {
+            _character.Talents.Add(talentData);
+            if (string.Compare(talentData.name, "Псайкер", true) == 0)
+            {
+                _character.FreePsyPower.Value += 1;
+                _character.FreeSmallPsyPower.Value += 1;
+            }
         }
     }
 }

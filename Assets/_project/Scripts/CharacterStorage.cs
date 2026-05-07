@@ -55,6 +55,7 @@ namespace CharacterCreation
             d.Augmetics ??= new();
             d.Mutations ??= new();
             d.Contacts ??= new();
+            d.PsyDisciplineAccess ??= new();
             d.Influence ??= new();
         }
     }

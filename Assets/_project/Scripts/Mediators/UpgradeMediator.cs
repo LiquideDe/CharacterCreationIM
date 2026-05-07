@@ -18,8 +18,6 @@ namespace CharacterCreation
         private Subject<Unit> _characterUpgraded = new Subject<Unit>();
         public Observable<Unit> CharacterUpgraded => _characterUpgraded;
 
-        [Inject] private PrintCharacterPresenter _printPresenter;
-
         public UpgradeMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
         {
             _factory = factory;
@@ -29,9 +27,16 @@ namespace CharacterCreation
         public void ShowLoads()
         {
             LoadCharacterPresenter presenter = (LoadCharacterPresenter)_factory.Create<LoadCharacterView>();
-            presenter.LoadedCharacter.Subscribe(character => { UpgradeCharacteristics(character); }).AddTo(_cd);
+            presenter.LoadedCharacter.Subscribe(character => { ShowAddExperience(character); }).AddTo(_cd);
             presenter.ReturnToMenu.Subscribe(_ => _characterUpgraded.OnNext(Unit.Default)).AddTo(_cd);
             presenter.ShowSaves();
+        }
+
+        private void ShowAddExperience(Character character)
+        {
+            AddExperiencePresenter presenter = (AddExperiencePresenter)_factory.Create<AddExperienceView>();
+            presenter.NextClicked.Take(1).Subscribe(UpgradeCharacteristics);
+            presenter.SetCharacter(character);
         }
 
         private void UpgradeCharacteristics(Character character)
