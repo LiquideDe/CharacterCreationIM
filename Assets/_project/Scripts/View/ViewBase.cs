@@ -127,6 +127,21 @@ namespace CharacterCreation
             seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
                 OnComplete(() => Destroy(gameObject));
         }
+
+        public virtual void HideAndDestroyToRight(Action onComplete)
+        {
+            Sequence seq = DOTween.Sequence();
+            Vector2 targetBodyPosition = rectTransform.anchoredPosition;
+            Vector2 finishShift = new Vector2(Screen.width / 2, targetBodyPosition.y);
+            _audio.PlayFadeOut();
+
+            seq.Append(canvasGroup.DOFade(0, 1f).From(1)).Join(rectTransform.DOAnchorPos(finishShift, 1f).From(targetBodyPosition)).
+                OnComplete(() =>
+                {
+                    onComplete?.Invoke();
+                    Destroy(gameObject);
+                });
+        }
     }
 }
 

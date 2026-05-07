@@ -70,8 +70,7 @@ namespace CharacterCreation
             _subscriptions.Add(_view.OnPrintCharacterClicked.Subscribe(_ =>
             {
                 _audioManager.PlayClick();
-                _printCharacter.OnNext(Unit.Default);
-                _view.HideAndDestroyToLeft();
+                _view.HideAndDestroyToLeft(() => _printCharacter.OnNext(Unit.Default));
             }));
             _subscriptions.Add(_view.OnExitClicked.Subscribe(_ =>
             {

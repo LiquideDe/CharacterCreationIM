@@ -55,8 +55,7 @@ namespace CharacterCreation
         private void GoNext()
         {
             _audioManager.PlayClick();
-            _nextClicked.OnNext(_character);
-            _view.HideAndDestroyToLeft();
+            _view.HideAndDestroyToLeft(() => _nextClicked.OnNext(_character));
         }
 
         private void GoPrev()

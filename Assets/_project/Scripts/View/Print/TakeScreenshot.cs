@@ -74,7 +74,8 @@ namespace CharacterCreation
 
         IEnumerator StartSaveImages()
         {
-            yield return new WaitForSeconds(1f);
+            yield return null;
+            yield return new WaitForEndOfFrame();
             Coroutine cor = StartCoroutine(TakeScreenFirst());
             yield return cor;
             CombineImages();

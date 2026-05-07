@@ -94,8 +94,7 @@ namespace CharacterCreation
         private void GoNext()
         {
             Debug.Log($" GoNext emit. HasObservers? {_nextClicked}");
-            _nextClicked.OnNext(_character);
-            _view.HideAndDestroyToLeft();                        
+            _view.HideAndDestroyToLeft(() => _nextClicked.OnNext(_character));
         }
 
         private void GoPrev()

@@ -38,8 +38,7 @@ namespace CharacterCreation
             var character = new Character();
             Debug.LogAssertion($"entry == null {entry == null}, entry.Header == null {entry.Header == null} ");
             CharacterMapper.ApplyDto(character, entry.Header);
-            _returnCharacter.OnNext(character);
-            Close();
+            Close(() => _returnCharacter.OnNext(character));
         }
 
         private List<Entry> ScanFolderAndShowCharacters()
@@ -95,9 +94,9 @@ namespace CharacterCreation
             return list;
         }
 
-        private void Close()
+        private void Close(Action onComplete = null)
         {
-            _view.HideAndDestroyToRight();
+            _view.HideAndDestroyToRight(() => onComplete?.Invoke());
             _cd.Clear();
         }
 
