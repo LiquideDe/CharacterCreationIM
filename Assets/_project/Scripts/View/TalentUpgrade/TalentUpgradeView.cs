@@ -52,6 +52,7 @@ namespace CharacterCreation
             _textDescriptionTalent.text = talent.description;
             if(talent.requirements != null)
             {
+                _textDescriptionTalent.text += $"\n";
                 foreach (var require in talent.requirements)
                 {
                     _textDescriptionTalent.text += ParseRequire(require);
@@ -64,11 +65,11 @@ namespace CharacterCreation
                 if (talent.maxMultiple == 0)                
                     multtext = "бесконечно";
                 
-                _textDescriptionTalent.text += $"Можно брать несколько раз. Максимум {multtext} раз. \n";
+                _textDescriptionTalent.text += $"\nМожно брать несколько раз. Максимум {multtext} раз. \n";
             }
                 
             if (talent.character_creation_only)
-                _textDescriptionTalent.text += $"Можно взять только при создании персонажа";
+                _textDescriptionTalent.text += $"\nМожно взять только при создании персонажа";
             _buyButton.gameObject.SetActive(isAvailable);
         }
 
@@ -84,27 +85,32 @@ namespace CharacterCreation
             switch (requirement.type)
             {
                 case "specialization_improvement":
-                     return text = $"Требуется прокачка специализации {requirement.specialization} на {requirement.amount} пункта.";
+                     return text = $"\nТребуется прокачка специализации {requirement.specialization} на {requirement.amount} пункта.";
 
                 case "skill_improvement":
-                    return text = $"Требуется прокачка навыка {requirement.skill} на {requirement.amount} пункта.";
+                    return text = $"\nТребуется прокачка навыка {requirement.skill} на {requirement.amount} пункта.";
 
                 case "attribute_min":
-                    return text = $"Требуется развитие характеристики {requirement.attribute} минимум на {requirement.value}.";
+                    return text = $"\nТребуется развитие характеристики {requirement.attribute} минимум на {requirement.value}.";
 
                 case "no_improvement":
-                    return text = $"Не должен быть прокачен навык {requirement.skill}";
+                    return text = $"\nНе должен быть прокачен навык {requirement.skill}";
 
                 case "requirement_talent":
                     foreach (var item in requirement.talents)
-                        text += $"Требуется талант {item}. ";
+                        text += $"\nТребуется талант {item}. ";
+                    return text;
+
+                case "development_requirement_talent":
+                    foreach (var item in requirement.talents)
+                        text += $"\nПри развитии требуется талант {item}. ";
                     return text;
 
                 case "exclusive_with":
-                    return text = $"Не совместим с навыком {requirement.talents[0]}";
+                    return text = $"\nНе совместим с навыком {requirement.talents[0]}";
 
                 default:
-                    return text = $"Не нашли такого ключа {requirement.type}";
+                    return text = $"\nНе нашли такого ключа {requirement.type}";
             }
         }
 

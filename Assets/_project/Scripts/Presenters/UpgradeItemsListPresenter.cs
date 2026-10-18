@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace CharacterCreation
 {
     public class UpgradeItemsListPresenter
     {
+        public event Action UpgradeCancelled;
         private readonly UpgradeItemsListView _view;
         private readonly List<UpgradeEntry> _entries = new();
         private bool _isUpgradeSessionActive;
@@ -42,8 +44,10 @@ namespace CharacterCreation
 
         private void CancelUpgrade(UpgradeEntry entry)
         {
+            Debug.Log($"[FIX:UpgradeExperience] Cancelling upgrade '{entry.Item.name}' and refreshing active upgrade views.");
             RemoveUpgrade(entry);
             RemoveInvalidUpgrades();
+            UpgradeCancelled?.Invoke();
         }
 
         private void RemoveInvalidUpgrades()

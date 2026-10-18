@@ -85,6 +85,7 @@ namespace CharacterCreation
         public void Initialize()
         {
             Debug.Log("[TalentUpgradePresenter] Initialize");
+            _upgradeItemsListPresenter.UpgradeCancelled += RefreshTalents;
             _view.OnButtonBuyClick.Subscribe(_ => { BuyTalent(); }).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { Debug.Log("[TalentUpgradePresenter] Next button click"); _audioManager.PlayConfirm(); GoNext(); }).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { _audioManager.PlayClick(); GoPrev(); }).AddTo(_cd);
@@ -148,6 +149,7 @@ namespace CharacterCreation
         public void Dispose()
         {
             Debug.LogAssertion("Dispose");
+            _upgradeItemsListPresenter.UpgradeCancelled -= RefreshTalents;
             _cd.Dispose();
         }
 
@@ -296,7 +298,11 @@ namespace CharacterCreation
                     return CheckSpecialization(requirement.specialization, requirement.amount);
 
                 case "skill_improvement":
-                    return CheckSkill(requirement.specialization, requirement.amount); 
+                    return LogRequirementResult(
+                        requirement.type,
+                        requirement.skill,
+                        requirement.amount,
+                        CheckSkill(requirement.skill, requirement.amount));
 
                 case "attribute_min":
                     return CheckCharacteristic(requirement.attribute, requirement.value);
@@ -309,6 +315,9 @@ namespace CharacterCreation
 
                 case "requirement_talent":
                     return IsTalents(requirement.talents);
+
+                case "development_requirement_talent":
+                    return CheckDevelopmentTalentRequirement(requirement.talents);
 
                 case "exclusive_with":
                     return IsNoTalent(requirement.talents[0]);
@@ -326,6 +335,21 @@ namespace CharacterCreation
                         return true;
             
             return false;
+        }
+
+        private static bool LogRequirementResult(string type, string subject, int requiredAmount, bool isMet)
+        {
+            var amountDescription = requiredAmount > 0 ? $", required level: {requiredAmount}" : string.Empty;
+            Debug.Log($"[FIX:TalentRequirements] {type}, subject: {subject}{amountDescription}, met: {isMet}");
+            return isMet;
+        }
+
+        private bool CheckDevelopmentTalentRequirement(List<string> talents)
+        {
+            bool isMet = _isCharacterCreation || IsTalents(talents);
+            string requiredTalents = talents == null ? "<none>" : string.Join(", ", talents);
+            Debug.Log($"[FIX:TalentRequirements] development_requirement_talent, talents: {requiredTalents}, character creation: {_isCharacterCreation}, met: {isMet}");
+            return isMet;
         }
 
         private bool CheckSkill(string name, int level)

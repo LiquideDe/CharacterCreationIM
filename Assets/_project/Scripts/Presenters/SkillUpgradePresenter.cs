@@ -113,6 +113,7 @@ namespace CharacterCreation
 
         public void Initialize()
         {
+            _upgradeItemsListPresenter.UpgradeCancelled += RefreshExperience;
             _view.NewSpecialization.Subscribe(spec => { _specializationDatas.Add(spec); } ).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { GoNext(); } ).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { ReturnToCharacteristics(); } ).AddTo(_cd);
@@ -193,13 +194,17 @@ namespace CharacterCreation
 
         public void Dispose()
         {
+            _upgradeItemsListPresenter.UpgradeCancelled -= RefreshExperience;
             _cd.Dispose();
         }
 
         private void RefreshExperience()
         {
             if (_view != null)
+            {
                 _view.SetExperience(_character.Experience.Value.experiencePoints);
+                Debug.Log($"[FIX:UpgradeExperience] Skill upgrade experience refreshed: {_character.Experience.Value.experiencePoints}.");
+            }
         }
 
         private void UpgradeSpecialization(SpecializationData spec)

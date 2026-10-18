@@ -35,11 +35,13 @@ namespace CharacterCreation
 
         public void Dispose()
         {
+            _upgradeItemsListPresenter.UpgradeCancelled -= RefreshPsyPowers;
             _cd.Dispose();
         }
 
         public void Initialize()
         {
+            _upgradeItemsListPresenter.UpgradeCancelled += RefreshPsyPowers;
             _view.OnButtonBuyClick.Subscribe(_ => { BuyPsyPower(); }).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { GoNext(); }).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { GoPrev(); }).AddTo(_cd);
