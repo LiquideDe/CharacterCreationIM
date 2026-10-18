@@ -1060,6 +1060,7 @@ MonoBehaviour:
   thirdPagePrefab: {fileID: 228000130255433520, guid: ccd13c53b15f88a428b6f371ca51deee, type: 3}
   buttonInListPrefab: {fileID: 6390344414324461004, guid: 752f6391d2135374d85f8d9996a42cba, type: 3}
   upgradeItemPrefab: {fileID: 2801086313900349096, guid: 80551c7aacc38454eac48ab2545bb400, type: 3}
+    exitMenuPrefab: {fileID: 2988184478493690670, guid: 6a576e31c6ee35e45a652cff51525d3c, type: 3}
 --- !u!114 &1205669460
 MonoBehaviour:
   m_ObjectHideFlags: 0

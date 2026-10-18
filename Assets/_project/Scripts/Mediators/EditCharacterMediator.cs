@@ -1,6 +1,7 @@
 using System.IO;
 using R3;
 using UnityEngine;
+using Zenject;
 
 namespace CharacterCreation
 {
@@ -8,6 +9,7 @@ namespace CharacterCreation
     {
         private readonly PresenterViewFactory _factory;
         private readonly PrintCharacterPresenter _printCharacter;
+        private readonly IFactory<ExitMenu> _exitMenuFactory;
         private ICharacterPresenter _characterPresenter;
         private Character _character;
         private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
@@ -15,11 +17,13 @@ namespace CharacterCreation
         private readonly Subject<Unit> _characterEdited = new Subject<Unit>();
         public Observable<Unit> CharacterEdited => _characterEdited;
 
-        public EditCharacterMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
+        public EditCharacterMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter,
+            UpgradeItemsListPresenter upgradeItemsListPresenter, IFactory<ExitMenu> exitMenuFactory)
         {
             _factory = factory;
             _printCharacter = printCharacter;
             _upgradeItemsListPresenter = upgradeItemsListPresenter;
+            _exitMenuFactory = exitMenuFactory;
         }
 
         public void ShowLoads()
@@ -76,7 +80,7 @@ namespace CharacterCreation
                 if (c.IsPsyker)
                     ShowEditPsyPowers(c);
                 else
-                    Print(c);
+                    ShowExitMenu(c);
             }).AddTo(_cd);
             pres.PrevClicked.Subscribe(c => ShowEditSkills(c)).AddTo(_cd);
         }
@@ -89,21 +93,57 @@ namespace CharacterCreation
             var pres = _characterPresenter as UpgradePsyPresenter;
             pres.SetFreeEdit(true);
             _characterPresenter.SetCharacter(_character);
-            _characterPresenter.NextClicked.Subscribe(c => Print(c)).AddTo(_cd);
+            _characterPresenter.NextClicked.Subscribe(ShowExitMenu).AddTo(_cd);
             pres.PrevClicked.Subscribe(c => ShowEditTalents(c)).AddTo(_cd);
         }
 
-        private void Print(Character character)
+        private void ShowExitMenu(Character character)
         {
             _upgradeItemsListPresenter.EndUpgradeSession();
             _cd?.Clear();
             _character = character;
+            var exitMenu = _exitMenuFactory.Create();
+            exitMenu.SaveAndReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: true);
+            });
+            exitMenu.ReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ReturnToMenu();
+            });
+            exitMenu.SaveAndExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: false);
+            });
+            exitMenu.ExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+        }
+
+        private void SaveAndPrint(bool returnToMenu)
+        {
             if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))
                 Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}");
-            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{character.Name.Value}/{character.Name.Value}.json");
+            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{_character.Name.Value}/{_character.Name.Value}.json");
             CharacterStorage.SaveToFile(_character, path);
-            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ => _characterEdited.OnNext(Unit.Default));
-            _printCharacter.PrintCharacter(character);
+            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ =>
+            {
+                if (returnToMenu)
+                    ReturnToMenu();
+                else
+                    ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+            _printCharacter.PrintCharacter(_character);
+        }
+
+        private void ReturnToMenu()
+        {
+            _characterEdited.OnNext(Unit.Default);
         }
     }
 }

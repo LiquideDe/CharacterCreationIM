@@ -29,6 +29,7 @@ namespace CharacterCreation
         [SerializeField] private ThirdPage thirdPagePrefab;
         [SerializeField] private ButtonInList buttonInListPrefab;
         [SerializeField] private UpgradeItem upgradeItemPrefab;
+        [SerializeField] private ExitMenu exitMenuPrefab;
 
         public override void InstallBindings()
         {
@@ -56,6 +57,7 @@ namespace CharacterCreation
             Container.BindIFactory<ThirdPage>().FromComponentInNewPrefab(thirdPagePrefab);
             Container.BindIFactory<ButtonInList>().FromComponentInNewPrefab(buttonInListPrefab);
             Container.BindIFactory<UpgradeItem>().FromComponentInNewPrefab(upgradeItemPrefab);
+            Container.BindIFactory<ExitMenu>().FromComponentInNewPrefab(exitMenuPrefab);
         }
     }
 }

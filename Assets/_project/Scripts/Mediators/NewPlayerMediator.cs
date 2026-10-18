@@ -3,6 +3,7 @@ using System.IO;
 using CharacterCreation.Background;
 using R3;
 using UnityEngine;
+using Zenject;
 
 namespace CharacterCreation
 {
@@ -14,15 +15,18 @@ namespace CharacterCreation
         private IDisposable _prevClicked;
         private Character _character;
         private PrintCharacterPresenter _printCharacter;
+        private IFactory<ExitMenu> _exitMenuFactory;
         private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
         private Subject<Unit> _newPlayerDone = new Subject<Unit>();
         public Observable<Unit> NewPlayerIsDone => _newPlayerDone;
 
-        public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
+        public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter,
+            UpgradeItemsListPresenter upgradeItemsListPresenter, IFactory<ExitMenu> exitMenuFactory)
         {
             _factory = factory;
             _printCharacter = printCharacter;
             _upgradeItemsListPresenter = upgradeItemsListPresenter;
+            _exitMenuFactory = exitMenuFactory;
         }
 
         public void ShowNewCharacteristic()
@@ -151,19 +155,56 @@ namespace CharacterCreation
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<SetNameView>();
             _characterPresenter.SetCharacter(_character);
-            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => Print(character));
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(ShowExitMenu);
         }
 
-        private void Print(Character character)
+        private void ShowExitMenu(Character character)
         {
             _character = character;
+            Reset();
+            var exitMenu = _exitMenuFactory.Create();
+            exitMenu.SaveAndReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: true);
+            });
+            exitMenu.ReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ReturnToMenu();
+            });
+            exitMenu.SaveAndExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: false);
+            });
+            exitMenu.ExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+        }
+
+        private void SaveAndPrint(bool returnToMenu)
+        {
             if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))
                 Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}");
-            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{character.Name.Value}/{character.Name.Value}.json");
+            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{_character.Name.Value}/{_character.Name.Value}.json");
             CharacterStorage.SaveToFile(_character, path);
-            Reset();
-            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ => _newPlayerDone.OnNext(Unit.Default));
-            _printCharacter.PrintCharacter(character);
+            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ =>
+            {
+                if (returnToMenu)
+                    ReturnToMenu();
+                else
+                    ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+            _printCharacter.PrintCharacter(_character);
+        }
+
+        private void ReturnToMenu()
+        {
+            _upgradeItemsListPresenter.EndUpgradeSession();
+            _newPlayerDone.OnNext(Unit.Default);
         }
 
         private void Reset()

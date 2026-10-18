@@ -14,16 +14,19 @@ namespace CharacterCreation
         private ICharacterPresenter _characterPresenter;
         private Character _character;
         private PrintCharacterPresenter _printCharacter;
+        private IFactory<ExitMenu> _exitMenuFactory;
         private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
         private CompositeDisposable _cd = new CompositeDisposable();
         private Subject<Unit> _characterUpgraded = new Subject<Unit>();
         public Observable<Unit> CharacterUpgraded => _characterUpgraded;
 
-        public UpgradeMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
+        public UpgradeMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter,
+            UpgradeItemsListPresenter upgradeItemsListPresenter, IFactory<ExitMenu> exitMenuFactory)
         {
             _factory = factory;
             _printCharacter = printCharacter;
             _upgradeItemsListPresenter = upgradeItemsListPresenter;
+            _exitMenuFactory = exitMenuFactory;
         }
 
         public void ShowLoads()
@@ -81,28 +84,64 @@ namespace CharacterCreation
                 _character = character;
                 _characterPresenter = (ICharacterPresenter)_factory.Create<UpgradePsyView>();
                 _characterPresenter.SetCharacter(_character);
-                _characterPresenter.NextClicked.Subscribe(character => Print(character));
+                _characterPresenter.NextClicked.Subscribe(ShowExitMenu);
                 var pres = _characterPresenter as UpgradePsyPresenter;
                 pres.PrevClicked.Subscribe(character => UpgradeTalent(character)).AddTo(_cd);
             }
             else
             {
-                Print(character);
+                ShowExitMenu(character);
             }
             
         }
         
-        private void Print(Character character)
+        private void ShowExitMenu(Character character)
         {
             _upgradeItemsListPresenter.EndUpgradeSession();
             _cd?.Clear();
             _character = character;
+            var exitMenu = _exitMenuFactory.Create();
+            exitMenu.SaveAndReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: true);
+            });
+            exitMenu.ReturnToMenuClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ReturnToMenu();
+            });
+            exitMenu.SaveAndExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                SaveAndPrint(returnToMenu: false);
+            });
+            exitMenu.ExitClicked.Take(1).Subscribe(_ =>
+            {
+                exitMenu.Close();
+                ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+        }
+
+        private void SaveAndPrint(bool returnToMenu)
+        {
             if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))
                 Directory.CreateDirectory($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}");
-            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{character.Name.Value}/{character.Name.Value}.json");
+            var path = Path.Combine(Application.streamingAssetsPath, $"Персонажи/{_character.Name.Value}/{_character.Name.Value}.json");
             CharacterStorage.SaveToFile(_character, path);
-            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ => _characterUpgraded.OnNext(Unit.Default));
-            _printCharacter.PrintCharacter(character);
+            _printCharacter.WorkIsFinished.Take(1).Subscribe(_ =>
+            {
+                if (returnToMenu)
+                    ReturnToMenu();
+                else
+                    ApplicationExit.OpenCharactersFolderAndQuit();
+            });
+            _printCharacter.PrintCharacter(_character);
+        }
+
+        private void ReturnToMenu()
+        {
+            _characterUpgraded.OnNext(Unit.Default);
         }
 
     }

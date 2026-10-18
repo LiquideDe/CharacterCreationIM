@@ -78,7 +78,7 @@ namespace CharacterCreation
 
         private void OnExitClicked()
         {
-
+            ApplicationExit.OpenCharactersFolderAndQuit();
         }
 
         private void ShowLoads()
