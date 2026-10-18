@@ -58,8 +58,6 @@ namespace CharacterCreation
         public ObservableList<Mutation> Mutations => _mutations;
         public ObservableList<string> PsyDisciplineAccess => _psyDisciplineAccess;
 
-        public UndoRedoManager CharacteristicHistory = new();
-
         private CompositeDisposable _cd = new CompositeDisposable();
 
         public bool IsPsyker { get; private set; }

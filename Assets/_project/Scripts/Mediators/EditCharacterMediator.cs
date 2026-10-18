@@ -10,14 +10,16 @@ namespace CharacterCreation
         private readonly PrintCharacterPresenter _printCharacter;
         private ICharacterPresenter _characterPresenter;
         private Character _character;
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
         private readonly CompositeDisposable _cd = new CompositeDisposable();
         private readonly Subject<Unit> _characterEdited = new Subject<Unit>();
         public Observable<Unit> CharacterEdited => _characterEdited;
 
-        public EditCharacterMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
+        public EditCharacterMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _factory = factory;
             _printCharacter = printCharacter;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void ShowLoads()
@@ -50,6 +52,7 @@ namespace CharacterCreation
 
         private void ShowEditSkills(Character character)
         {
+            _upgradeItemsListPresenter.BeginUpgradeSession();
             _cd?.Clear();
             _character = character;
             _characterPresenter = (ICharacterPresenter)_factory.Create<SkillUpgradeView>();
@@ -68,7 +71,13 @@ namespace CharacterCreation
             var pres = _characterPresenter as TalentUpgradePresenter;
             pres.SetFreeEdit(true);
             _characterPresenter.SetCharacter(_character);
-            _characterPresenter.NextClicked.Subscribe(c => ShowEditPsyPowers(c)).AddTo(_cd);
+            _characterPresenter.NextClicked.Subscribe(c =>
+            {
+                if (c.IsPsyker)
+                    ShowEditPsyPowers(c);
+                else
+                    Print(c);
+            }).AddTo(_cd);
             pres.PrevClicked.Subscribe(c => ShowEditSkills(c)).AddTo(_cd);
         }
 
@@ -86,6 +95,7 @@ namespace CharacterCreation
 
         private void Print(Character character)
         {
+            _upgradeItemsListPresenter.EndUpgradeSession();
             _cd?.Clear();
             _character = character;
             if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))

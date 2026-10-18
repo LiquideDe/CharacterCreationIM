@@ -10,7 +10,6 @@ namespace CharacterCreation
 {
     public class CharacteristicUpgradeView : ViewBase
     {
-        [SerializeField] private Button _buttonCancel;
         [SerializeField] private TextMeshProUGUI _textExperience;
         [SerializeField] private Button _buttonNext;
         [SerializeField] private Transform _content;
@@ -21,7 +20,6 @@ namespace CharacterCreation
         private readonly Subject<Characteristic> _characteristicClicked = new();
         private LevelCostTable _levelCostTable = new LevelCostTable();
         public Observable<Characteristic> CharacteristicClicked => _characteristicClicked;
-        public Observable<Unit> OnButtonCancelClick => _buttonCancel.OnClickAsObservable();
         public Observable<Unit> OnButtonNextClick => _buttonNext.OnClickAsObservable();
 
         private void Start()

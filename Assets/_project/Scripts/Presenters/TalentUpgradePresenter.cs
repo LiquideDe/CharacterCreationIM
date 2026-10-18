@@ -22,11 +22,14 @@ namespace CharacterCreation
         private TalentDecorator _currentTalent;
         private bool _lastToggle;
         private bool _isFreeEdit;
+        private bool _isCharacterCreation;
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
 
-        public TalentUpgradePresenter(AudioManager audioManager, TalentUpgradeView view)
+        public TalentUpgradePresenter(AudioManager audioManager, TalentUpgradeView view, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _audioManager = audioManager;
             _view = view;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void SetCharacter(Character character)
@@ -74,11 +77,15 @@ namespace CharacterCreation
             _isFreeEdit = isFreeEdit;
         }
 
+        public void SetCharacterCreation(bool isCharacterCreation)
+        {
+            _isCharacterCreation = isCharacterCreation;
+        }
+
         public void Initialize()
         {
             Debug.Log("[TalentUpgradePresenter] Initialize");
             _view.OnButtonBuyClick.Subscribe(_ => { BuyTalent(); }).AddTo(_cd);
-            _view.OnButtonCancelClick.Subscribe(_ => { _audioManager.PlayClick(); CancelUpgrade(); }).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { Debug.Log("[TalentUpgradePresenter] Next button click"); _audioManager.PlayConfirm(); GoNext(); }).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { _audioManager.PlayClick(); GoPrev(); }).AddTo(_cd);
             _view.ShowTalentClicked.Subscribe(name => { _audioManager.PlayClick(); ShowTalent(name); }).AddTo(_cd);
@@ -110,7 +117,7 @@ namespace CharacterCreation
             if (string.Compare(_currentTalent.TalentData.name, "Псайкер", true) == 0)
                 cmd = new UpgradePsykerTalentCommand(_character, _currentTalent.TalentData, cost);
 
-            var ok = _character.CharacteristicHistory.Do(cmd);
+            var ok = cmd.Execute();
             if (!ok)
                 _audioManager.PlayError();
             else
@@ -119,15 +126,23 @@ namespace CharacterCreation
                 _audioManager.PlayClick();
                 SetTalents();
                 SetListToView(_lastToggle);
+                var talent = _currentTalent.TalentData;
+                _upgradeItemsListPresenter.AddUpgrade($"Талант: {talent.name}", cost, cmd, RefreshTalents,
+                    () => _isFreeEdit || IsTalentRequireDone(talent));
                 if (string.Compare(_currentTalent.TalentData.name, "Псайкер", true) == 0)
                     ShowChooseDiscipline();
             }
         }
 
-        private void CancelUpgrade()
+        private void RefreshTalents()
         {
-            _character.CharacteristicHistory.Undo();
+            if (_view == null)
+                return;
+
             _view.SetExperience(_character.Experience.Value.experiencePoints);
+            SetTalents();
+            SetListToView(_lastToggle);
+            EnsurePsyDisciplineAccessPrompt();
         }
 
         public void Dispose()
@@ -141,6 +156,9 @@ namespace CharacterCreation
             _talents.Clear();
             foreach (var item in _talentCreator.Talents)
             {
+                if (item.character_creation_only && !_isCharacterCreation)
+                    continue;
+
                 if (IsCharacterHasNotTalent(item.name))
                 {
                     TalentDecorator decorator = new TalentDecorator();
@@ -225,11 +243,14 @@ namespace CharacterCreation
                 return;
 
             var cmd = new AddPsyDisciplineAccessCommand(_character, name);
-            var ok = _character.CharacteristicHistory.Do(cmd);
+            var ok = cmd.Execute();
             if (!ok)
                 _audioManager.PlayError();
             else
+            {
                 _audioManager.PlayClick();
+                _upgradeItemsListPresenter.AddUpgrade($"Дисциплина псайкера: {name}", 0, cmd, EnsurePsyDisciplineAccessPrompt);
+            }
 
             EnsurePsyDisciplineAccessPrompt();
         }
@@ -401,8 +422,6 @@ namespace CharacterCreation
         private readonly Character _character;
         private readonly TalentData _talent; 
         private readonly int _xpCost;
-        private int _prevXP;
-        private int _prevExpSpent;
         private bool _applied;
 
         public UpgradeTalentCommand(Character player, TalentData ch, int xpCost)
@@ -416,8 +435,6 @@ namespace CharacterCreation
         {
             if (_character.Experience.Value.experiencePoints < _xpCost) return false;
 
-            _prevXP = _character.Experience.Value.experiencePoints;
-            _prevExpSpent = _character.Experience.Value.experienceSpent;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
             _character.Talents.Add(_talent);
@@ -430,8 +447,8 @@ namespace CharacterCreation
         {
             if (!_applied) return;
             _character.Talents.Remove(_talent);
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
+            _character.Experience.Value.experiencePoints += _xpCost;
+            _character.Experience.Value.experienceSpent -= _xpCost;
             _applied = false;
         }
     }
@@ -441,10 +458,6 @@ namespace CharacterCreation
         private readonly Character _character;
         private readonly TalentData _talent;
         private readonly int _xpCost;
-        private int _prevXP;
-        private int _prevExpSpent;
-        private int _prevFreeSmall;
-        private int _prevFreeBig;
         private bool _applied;
 
         public UpgradePsykerTalentCommand(Character player, TalentData ch, int xpCost)
@@ -458,10 +471,6 @@ namespace CharacterCreation
         {
             if (_character.Experience.Value.experiencePoints < _xpCost) return false;
 
-            _prevXP = _character.Experience.Value.experiencePoints;
-            _prevExpSpent = _character.Experience.Value.experienceSpent;
-            _prevFreeSmall = _character.FreeSmallPsyPower.Value;
-            _prevFreeBig = _character.FreePsyPower.Value;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
             _character.Talents.Add(_talent);
@@ -476,10 +485,10 @@ namespace CharacterCreation
         {
             if (!_applied) return;
             _character.Talents.Remove(_talent);
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
-            _character.FreeSmallPsyPower.Value = _prevFreeSmall;
-            _character.FreePsyPower.Value = _prevFreeBig;
+            _character.Experience.Value.experiencePoints += _xpCost;
+            _character.Experience.Value.experienceSpent -= _xpCost;
+            _character.FreeSmallPsyPower.Value -= 1;
+            _character.FreePsyPower.Value -= 1;
             _applied = false;
         }
     }

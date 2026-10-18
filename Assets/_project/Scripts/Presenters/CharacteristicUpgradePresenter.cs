@@ -16,11 +16,13 @@ namespace CharacterCreation
         private readonly List<IDisposable> _subscriptions = new();
         private Character _character;
         private readonly LevelCostTable _costs = new();
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
 
-        public CharacteristicUpgradePresenter(AudioManager audioManager, CharacteristicUpgradeView view)
+        public CharacteristicUpgradePresenter(AudioManager audioManager, CharacteristicUpgradeView view, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _audioManager = audioManager;
             _view = view;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void SetCharacter(Character character) 
@@ -41,13 +43,6 @@ namespace CharacterCreation
             );
 
             _subscriptions.Add(
-                _view.OnButtonCancelClick.Subscribe(_ =>
-                {
-                    CancelUpgrade();
-                })
-            );
-
-            _subscriptions.Add(
                 _view.CharacteristicClicked.Subscribe(ch => { UpgradeCharacteristic(ch); }));
         }
 
@@ -59,21 +54,16 @@ namespace CharacterCreation
         private void UpgradeCharacteristic(Characteristic ch)
         {
             var cmd = new UpgradeCharacteristicCommand(_character, ch, delta: 1, xpCost: _costs.GetCostForNextLevel(ch.Level));
-            var ok = _character.CharacteristicHistory.Do(cmd);
+            var ok = cmd.Execute();
             if (!ok)            
                 _audioManager.PlayError();
             else
             {
                 _view.SetExperience(_character.Experience.Value.experiencePoints);
                 _audioManager.PlayClick();
+                _upgradeItemsListPresenter.AddUpgrade($"Характеристика: {ch.Name}", _costs.GetCostForNextLevel(ch.Level - 1), cmd,
+                    RefreshExperience);
             }   
-        }
-
-        private void CancelUpgrade()
-        {
-            _character.CharacteristicHistory.Undo();
-            _audioManager.PlayClick();
-            _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 
         private void GoToNext()
@@ -81,6 +71,12 @@ namespace CharacterCreation
             _audioManager.PlayClick();
             _view.HideAndDestroyToLeft();
             _nextClicked.OnNext(_character);
+        }
+
+        private void RefreshExperience()
+        {
+            if (_view != null)
+                _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 
         public void Dispose()
@@ -105,8 +101,6 @@ namespace CharacterCreation
         private readonly int _delta;         // обычно 1
         private readonly int _xpCost;        // сколько списываем
         private int _prevLevel;
-        private int _prevXP;
-        private int _prevExpSpent;
         private bool _applied;
 
         public UpgradeCharacteristicCommand(Character player, Characteristic ch, int delta, int xpCost)
@@ -122,8 +116,6 @@ namespace CharacterCreation
             if (_character.Experience.Value.experiencePoints < _xpCost) return false;
 
             _prevLevel = _ch.Level;
-            _prevXP = _character.Experience.Value.experiencePoints;
-            _prevExpSpent = _character.Experience.Value.experienceSpent;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
             _ch.PlusLevel(_delta);
@@ -137,34 +129,10 @@ namespace CharacterCreation
             if (!_applied) return;
             _ch.Level = _prevLevel;
             _ch.PlusLevel(0);
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
+            _character.Experience.Value.experiencePoints += _xpCost;
+            _character.Experience.Value.experienceSpent -= _xpCost;
             _applied = false;
         }
-    }
-
-    public sealed class UndoRedoManager
-    {
-        private readonly Stack<IGameCommand> _undo = new();
-        private readonly Stack<IGameCommand> _redo = new();
-
-        public bool Do(IGameCommand cmd)
-        {
-            if (!cmd.Execute()) return false;
-            _undo.Push(cmd);
-            _redo.Clear();
-            return true;
-        }
-
-        public void Undo()
-        {
-            if (_undo.Count == 0) return;
-            var cmd = _undo.Pop();
-            cmd.Undo();
-            _redo.Push(cmd);
-        }
-        // опционально ограничить размер стека
-        public int MaxDepth { get; set; } = 50;
     }
 
     public struct LevelCostBand

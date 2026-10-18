@@ -15,7 +15,6 @@ namespace CharacterCreation
         [SerializeField] private TextMeshProUGUI _textNameTalent;
         [SerializeField] private TextMeshProUGUI _textDescriptionTalent;
         [SerializeField] private VirtualListView _virtualListView;
-        [SerializeField] private Button _cancelButton;
         [SerializeField] private Button _nextButton;
         [SerializeField] private Button _prevButton;
         [SerializeField] private Button _buyButton;
@@ -29,7 +28,6 @@ namespace CharacterCreation
         public Observable<Unit> OnButtonBuyClick => _buyButton.OnClickAsObservable();
         public Observable<Unit> OnButtonNextClick => _nextButton.OnClickAsObservable();
         public Observable<Unit> OnButtonPrevClick => _prevButton.OnClickAsObservable();
-        public Observable<Unit> OnButtonCancelClick => _cancelButton.OnClickAsObservable();
         public Observable<string> DisciplineChosen => _chooseDisciplineView.NameDisciplineChosen;
 
         private void Start()

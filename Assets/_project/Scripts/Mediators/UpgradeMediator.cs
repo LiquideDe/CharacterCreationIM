@@ -14,14 +14,16 @@ namespace CharacterCreation
         private ICharacterPresenter _characterPresenter;
         private Character _character;
         private PrintCharacterPresenter _printCharacter;
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
         private CompositeDisposable _cd = new CompositeDisposable();
         private Subject<Unit> _characterUpgraded = new Subject<Unit>();
         public Observable<Unit> CharacterUpgraded => _characterUpgraded;
 
-        public UpgradeMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
+        public UpgradeMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _factory = factory;
             _printCharacter = printCharacter;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void ShowLoads()
@@ -41,6 +43,7 @@ namespace CharacterCreation
 
         private void UpgradeCharacteristics(Character character)
         {
+            _upgradeItemsListPresenter.BeginUpgradeSession();
             _cd?.Clear();
             _character = character;
             _characterPresenter = (ICharacterPresenter)_factory.Create<CharacteristicUpgradeView>();
@@ -91,6 +94,7 @@ namespace CharacterCreation
         
         private void Print(Character character)
         {
+            _upgradeItemsListPresenter.EndUpgradeSession();
             _cd?.Clear();
             _character = character;
             if (!Directory.Exists($"{Application.dataPath}/StreamingAssets/Персонажи/{_character.Name.Value}"))

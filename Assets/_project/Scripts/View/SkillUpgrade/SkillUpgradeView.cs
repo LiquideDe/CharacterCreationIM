@@ -16,7 +16,6 @@ namespace CharacterCreation
         [SerializeField] private Transform _contentSpecializations;
         [SerializeField] private Button _buttonNext;
         [SerializeField] private Button _buttonPrev;
-        [SerializeField] private Button _buttonCancel;
         [SerializeField] private Button _buttonNewSpecialization;
         [Inject] private IFactory<SkillPanelUpgrade> _factorySkillPanel;
         [Inject] private IFactory<NewSpecializationPanel> _factoryNewSpecialization;
@@ -31,7 +30,6 @@ namespace CharacterCreation
         private readonly Subject<SpecializationData> _upgradeSpecialization = new();
         public Observable<Unit> OnButtonNextClick => _buttonNext.OnClickAsObservable();
         public Observable<Unit> OnButtonPrevClick => _buttonPrev.OnClickAsObservable();
-        public Observable<Unit> OnButtonCancelClick => _buttonCancel.OnClickAsObservable();
         public Observable<SpecializationData> NewSpecialization => _newSpec;
         public Observable<string> ShowSpecialization => _showSpecs;
         public Observable<SkillData> UpgradeSkill => _upgradeSkill;

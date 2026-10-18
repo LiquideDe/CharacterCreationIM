@@ -24,11 +24,13 @@ namespace CharacterCreation
         private int _currentPsyIdSchool;
         private List<string> _schools = new List<string>() { "Биомантия", "Прорицание", "Пиромантия", "Телекинез", "Телепатия" };
         private List<List<PsyData>> _psyDatas = new List<List<PsyData>>();
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
 
-        public UpgradePsyPresenter(AudioManager audioManager, UpgradePsyView view)
+        public UpgradePsyPresenter(AudioManager audioManager, UpgradePsyView view, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _audioManager = audioManager;
             _view = view;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void Dispose()
@@ -39,7 +41,6 @@ namespace CharacterCreation
         public void Initialize()
         {
             _view.OnButtonBuyClick.Subscribe(_ => { BuyPsyPower(); }).AddTo(_cd);
-            _view.OnButtonCancelClick.Subscribe(_ => { CancelBuy(); }).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { GoNext(); }).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { GoPrev(); }).AddTo(_cd);
             _view.OnButtonNextSchoolClick.Subscribe(_ => { _audioManager.PlayClick(); NextSchool(); }).AddTo(_cd);
@@ -70,7 +71,7 @@ namespace CharacterCreation
             if (_isFreeEdit)
             {
                 var cmdFree = new FreeUpgradePsyPowerCommand(_character, _currentPsy);
-                var okFree = _character.CharacteristicHistory.Do(cmdFree);
+                var okFree = cmdFree.Execute();
                 if (!okFree)
                     _audioManager.PlayError();
                 else
@@ -79,6 +80,7 @@ namespace CharacterCreation
                     _audioManager.PlayClick();
                     _psyDatas[_currentPsyIdSchool].Remove(_currentPsy);
                     ConvertPsyToStringAndShow();
+                    _upgradeItemsListPresenter.AddUpgrade($"Пси-сила: {_currentPsy.name}", 0, cmdFree, RefreshPsyPowers);
                 }
                 return;
             }
@@ -88,7 +90,7 @@ namespace CharacterCreation
                 cost = 60;
 
             var cmd = new UpgradePsyPowerCommand(_character, _currentPsy, cost);
-            var ok = _character.CharacteristicHistory.Do(cmd);
+            var ok = cmd.Execute();
             if (!ok)
                 _audioManager.PlayError();
             else
@@ -97,13 +99,18 @@ namespace CharacterCreation
                 _audioManager.PlayClick();
                 _psyDatas[_currentPsyIdSchool].Remove(_currentPsy);
                 ConvertPsyToStringAndShow();
+                _upgradeItemsListPresenter.AddUpgrade($"Пси-сила: {_currentPsy.name}", cost, cmd, RefreshPsyPowers);
             }
         }
 
-        private void CancelBuy()
+        private void RefreshPsyPowers()
         {
-            _character.CharacteristicHistory.Undo();
+            if (_view == null)
+                return;
+
             _view.SetExperience(_character.Experience.Value.experiencePoints);
+            SetPsyPowers();
+            ConvertPsyToStringAndShow();
         }
 
         private void ShowPsy(string name)
@@ -215,10 +222,8 @@ namespace CharacterCreation
         private readonly Character _character;
         private readonly PsyData _psy;
         private readonly int _xpCost;
-        private int _prevXP;
-        private int _prevExpSpent;
-        private int _prevFreeSmallPoints;
-        private int _prevFreePoints;
+        private bool _usedFreeSmallPoint;
+        private bool _usedFreePoint;
         private bool _applied;
 
         public UpgradePsyPowerCommand(Character player, PsyData ch, int xpCost)
@@ -243,28 +248,18 @@ namespace CharacterCreation
 
             if (freeLesser)
             {
-                _prevXP = _character.Experience.Value.experiencePoints;
-                _prevExpSpent = _character.Experience.Value.experienceSpent;
-                _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
-                _prevFreePoints = _character.FreePsyPower.Value;
+                _usedFreeSmallPoint = true;
                 _character.FreeSmallPsyPower.Value -= 1;
                 _character.PsyPowers.Add(_psy);
             }
             else if (freeBig)
             {
-                _prevXP = _character.Experience.Value.experiencePoints;
-                _prevExpSpent = _character.Experience.Value.experienceSpent;
-                _prevFreePoints = _character.FreePsyPower.Value;
-                _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
+                _usedFreePoint = true;
                 _character.FreePsyPower.Value -= 1;
                 _character.PsyPowers.Add(_psy);
             }
             else
             {
-                _prevXP = _character.Experience.Value.experiencePoints;
-                _prevExpSpent = _character.Experience.Value.experienceSpent;
-                _prevFreePoints = _character.FreePsyPower.Value;
-                _prevFreeSmallPoints = _character.FreeSmallPsyPower.Value;
                 _character.Experience.Value.experiencePoints -= _xpCost;
                 _character.Experience.Value.experienceSpent += _xpCost;
                 _character.PsyPowers.Add(_psy);
@@ -278,10 +273,15 @@ namespace CharacterCreation
         {
             if (!_applied) return;
             _character.PsyPowers.Remove(_psy);
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
-            _character.FreePsyPower.Value = _prevFreePoints;
-            _character.FreeSmallPsyPower.Value = _prevFreeSmallPoints;
+            if (_usedFreeSmallPoint)
+                _character.FreeSmallPsyPower.Value += 1;
+            else if (_usedFreePoint)
+                _character.FreePsyPower.Value += 1;
+            else
+            {
+                _character.Experience.Value.experiencePoints += _xpCost;
+                _character.Experience.Value.experienceSpent -= _xpCost;
+            }
             _applied = false;
         }
     }

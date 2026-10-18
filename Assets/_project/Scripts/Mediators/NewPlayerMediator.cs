@@ -14,13 +14,15 @@ namespace CharacterCreation
         private IDisposable _prevClicked;
         private Character _character;
         private PrintCharacterPresenter _printCharacter;
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
         private Subject<Unit> _newPlayerDone = new Subject<Unit>();
         public Observable<Unit> NewPlayerIsDone => _newPlayerDone;
 
-        public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter)
+        public NewPlayerMediator(PresenterViewFactory factory, PrintCharacterPresenter printCharacter, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _factory = factory;
             _printCharacter = printCharacter;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void ShowNewCharacteristic()
@@ -97,6 +99,7 @@ namespace CharacterCreation
 
         private void UpgradeCharacteristic(Character character)
         {
+            _upgradeItemsListPresenter.BeginUpgradeSession();
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<CharacteristicUpgradeView>();
@@ -120,12 +123,13 @@ namespace CharacterCreation
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<TalentUpgradeView>();
+            var pres = _characterPresenter as TalentUpgradePresenter;
+            pres.SetCharacterCreation(true);
             _characterPresenter.SetCharacter(_character);
             if(character.IsPsyker)
                 _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { UpgradePsyPowers(character); }, ex => Debug.LogException(ex.Exception));
             else
                 _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => { SetName(character); }, ex => Debug.LogException(ex.Exception));
-            var pres = _characterPresenter as TalentUpgradePresenter;
             _prevClicked = pres.PrevClicked.Subscribe(character => UpgradeSkills(character));
         }
 
@@ -142,6 +146,7 @@ namespace CharacterCreation
 
         private void SetName(Character character)
         {
+            _upgradeItemsListPresenter.EndUpgradeSession();
             _character = character;
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<SetNameView>();

@@ -22,11 +22,13 @@ namespace CharacterCreation
         private bool _isFreeEdit;
         private List<SkillData> _skillDatas = new List<SkillData>();
         private List<SpecializationData> _specializationDatas = new List<SpecializationData>();
+        private readonly UpgradeItemsListPresenter _upgradeItemsListPresenter;
 
-        public SkillUpgradePresenter(AudioManager audioManager, SkillUpgradeView view)
+        public SkillUpgradePresenter(AudioManager audioManager, SkillUpgradeView view, UpgradeItemsListPresenter upgradeItemsListPresenter)
         {
             _audioManager = audioManager;
             _view = view;
+            _upgradeItemsListPresenter = upgradeItemsListPresenter;
         }
 
         public void SetCharacter(Character character)
@@ -112,7 +114,6 @@ namespace CharacterCreation
         public void Initialize()
         {
             _view.NewSpecialization.Subscribe(spec => { _specializationDatas.Add(spec); } ).AddTo(_cd);
-            _view.OnButtonCancelClick.Subscribe(_ => { CancelUpgrade(); } ).AddTo(_cd);
             _view.OnButtonNextClick.Subscribe(_ => { GoNext(); } ).AddTo(_cd);
             _view.OnButtonPrevClick.Subscribe(_ => { ReturnToCharacteristics(); } ).AddTo(_cd);
             _view.UpgradeSkill.Subscribe(skill => { UpgradeSkill(skill); } ).AddTo(_cd);
@@ -132,13 +133,15 @@ namespace CharacterCreation
             {
                 int cost = _isFreeEdit ? 0 : (skill.level + 1) * 50;
                 var cmd = new UpgradeSkillCommand(_character, skill, 1, cost);
-                var ok = _character.CharacteristicHistory.Do(cmd);
+                var ok = cmd.Execute();
                 if (!ok)
                     _audioManager.PlayError();
                 else
                 {
                     _view.SetExperience(_character.Experience.Value.experiencePoints);
                     _audioManager.PlayClick();
+                    _upgradeItemsListPresenter.AddUpgrade($"Навык: {skill.name}", cost, cmd,
+                        RefreshExperience);
                 }
             }
             
@@ -193,11 +196,10 @@ namespace CharacterCreation
             _cd.Dispose();
         }
 
-        private void CancelUpgrade()
+        private void RefreshExperience()
         {
-            _audioManager.PlayClick();
-            _character.CharacteristicHistory.Undo();
-            _view.SetExperience(_character.Experience.Value.experiencePoints);
+            if (_view != null)
+                _view.SetExperience(_character.Experience.Value.experiencePoints);
         }
 
         private void UpgradeSpecialization(SpecializationData spec)
@@ -220,13 +222,15 @@ namespace CharacterCreation
             {
                 int cost = _isFreeEdit ? 0 : (spec.level + 1) * 50;
                 var cmd = new UpgradeSpecializationCommand(_character, spec, 1, cost);
-                var ok = _character.CharacteristicHistory.Do(cmd);
+                var ok = cmd.Execute();
                 if (!ok)
                     _audioManager.PlayError();
                 else
                 {
                     _view.SetExperience(_character.Experience.Value.experiencePoints);
                     _audioManager.PlayClick();
+                    _upgradeItemsListPresenter.AddUpgrade($"Специализация: {spec.name}", cost, cmd,
+                        RefreshExperience);
                 }
             }
         }
@@ -261,8 +265,6 @@ namespace CharacterCreation
         private readonly int _delta;         // обычно 1
         private readonly int _xpCost;        // сколько списываем
         private int _prevLevel;
-        private int _prevXP;
-        private int _prevExpSpent;
         private bool _applied;
 
         public UpgradeSkillCommand(Character player, SkillData ch, int delta, int xpCost)
@@ -278,8 +280,6 @@ namespace CharacterCreation
             if (_character.Experience.Value.experiencePoints < _xpCost) return false;
 
             _prevLevel = _skill.level;
-            _prevXP = _character.Experience.Value.experiencePoints;
-            _prevExpSpent = _character.Experience.Value.experienceSpent;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
             _skill.PlusLevel(_delta);
@@ -293,8 +293,8 @@ namespace CharacterCreation
             if (!_applied) return;
             _skill.level = _prevLevel;
             _skill.PlusLevel(0); //Чтобы тригернуть подписку
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
+            _character.Experience.Value.experiencePoints += _xpCost;
+            _character.Experience.Value.experienceSpent -= _xpCost;
             _applied = false;
         }
     }
@@ -306,8 +306,6 @@ namespace CharacterCreation
         private readonly int _delta;         // обычно 1
         private readonly int _xpCost;        // сколько списываем
         private int _prevLevel;
-        private int _prevXP;
-        private int _prevExpSpent;
         private bool _applied;
 
         public UpgradeSpecializationCommand(Character player, SpecializationData ch, int delta, int xpCost)
@@ -323,8 +321,6 @@ namespace CharacterCreation
             if (_character.Experience.Value.experiencePoints < _xpCost) return false;
 
             _prevLevel = _specialization.level;
-            _prevXP = _character.Experience.Value.experiencePoints;
-            _prevExpSpent = _character.Experience.Value.experienceSpent;
             _character.Experience.Value.experiencePoints -= _xpCost;
             _character.Experience.Value.experienceSpent += _xpCost;
             _specialization.PlusLevel(_delta);
@@ -338,8 +334,8 @@ namespace CharacterCreation
             if (!_applied) return;
             _specialization.level = _prevLevel;
             _specialization.PlusLevel(0); //Чтобы тригернуть подписку
-            _character.Experience.Value.experiencePoints = _prevXP;
-            _character.Experience.Value.experienceSpent = _prevExpSpent;
+            _character.Experience.Value.experiencePoints += _xpCost;
+            _character.Experience.Value.experienceSpent -= _xpCost;
             _applied = false;
         }
     }

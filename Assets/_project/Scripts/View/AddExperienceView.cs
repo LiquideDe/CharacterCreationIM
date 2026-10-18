@@ -32,14 +32,21 @@ namespace CharacterCreation
 
         private void SetExperience()
         {
-            int.TryParse(_inputField.text, out int _exp);
-            if (_exp > 0)
+            var text = _inputField.text;
+            int exp = 0;
+            if (!string.IsNullOrWhiteSpace(text) && !int.TryParse(text, out exp))
             {
-                _getExperience.OnNext(_exp);
+                _audio.PlayError();
+                return;
             }
 
-            else
+            if (exp < 0)
+            {
                 _audio.PlayError();
+                return;
+            }
+
+            _getExperience.OnNext(exp);
         }
     }
 }
