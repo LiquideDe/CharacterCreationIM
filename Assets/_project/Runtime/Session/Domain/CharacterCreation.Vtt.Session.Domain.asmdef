@@ -1,0 +1,16 @@
+{
+  "name": "CharacterCreation.Vtt.Session.Domain",
+  "rootNamespace": "CharacterCreation.Vtt.Session.Domain",
+  "references": [
+    "CharacterCreation.Vtt.Shared"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

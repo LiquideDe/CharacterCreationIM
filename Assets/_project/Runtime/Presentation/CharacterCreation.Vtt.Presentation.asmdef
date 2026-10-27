@@ -1,0 +1,19 @@
+{
+  "name": "CharacterCreation.Vtt.Presentation",
+  "rootNamespace": "CharacterCreation.Vtt.Presentation",
+  "references": [
+    "R3.Unity",
+    "CharacterCreation.Vtt.Networking",
+    "UnityEngine.UI",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

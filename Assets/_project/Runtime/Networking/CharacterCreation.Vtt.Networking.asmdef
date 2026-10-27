@@ -1,0 +1,14 @@
+{
+  "name": "CharacterCreation.Vtt.Networking",
+  "rootNamespace": "CharacterCreation.Vtt.Networking",
+  "references": ["FishNet.Runtime"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

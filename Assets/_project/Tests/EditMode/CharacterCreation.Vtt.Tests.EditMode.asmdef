@@ -1,0 +1,30 @@
+{
+  "name": "CharacterCreation.Vtt.Tests.EditMode",
+  "rootNamespace": "CharacterCreation.Vtt.Tests.EditMode",
+  "references": [
+    "CharacterCreation.Vtt.Shared",
+    "CharacterCreation.Vtt.Campaign.Domain",
+    "CharacterCreation.Vtt.Campaign.Application",
+    "CharacterCreation.Vtt.Map.Domain",
+    "CharacterCreation.Vtt.Map.Application",
+    "CharacterCreation.Vtt.Encounter.Domain",
+    "CharacterCreation.Vtt.Encounter.Application",
+    "CharacterCreation.Vtt.Rules.Domain",
+    "CharacterCreation.Vtt.Rules.Application",
+    "CharacterCreation.Vtt.Session.Domain"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

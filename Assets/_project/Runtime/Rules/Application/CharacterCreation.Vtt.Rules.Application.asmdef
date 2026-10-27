@@ -1,0 +1,17 @@
+{
+  "name": "CharacterCreation.Vtt.Rules.Application",
+  "rootNamespace": "CharacterCreation.Vtt.Rules.Application",
+  "references": [
+    "CharacterCreation.Vtt.Shared",
+    "CharacterCreation.Vtt.Rules.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

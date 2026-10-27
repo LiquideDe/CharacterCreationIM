@@ -1,0 +1,17 @@
+{
+  "name": "CharacterCreation.Vtt.Campaign.Application",
+  "rootNamespace": "CharacterCreation.Vtt.Campaign.Application",
+  "references": [
+    "CharacterCreation.Vtt.Shared",
+    "CharacterCreation.Vtt.Campaign.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

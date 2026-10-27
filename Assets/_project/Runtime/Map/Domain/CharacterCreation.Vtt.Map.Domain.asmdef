@@ -1,0 +1,16 @@
+{
+  "name": "CharacterCreation.Vtt.Map.Domain",
+  "rootNamespace": "CharacterCreation.Vtt.Map.Domain",
+  "references": [
+    "CharacterCreation.Vtt.Shared"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

@@ -1,0 +1,23 @@
+{
+  "name": "CharacterCreation.Vtt.Composition",
+  "rootNamespace": "CharacterCreation.Vtt.Composition",
+  "references": [
+    "Zenject",
+    "CharacterCreation.Vtt.Presentation",
+    "CharacterCreation.Vtt.Networking",
+    "CharacterCreation.Vtt.Campaign.Application",
+    "CharacterCreation.Vtt.Map.Application",
+    "CharacterCreation.Vtt.Encounter.Application",
+    "CharacterCreation.Vtt.Rules.Application",
+    "CharacterCreation.Vtt.Session.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

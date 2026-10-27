@@ -1,0 +1,17 @@
+{
+  "name": "CharacterCreation.Vtt.Map.Application",
+  "rootNamespace": "CharacterCreation.Vtt.Map.Application",
+  "references": [
+    "CharacterCreation.Vtt.Shared",
+    "CharacterCreation.Vtt.Map.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

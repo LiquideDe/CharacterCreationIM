@@ -1,0 +1,17 @@
+{
+  "name": "CharacterCreation.Vtt.Encounter.Application",
+  "rootNamespace": "CharacterCreation.Vtt.Encounter.Application",
+  "references": [
+    "CharacterCreation.Vtt.Shared",
+    "CharacterCreation.Vtt.Encounter.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}
