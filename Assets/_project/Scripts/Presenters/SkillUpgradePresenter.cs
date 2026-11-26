@@ -11,6 +11,7 @@ namespace CharacterCreation
     public class SkillUpgradePresenter : ICharacterPresenter
     {
         [Inject] private SkillCreator _skillCreator;
+        [Inject] private PatronEffects _patronEffects;
         private readonly Subject<Character> _nextClicked = new();
         private readonly Subject<Character> _prevClicked = new();
         public Observable<Character> NextClicked => _nextClicked;
@@ -19,6 +20,7 @@ namespace CharacterCreation
         private SkillUpgradeView _view;
         private readonly CompositeDisposable _cd = new CompositeDisposable();
         private Character _character;
+        private Patron _patron;
         private bool _isFreeEdit;
         private List<SkillData> _skillDatas = new List<SkillData>();
         private List<SpecializationData> _specializationDatas = new List<SpecializationData>();
@@ -34,6 +36,8 @@ namespace CharacterCreation
         public void SetCharacter(Character character)
         {
             _character = character;
+            _patron = _patronEffects.ResolvePatron(character);
+            _view.SetSpecializationCost(GetSpecializationCost);
             SetSkills();
             InitialSpecializations();
         }
@@ -225,7 +229,10 @@ namespace CharacterCreation
 
             if ((_isFreeEdit || IsRequireTalent(spec.requireTalent)) && (_isFreeEdit || IsRequireSkill(spec.skill, spec.lvlRequireSkill)) && spec.level < 5)
             {
-                int cost = _isFreeEdit ? 0 : (spec.level + 1) * 50;
+                int baseCost = (spec.level + 1) * 50;
+                int discount = _isFreeEdit ? 0 : _patronEffects.SpecializationDiscount(_patron, spec.name);
+                int cost = _isFreeEdit ? 0 : Math.Max(0, baseCost - discount);
+                Debug.Log($"[PatronEffects] Специализация «{spec.name}»: базовая цена {baseCost}, скидка {discount}, итог {cost}.");
                 var cmd = new UpgradeSpecializationCommand(_character, spec, 1, cost);
                 var ok = cmd.Execute();
                 if (!ok)
@@ -238,6 +245,12 @@ namespace CharacterCreation
                         RefreshExperience);
                 }
             }
+        }
+
+        private int GetSpecializationCost(SpecializationData spec)
+        {
+            if (_isFreeEdit) return 0;
+            return Math.Max(0, (spec.level + 1) * 50 - _patronEffects.SpecializationDiscount(_patron, spec.name));
         }
 
         private bool IsRequireTalent(string nameTalent)

@@ -12,6 +12,7 @@ namespace CharacterCreation
             Container.Bind<NewPlayerMediator>().AsTransient();
             Container.Bind<UpgradeMediator>().AsTransient();
             Container.Bind<EditCharacterMediator>().AsTransient();
+            Container.Bind<PatronMediator>().AsTransient();
             Container.BindInterfacesAndSelfTo<StartMediator>().AsSingle();            
         }
     }

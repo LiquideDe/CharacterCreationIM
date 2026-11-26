@@ -101,6 +101,7 @@ namespace CharacterCreation
         public void SetCharacter(Character character)
         {
             _character = character;
+            if (_patron != null) _patron.text = character.Patron.Value ?? string.Empty;
             FillDictionaries();
             StartScreenshot(PageName.First.ToString());
         }

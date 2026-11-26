@@ -40,7 +40,21 @@ namespace CharacterCreation
             _character = character;
             _characterPresenter = (ICharacterPresenter)_factory.Create<EditCharacterView>();
             _characterPresenter.SetCharacter(_character);
-            _characterPresenter.NextClicked.Subscribe(c => ShowEditCharacteristics(c)).AddTo(_cd);
+            _characterPresenter.NextClicked.Subscribe(c => ShowPatronSelection(c)).AddTo(_cd);
+        }
+
+        private void ShowPatronSelection(Character character)
+        {
+            _cd.Clear();
+            _character = character;
+            _characterPresenter = (ICharacterPresenter)_factory.Create<PatronSelectionView>();
+            if (_characterPresenter == null)
+            {
+                Debug.LogError("[EditCharacterMediator] Не удалось открыть выбор покровителя.");
+                return;
+            }
+            _characterPresenter.SetCharacter(_character);
+            _characterPresenter.NextClicked.Subscribe(ShowEditCharacteristics).AddTo(_cd);
         }
 
         private void ShowEditCharacteristics(Character character)

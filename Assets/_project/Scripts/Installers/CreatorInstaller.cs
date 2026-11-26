@@ -12,6 +12,9 @@ namespace CharacterCreation
             Container.BindInterfacesAndSelfTo<OriginCreator>().AsSingle();
             Container.BindInterfacesAndSelfTo<RoleCreator>().AsSingle();
             Container.BindInterfacesAndSelfTo<PsycanaCreator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PatronCreator>().AsSingle();
+            Container.Bind<PatronStorage>().AsSingle();
+            Container.Bind<PatronEffects>().AsSingle();
             Container.BindInterfacesAndSelfTo<SkillCreator>().AsSingle();
             Container.BindInterfacesAndSelfTo<TalentCreator>().AsSingle();
             Container.BindInterfacesAndSelfTo<WeaponPropertyCreator>().AsSingle();

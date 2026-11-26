@@ -23,6 +23,9 @@ namespace CharacterCreation
         private CompositeDisposable _specDisposable = new CompositeDisposable();
         private SkillData _currentSkill;
         private List<SkillPanelUpgrade> _specPanels = new List<SkillPanelUpgrade>();
+        private Func<SpecializationData, int> _specializationCost;
+
+        public void SetSpecializationCost(Func<SpecializationData, int> cost) => _specializationCost = cost;
         
         private readonly Subject<SpecializationData> _newSpec = new();
         private readonly Subject<string> _showSpecs = new();
@@ -76,7 +79,8 @@ namespace CharacterCreation
             var specializationData = specialization;
             var spec = _factorySkillPanel.Create();
             spec.transform.SetParent(_contentSpecializations, false);
-            spec.SetSpecialization(specialization);
+            spec.SetSpecialization(specialization, level =>
+                _specializationCost != null ? _specializationCost(specialization) : (level + 1) * 50);
             spec.SetHelp(specialization.level);
             spec.OnUpgradeButtonClick.Subscribe(_ => { _upgradeSpecialization.OnNext(specializationData); }).AddTo(_specDisposable);
             spec.gameObject.SetActive(true);

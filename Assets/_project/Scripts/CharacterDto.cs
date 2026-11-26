@@ -28,6 +28,7 @@ namespace CharacterCreation
         public string Origin;
         public string Faction;
         public string Role;
+        public string Patron;
 
         public int FreeSmallPsyPower;
         public int FreePsyPower;

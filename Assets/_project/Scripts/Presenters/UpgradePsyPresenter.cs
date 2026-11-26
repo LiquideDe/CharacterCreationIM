@@ -20,6 +20,8 @@ namespace CharacterCreation
         private Character _character;
         private bool _isFreeEdit;
         [Inject] private PsycanaCreator _psyCreator;
+        [Inject] private PatronEffects _patronEffects;
+        private Patron _patron;
         private PsyData _currentPsy;
         private int _currentPsyIdSchool;
         private List<string> _schools = new List<string>() { "Биомантия", "Прорицание", "Пиромантия", "Телекинез", "Телепатия" };
@@ -90,6 +92,9 @@ namespace CharacterCreation
             int cost = 100;
             if (_currentPsy.isLesser)
                 cost = 60;
+            int discount = _patronEffects.PsyPowerDiscount(_patron);
+            cost = Math.Max(0, cost - discount);
+            Debug.Log($"[PatronEffects] Психосила «{_currentPsy.name}»: скидка {discount}, итог {cost}.");
 
             var cmd = new UpgradePsyPowerCommand(_character, _currentPsy, cost);
             var ok = cmd.Execute();
@@ -129,6 +134,7 @@ namespace CharacterCreation
         public void SetCharacter(Character character)
         {
             _character = character;
+            _patron = _patronEffects.ResolvePatron(character);
             if(IsCharacterHasNotPsyPower("Психический удар"))
             {
                 var psyPower = _psyCreator.PsyPowerByName("Психический удар");

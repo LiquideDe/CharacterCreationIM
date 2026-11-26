@@ -15,17 +15,19 @@ namespace CharacterCreation
         private NewPlayerMediator _newPlayerMediator;
         private UpgradeMediator _upgradeMediator;
         private EditCharacterMediator _editCharacterMediator;
+        private PatronMediator _patronMediator;
         private CompositeDisposable _cd = new CompositeDisposable();
         private CompositeDisposable _ppcd = new CompositeDisposable();
         [Inject] private PrintCharacterPresenter _printPresenter;
 
         public StartMediator(PresenterViewFactory factory, NewPlayerMediator newPlayerMediator
-        , UpgradeMediator upgradeMediator, EditCharacterMediator editCharacterMediator)
+        , UpgradeMediator upgradeMediator, EditCharacterMediator editCharacterMediator, PatronMediator patronMediator)
         {
             _factory = factory;
             _newPlayerMediator = newPlayerMediator;
             _upgradeMediator = upgradeMediator;
             _editCharacterMediator = editCharacterMediator;
+            _patronMediator = patronMediator;
         }
 
         public void ShowMainMenu()
@@ -56,7 +58,8 @@ namespace CharacterCreation
 
         private void OnCreatePatronClicked()
         {
-
+            _patronMediator.Finished.Take(1).Subscribe(_ => ShowMainMenu()).AddTo(_cd);
+            _patronMediator.Show();
         }
 
         private void OnEditCharacterClicked()

@@ -38,6 +38,7 @@ namespace CharacterCreation
         public ReactiveProperty<string> Origin { get; set; } = new();
         public ReactiveProperty<string> Faction { get; set; } = new();
         public ReactiveProperty<string> Role { get; set; } = new();
+        public ReactiveProperty<string> Patron { get; set; } = new();
         public ReactiveProperty<int> FreeSmallPsyPower { get; set; } = new();
         public ReactiveProperty<int> FreePsyPower { get; set; } = new();
         public ReactiveProperty<int> Age { get; set; } = new();

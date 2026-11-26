@@ -35,6 +35,7 @@ namespace CharacterCreation
                 Origin = c.Origin.Value,
                 Faction = c.Faction.Value,
                 Role = c.Role.Value,
+                Patron = c.Patron.Value,
                 FreeSmallPsyPower = c.FreeSmallPsyPower.Value,
                 FreePsyPower = c.FreePsyPower.Value,
                 Age = c.Age.Value,
@@ -83,6 +84,7 @@ namespace CharacterCreation
             c.Origin.Value = d.Origin;
             c.Faction.Value = d.Faction;
             c.Role.Value = d.Role;
+            c.Patron.Value = d.Patron;
             c.FreeSmallPsyPower.Value = d.FreeSmallPsyPower;
             c.FreePsyPower.Value = d.FreePsyPower;
             c.Age.Value = d.Age;

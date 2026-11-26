@@ -98,7 +98,21 @@ namespace CharacterCreation
             Reset();
             _characterPresenter = (ICharacterPresenter)_factory.Create<QuestionsView>();
             _characterPresenter.SetCharacter(_character);
-            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => UpgradeCharacteristic(character));
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(character => SelectPatron(character));
+        }
+
+        private void SelectPatron(Character character)
+        {
+            _character = character;
+            Reset();
+            _characterPresenter = (ICharacterPresenter)_factory.Create<PatronSelectionView>();
+            if (_characterPresenter == null)
+            {
+                Debug.LogError("[NewPlayerMediator] Не удалось открыть выбор покровителя.");
+                return;
+            }
+            _characterPresenter.SetCharacter(_character);
+            _nextClickedSubscription = _characterPresenter.NextClicked.Subscribe(UpgradeCharacteristic);
         }
 
         private void UpgradeCharacteristic(Character character)

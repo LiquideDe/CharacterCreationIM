@@ -18,6 +18,7 @@ namespace CharacterCreation
         [SerializeField] private Sprite _activeSprite, _deactiveSprite;
         [SerializeField] private InfoButtonView _infoButton;
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
+        private Func<int, int> _specializationPrice;
         public Observable<Unit> OnShowSpecButtonClick => _buttonShowSpecialization.OnClickAsObservable();
         public Observable<Unit> OnUpgradeButtonClick => _buttonUpgrade.OnClickAsObservable();
 
@@ -29,8 +30,9 @@ namespace CharacterCreation
             skillData.LevelChanged.Subscribe(level => { SetLevelImage(level); SetHelp(level); }).AddTo(_compositeDisposable);
         }
 
-        public void SetSpecialization(SpecializationData specializationData)
+        public void SetSpecialization(SpecializationData specializationData, Func<int, int> price = null)
         {
+            _specializationPrice = price;
             _buttonShowSpecialization.interactable = false;
             _textName.text = specializationData.name;
             SetLevelImage(specializationData.level);
@@ -49,7 +51,7 @@ namespace CharacterCreation
 
         public void SetHelp(int level)
         {
-            _textHelp.text = $"Стоимость прокачки {(level + 1)*50}";
+            _textHelp.text = $"Стоимость прокачки {(_specializationPrice != null ? _specializationPrice(level) : (level + 1) * 50)}";
         }
 
         private void OnDestroy()
